@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<!--
+==========================================================================
+ MHD Reentry Console - Steerable Plasma Shield Envelope Model
+ A single-file interactive order-of-magnitude simulator.
+
+ MIT License
+
+ Copyright (c) 2026 [your name]
+
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the "Software"),
+ to deal in the Software without restriction, including without limitation
+ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ and/or sell copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included
+ in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ DEALINGS IN THE SOFTWARE.
+
+ NOTE ON THE PHYSICS: this is an envelope model built from published
+ engineering correlations. It is not validated design data and must not be
+ used as such. See the "Where the model breaks" notes in the footer.
+==========================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MHD Reentry Console — Steerable Plasma Shield Envelope Model</title>
+<style>
+:root{
+  /* Palette derived from the emission spectra of the species in the model:
+     Li I 670.8 nm crimson, N2 1st-positive violet, O I 557.7 nm auroral green */
+  --void:#070b12;
+  --deep:#0c131e;
+  --panel:#101a27;
+  --panel2:#0a1119;
+  --rule:#1c2c3e;
+  --rule2:#263a50;
+  --ink:#cfdcea;
+  --ink2:#8ba3bd;
+  --dim:#5b7189;
+  --li:#ff3b4e;        /* lithium 670.8 nm */
+  --n2:#8b6cff;        /* nitrogen 1st positive */
+  --oi:#5ee68a;        /* oxygen 557.7 nm */
+  --heat:#ff9d3f;
+  --heat2:#ffce6b;
+  --em:#3fd8e0;
+  --bad:#ff4d5e;
+  --warn:#ffc14d;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,"Cascadia Mono","Roboto Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 700px at 70% -10%, #14243a 0%, transparent 60%),
+    linear-gradient(180deg,#070b12 0%, #0a1119 100%);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:var(--mono);
+  font-size:13px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+.prose{font-family:var(--sans);color:var(--ink2);font-size:12.5px;line-height:1.6}
+
+/* ---------- header ---------- */
+header{
+  border-bottom:1px solid var(--rule);
+  padding:18px 22px 14px;
+  display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between;
+  background:linear-gradient(180deg,rgba(20,36,58,.5),transparent);
+}
+h1{
+  font-family:var(--mono);
+  font-size:15px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  margin:0;color:var(--ink);
+}
+.sub{color:var(--dim);font-size:11px;letter-spacing:.09em;margin-top:5px}
+.stamp{
+  border:1px solid var(--rule2);color:var(--dim);
+  padding:5px 10px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  white-space:nowrap;
+}
+
+/* ---------- layout ---------- */
+.wrap{display:grid;grid-template-columns:272px minmax(0,1fr) 430px;gap:0;align-items:start}
+.rail{border-right:1px solid var(--rule);padding:16px 16px 40px;position:sticky;top:0;max-height:100vh;overflow-y:auto}
+.stack{padding:16px 20px 40px;min-width:0}
+.tape{border-left:1px solid var(--rule);padding:16px 16px 40px;position:sticky;top:0;max-height:100vh;overflow-y:auto;background:var(--panel2)}
+@media(max-width:1280px){
+  .wrap{grid-template-columns:250px minmax(0,1fr)}
+  .tape{grid-column:1/-1;border-left:none;border-top:1px solid var(--rule);position:static;max-height:none}
+}
+@media(max-width:860px){
+  .wrap{grid-template-columns:1fr}
+  .rail{border-right:none;border-bottom:1px solid var(--rule);position:static;max-height:none}
+}
+
+/* ---------- section headings ---------- */
+.sect{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+  border-bottom:1px solid var(--rule);padding-bottom:6px;margin:22px 0 12px;
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+}
+.sect:first-child{margin-top:0}
+.sect b{color:var(--ink2);font-weight:500;letter-spacing:.06em;text-transform:none;font-size:11px}
+
+/* ---------- controls ---------- */
+.ctl{margin-bottom:13px}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11px;color:var(--ink2);margin-bottom:5px}
+.ctl .val{color:var(--ink);font-variant-numeric:tabular-nums}
+.ctl .val em{color:var(--dim);font-style:normal;font-size:10px;margin-left:3px}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;cursor:ew-resize;margin:0;
+}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--rule2)}
+input[type=range]::-moz-range-track{height:2px;background:var(--rule2)}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:11px;height:11px;background:var(--em);margin-top:-4.5px;
+  border-radius:0;transform:rotate(45deg);
+}
+input[type=range]::-moz-range-thumb{width:9px;height:9px;background:var(--em);border:none;border-radius:0}
+input[type=range].hot::-webkit-slider-thumb{background:var(--li)}
+input[type=range].hot::-moz-range-thumb{background:var(--li)}
+input[type=range]:focus-visible{outline:1px solid var(--em);outline-offset:4px}
+
+.toggles{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.tg{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:11px;color:var(--ink2);user-select:none}
+.tg input{position:absolute;opacity:0;width:0;height:0}
+.tg .box{width:12px;height:12px;border:1px solid var(--rule2);flex:none;position:relative}
+.tg input:checked + .box{background:var(--em);border-color:var(--em)}
+.tg input:checked ~ span{color:var(--ink)}
+.tg input:focus-visible + .box{outline:1px solid var(--em);outline-offset:3px}
+
+button{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  background:transparent;color:var(--ink2);border:1px solid var(--rule2);
+  padding:8px 11px;cursor:pointer;transition:.13s;
+}
+button:hover{border-color:var(--em);color:var(--em)}
+button:focus-visible{outline:1px solid var(--em);outline-offset:2px}
+button.pri{border-color:var(--li);color:var(--li)}
+button.pri:hover{background:rgba(255,59,78,.1)}
+button[disabled]{opacity:.35;cursor:wait}
+.btnrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+
+/* ---------- verdict block ---------- */
+.verdict{border:1px solid var(--rule2);padding:12px;margin:14px 0 0;background:var(--panel2)}
+.verdict .lead{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:7px}
+.verdict .state{font-size:14px;letter-spacing:.06em;line-height:1.3}
+.verdict .why{font-size:10.5px;color:var(--dim);margin-top:7px;line-height:1.5}
+.s-ok{color:var(--oi)} .s-marg{color:var(--warn)} .s-no{color:var(--bad)} .s-plus{color:var(--em)}
+.bar{height:3px;background:var(--rule);margin-top:10px;position:relative;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--em);transition:width .2s}
+
+/* ---------- transport ---------- */
+.transport{display:flex;align-items:center;gap:12px;margin:4px 0 14px;flex-wrap:wrap}
+.transport input[type=range]{flex:1;min-width:160px}
+.tclock{font-variant-numeric:tabular-nums;color:var(--ink);font-size:12px;letter-spacing:.04em;white-space:nowrap}
+
+/* ---------- telemetry strip ---------- */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(94px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
+.cell{background:var(--panel);padding:9px 10px}
+.cell .k{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
+.cell .v{font-size:15px;font-variant-numeric:tabular-nums;margin-top:3px;letter-spacing:-.01em}
+.cell .u{font-size:9.5px;color:var(--dim);margin-left:3px}
+
+/* ---------- plots ---------- */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.card{border:1px solid var(--rule);background:var(--panel);padding:11px 12px 8px}
+.card h3{margin:0 0 2px;font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--ink2);font-weight:500}
+.card .cap{font-size:10px;color:var(--dim);margin-bottom:8px}
+canvas{display:block;width:100%;height:auto}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:10px;color:var(--dim);margin-top:7px}
+.legend i{display:inline-block;width:14px;height:2px;vertical-align:middle;margin-right:5px}
+
+/* ---------- tables ---------- */
+table{width:100%;border-collapse:collapse;font-size:11.5px;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:5px 7px;border-bottom:1px solid var(--rule)}
+th{color:var(--dim);font-weight:500;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase}
+td:first-child,th:first-child{text-align:left;color:var(--ink2)}
+tr.hi td{color:var(--heat2)}
+tbody tr:last-child td{border-bottom:none}
+
+/* ---------- algebra tape (signature element) ---------- */
+.tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--rule);margin-bottom:12px}
+.tabs button{border:none;border-bottom:2px solid transparent;padding:8px 9px;letter-spacing:.1em;font-size:9.5px}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--li)}
+.tabs button:hover{border-color:transparent;border-bottom-color:var(--rule2);color:var(--ink)}
+.tabs button.on:hover{border-bottom-color:var(--li)}
+
+.eq{border-left:2px solid var(--rule2);padding:0 0 0 11px;margin:0 0 15px}
+.eq.dom-flow{border-left-color:var(--em)}
+.eq.dom-heat{border-left-color:var(--heat)}
+.eq.dom-plas{border-left-color:var(--li)}
+.eq.dom-em{border-left-color:var(--n2)}
+.eq.dom-pow{border-left-color:var(--oi)}
+.eq .t{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.eq .sym{color:var(--ink);font-size:12.5px;margin-bottom:3px}
+.eq .sub{color:var(--ink2);font-size:11.5px;word-break:break-word;padding-left:9px;text-indent:-9px}
+.eq .res{font-size:13px;margin-top:3px;padding-left:9px;color:var(--heat2);font-variant-numeric:tabular-nums}
+.eq.dom-em .res{color:var(--n2)} .eq.dom-plas .res{color:var(--li)}
+.eq.dom-pow .res{color:var(--oi)} .eq.dom-flow .res{color:var(--em)}
+.eq .note{font-family:var(--sans);font-size:10.5px;color:var(--dim);margin-top:5px;line-height:1.5}
+.eq .u{color:var(--dim)}
+.eq n{color:var(--ink);font-style:normal}
+.flash{animation:fl .45s ease-out}
+@keyframes fl{from{background:rgba(63,216,224,.22)}to{background:transparent}}
+@media(prefers-reduced-motion:reduce){.flash{animation:none}}
+
+.flag{border:1px solid;padding:8px 10px;margin:0 0 14px;font-size:10.5px;line-height:1.55;font-family:var(--sans)}
+.flag.warn{border-color:rgba(255,193,77,.4);color:var(--warn);background:rgba(255,193,77,.05)}
+.flag.bad{border-color:rgba(255,77,94,.4);color:var(--bad);background:rgba(255,77,94,.05)}
+.flag.ok{border-color:rgba(94,230,138,.35);color:var(--oi);background:rgba(94,230,138,.05)}
+
+/* ---------- concept primer ---------- */
+.plev{display:flex;gap:6px;margin:0 0 16px;flex-wrap:wrap}
+.plev button{border:1px solid var(--rule2);border-radius:2px;padding:6px 9px;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);background:transparent}
+.plev button.on{color:var(--void);background:var(--li);border-color:var(--li)}
+.plev button:hover:not(.on){color:var(--ink);border-color:var(--ink2)}
+.pr{font-family:var(--sans);font-size:12.5px;line-height:1.68;color:var(--ink2)}
+.pr.big{font-size:14px;line-height:1.78}
+.pr h5{font-family:var(--mono);font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--dim);margin:22px 0 8px;font-weight:500;border-top:1px solid var(--rule);padding-top:14px}
+.pr h5:first-child{margin-top:0;border-top:none;padding-top:0}
+.pr p{margin:0 0 11px}
+.pr b{color:var(--ink);font-weight:600}
+.pr em{color:var(--li);font-style:normal}
+.pr .k{font-family:var(--mono);color:var(--heat2);font-size:11.5px;font-style:normal}
+.pr .lede{color:var(--ink);font-size:13.5px;border-left:2px solid var(--li);padding-left:11px;margin-bottom:16px}
+.pr.big .lede{font-size:15px}
+.sysbox{border-left:2px solid var(--rule2);padding-left:11px;margin:0 0 14px}
+.sysbox.s1{border-left-color:var(--heat)} .sysbox.s2{border-left-color:var(--li)}
+.sysbox.s3{border-left-color:var(--n2)}   .sysbox.s4{border-left-color:var(--em)}
+.sysbox.s5{border-left-color:var(--oi)}
+.sysbox .nm{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink);margin-bottom:4px}
+.sysbox .jb{font-family:var(--sans);font-size:12px;color:var(--ink2);line-height:1.6}
+.sysbox .jb .c{color:var(--dim)}
+/* dependency chain */
+.chain{margin:4px 0 16px;font-family:var(--mono);font-size:10.5px}
+.chain .lnk{border:1px solid var(--rule2);border-left-width:2px;border-radius:2px;padding:6px 9px;margin-bottom:0;background:var(--panel2)}
+.chain .lnk .o{color:var(--ink);font-size:11.5px}
+.chain .lnk .d{color:var(--dim);font-family:var(--sans);font-size:10.5px;margin-top:2px;line-height:1.45}
+.chain .ar{color:var(--rule2);text-align:center;font-size:12px;line-height:1;padding:3px 0}
+.chain .c-flow{border-left-color:var(--em)} .chain .c-heat{border-left-color:var(--heat)}
+.chain .c-plas{border-left-color:var(--li)} .chain .c-em{border-left-color:var(--n2)}
+.chain .fb{border:1px dashed var(--n2);border-radius:2px;padding:6px 9px;margin-top:6px;color:var(--n2);font-family:var(--sans);font-size:10.5px;line-height:1.5}
+.pr table.exp{width:100%;border-collapse:collapse;margin:2px 0 14px;font-family:var(--mono);font-size:11px}
+.pr table.exp td{padding:5px 6px;border-bottom:1px solid var(--rule);vertical-align:top}
+.pr table.exp td:first-child{color:var(--ink);white-space:nowrap}
+.pr table.exp td:last-child{color:var(--dim);font-family:var(--sans);font-size:10.5px}
+.jump{color:var(--em);border-bottom:1px dotted var(--em);cursor:pointer}
+.jump:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* ---------- footer notes ---------- */
+.foot{border-top:1px solid var(--rule);padding:26px 22px 60px;background:var(--panel2)}
+.foot .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:26px;max-width:1500px}
+.foot h4{font-size:10px;letter-spacing:.19em;text-transform:uppercase;color:var(--ink2);margin:0 0 9px;font-weight:500}
+.foot ul{margin:0;padding-left:16px}
+.foot li{margin-bottom:7px;font-family:var(--sans);font-size:11.5px;color:var(--dim);line-height:1.55}
+.foot code{font-family:var(--mono);color:var(--ink2);font-size:11px}
+.pill{display:inline-block;border:1px solid var(--rule2);padding:1px 6px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-left:6px;vertical-align:1px}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>MHD Reentry Console</h1>
+    <div class="sub">Steerable plasma shield · order-of-magnitude envelope model · Earth return</div>
+  </div>
+  <div class="stamp" id="stamp">Engineering estimate — not design data</div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ LEFT RAIL: CONTROLS ============ -->
+  <div class="rail">
+    <div class="sect">Entry state <b id="ic-note"></b></div>
+    <div class="ctl"><label>Entry velocity <span class="val"><n id="v-V0">7.80</n><em>km/s</em></span></label>
+      <input type="range" id="V0" min="6.5" max="12" step="0.05" value="7.8"></div>
+    <div class="ctl"><label>Flight path angle γ₀ <span class="val"><n id="v-G0">−1.60</n><em>deg</em></span></label>
+      <input type="range" id="G0" min="-8" max="-0.6" step="0.05" value="-1.6"></div>
+
+    <div class="sect">Vehicle</div>
+    <div class="ctl"><label>Entry mass <span class="val"><n id="v-M">12.0</n><em>t</em></span></label>
+      <input type="range" id="M" min="0.5" max="60" step="0.5" value="12"></div>
+    <div class="ctl"><label>Body diameter <span class="val"><n id="v-D">5.0</n><em>m</em></span></label>
+      <input type="range" id="D" min="1" max="9" step="0.1" value="5"></div>
+    <div class="ctl"><label>Nose radius R<sub>n</sub> <span class="val"><n id="v-RN">1.50</n><em>m</em></span></label>
+      <input type="range" id="RN" min="0.2" max="5" step="0.05" value="1.5"></div>
+    <div class="ctl"><label>Lift-to-drag L/D <span class="val"><n id="v-LD">0.30</n></span></label>
+      <input type="range" id="LD" min="0" max="1.2" step="0.01" value="0.3"></div>
+    <div class="ctl"><label>TPS heat-flux limit <span class="val"><n id="v-QL">70</n><em>W/cm²</em></span></label>
+      <input type="range" id="QL" min="15" max="600" step="5" value="70"></div>
+
+    <div class="sect">Plasma shield</div>
+    <div class="ctl"><label>Coil field at R<sub>n</sub>, B₀ <span class="val"><n id="v-B">0.800</n><em>T</em></span></label>
+      <input type="range" class="hot" id="B" min="0" max="3" step="0.01" value="0.8"></div>
+    <div class="ctl"><label>Li pellet feed ṁ<sub>Li</sub> <span class="val"><n id="v-ML">12</n><em>g/s</em></span></label>
+      <input type="range" class="hot" id="ML" min="0" max="200" step="1" value="12"></div>
+    <div class="ctl"><label>Array coupling ζ <span class="val"><n id="v-Z">0.50</n><em>% of flux</em></span></label>
+      <input type="range" class="hot" id="Z" min="0" max="5" step="0.05" value="0.5"></div>
+    <div class="toggles">
+      <label class="tg"><input type="checkbox" id="SH" checked><span class="box"></span><span>Shield energised</span></label>
+      <label class="tg"><input type="checkbox" id="PI"><span class="box"></span><span>Pre-ionise seed (vs. shock-heated)</span></label>
+      <label class="tg"><input type="checkbox" id="RG"><span class="box"></span><span>Recover MHD generator power</span></label>
+    </div>
+    <div class="btnrow">
+      <button class="pri" id="autoB">Size B₀ for margin</button>
+      <button id="reset">Reset</button>
+    </div>
+
+    <div class="verdict">
+      <div class="lead">Deflection adequacy</div>
+      <div class="state" id="vstate">—</div>
+      <div class="bar"><i id="vbar" style="width:0%"></i></div>
+      <div class="why" id="vwhy"></div>
+    </div>
+  </div>
+
+  <!-- ============ CENTRE: INSTRUMENTS ============ -->
+  <div class="stack">
+    <div class="transport">
+      <button id="play">▶ Play</button>
+      <input type="range" id="scrub" min="0" max="100" step="1" value="0">
+      <div class="tclock" id="clock">t = 0.0 s</div>
+      <button id="peak">Jump to peak q</button>
+    </div>
+
+    <div class="strip" id="strip"></div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Entry corridor</h3><div class="cap">Altitude vs. velocity — the classic h–V plane</div>
+        <canvas id="cHV"></canvas>
+        <div class="legend"><span><i style="background:var(--heat)"></i>trajectory (shaded by q̇)</span><span><i style="background:var(--dim)"></i>unshielded</span></div>
+      </div>
+      <div class="card">
+        <h3>Stagnation heating profile</h3><div class="cap">Heat flux vs. time, shielded and bare</div>
+        <canvas id="cQ"></canvas>
+        <div class="legend"><span><i style="background:var(--dim)"></i>bare q̇</span><span><i style="background:var(--heat)"></i>shielded q̇</span><span><i style="background:var(--bad)"></i>TPS limit</span></div>
+      </div>
+      <div class="card">
+        <h3>Ionisation vs. density</h3><div class="cap">Everything normalised, so the crossover is visible: the air gets denser while the shock layer gets less ionised</div>
+        <canvas id="cNE"></canvas>
+        <div class="legend"><span><i style="background:var(--li)"></i>n<sub>e</sub> ÷ 10²¹ m⁻³</span><span><i style="background:var(--n2)"></i>x<sub>e</sub> ionised fraction</span><span><i style="background:var(--dim)"></i>ρ<sub>∞</sub> ÷ ρ<sub>sea level</sub></span></div>
+      </div>
+      <div class="card">
+        <h3>Magnetic interaction parameter</h3><div class="cap">Q = σB²R<sub>n</sub>/(ρ<sub>∞</sub>V) — control authority window</div>
+        <canvas id="cQm"></canvas>
+        <div class="legend"><span><i style="background:var(--n2)"></i>Q</span><span><i style="background:var(--bad)"></i>Q = 1</span><span><i style="background:var(--warn)"></i>continuum limit Kn = 0.1</span></div>
+      </div>
+      <div class="card">
+        <h3>Electrical power ledger</h3><div class="cap">Ship-supplied load through the entry</div>
+        <canvas id="cP"></canvas>
+        <div class="legend"><span><i style="background:var(--oi)"></i>total draw</span><span><i style="background:var(--n2)"></i>phased array</span><span><i style="background:var(--em)"></i>cryogenics</span><span><i style="background:var(--li)"></i>seed</span></div>
+      </div>
+      <div class="card">
+        <h3>Comms and array transparency</h3><div class="cap">Plasma cutoff frequency vs. usable bands</div>
+        <canvas id="cF"></canvas>
+        <div class="legend"><span><i style="background:var(--li)"></i>f<sub>pe</sub></span><span><i style="background:var(--dim)"></i>S / X / Ka / W bands</span></div>
+      </div>
+    </div>
+
+    <div class="sect" style="margin-top:26px">Profile summary <b>peak values over the whole entry</b></div>
+    <div class="card"><table id="tSum"></table></div>
+
+    <div class="sect" style="margin-top:26px">Energy closure <b>can the ship carry what the shield costs?</b></div>
+    <div class="card"><table id="tClose"></table></div>
+
+    <div class="sect" style="margin-top:26px">Tri-propellant Δv <b>Li / F₂ reprocessed from cells</b></div>
+    <div class="card"><table id="tProp"></table></div>
+  </div>
+
+  <!-- ============ RIGHT: LIVE ALGEBRA TAPE ============ -->
+  <div class="tape">
+    <div class="sect">Live algebra <b id="tapeAlt">—</b></div>
+    <div class="tabs" id="tabs"></div>
+    <div id="tapeBody"></div>
+  </div>
+</div>
+
+<div class="foot">
+  <div class="cols">
+    <div>
+      <h4>What the model actually computes</h4>
+      <ul>
+        <li>3-DOF planar entry, RK4 integration, inverse-square gravity, rotating-Earth centrifugal term. Atmosphere is log-interpolated US Standard 1976 density and temperature to 150 km, exponential above.</li>
+        <li>Convective stagnation heating from <b>Sutton–Graves</b>; radiative from the <b>Tauber–Sutton</b> correlation with the tabulated f(V). Radiative heating is negligible below about 9 km/s and dominant above 11.</li>
+        <li>Shock-layer state from a real-gas fit T₂ ≈ 1300·√(h₀ in MJ/kg), density ratio 12, mean molecular mass blended through dissociation near 3500 K.</li>
+        <li>Electron density from a multi-species <b>Saha</b> charge balance solved by fixed-point iteration over NO (9.26 eV), N/O (13.6 eV) and seeded Li (5.39 eV).</li>
+        <li>Conductivity from electron–neutral and Coulomb collision frequencies in series; Q, Hall parameter and magnetic Reynolds number follow.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Correlations you should treat as adjustable</h4>
+      <ul>
+        <li><code>r<sub>mp</sub>/R<sub>n</sub> = (p<sub>mag</sub>/ρ<sub>∞</sub>V²)<sup>1/6</sup></code> — magnetopause pressure balance. This one is not fitted; it is the same relation that sizes a planetary magnetosphere, and the sixth-root exponent follows from a dipole falling as r<sup>−3</sup>.</li>
+        <li><code>g = Φ·Q/(1+Q)</code> — how much of that ideal standoff you actually get. Φ = 1/(1+(Kn/0.02)²) switches the coupling off as the flow rarefies, because the Lorentz force reaches the neutrals only through collisions.</li>
+        <li><code>C<sub>D</sub>A/C<sub>D</sub>A₀ = 1 + 0.5(πR<sub>eff</sub>²/A − 1)</code> — a magnetic obstacle is leaky, so it drags like roughly half a solid body of the same frontal area.</li>
+        <li><code>f<sub>neq</sub> = Da/(1+Da)</code>, Da = Δ/ℓ<sub>ion</sub>, ℓ<sub>ion</sub> ∝ ρ<sub>2</sub><sup>−3/2</sup> — a frozen-flow bridge that pulls n<sub>e</sub> below its equilibrium value at high altitude. This is the crudest thing in the model and n<sub>e</sub> is uncertain by an order of magnitude because of it.</li>
+        <li><code>σ_eff = 0.4·σ(stagnation)</code> — crude shock-layer average; conductivity falls sharply off the stagnation line.</li>
+        <li>Every one of these is a one-line change in the source. Nothing here is validated design data.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Where the model breaks</h4>
+      <ul>
+        <li><b>Above ~95 km</b> Kn &gt; 0.1: there is no continuum shock layer, so conductivity, Q and the standoff correlation are all meaningless. The console greys the Q trace there.</li>
+        <li><b>Hall parameter β = eB/(m<sub>e</sub>ν)</b> exceeds unity for most of the useful envelope. Once β &gt; 1 the current no longer flows along E and a scalar-σ model understates the complexity badly — real designs need a tensor conductivity and have to deal with current leakage through the Hall channel.</li>
+        <li><b>Non-equilibrium chemistry</b> is ignored. At 80 km the flow is frozen, not in Saha equilibrium, and real n<sub>e</sub> can sit an order of magnitude below the equilibrium value.</li>
+        <li>Seed mole fractions above ~10 % stop being a seeded air plasma and start being a lithium plasma with different everything. The console flags this.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Licence &amp; reuse</h4>
+      <ul>
+        <li><b>MIT License · Copyright (c) 2026 [your name]</b></li>
+        <li>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &ldquo;Software&rdquo;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</li>
+        <li>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</li>
+        <li>THE SOFTWARE IS PROVIDED &ldquo;AS IS&rdquo;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</li>
+        <li>The full notice is also in an HTML comment at the top of this file. Replace <code>[your name]</code> with the copyright holder before you distribute it.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>On the propellant side<span class="pill">read this</span></h4>
+      <ul>
+        <li>Lithium/fluorine is real: the Li–F₂–H₂ tri-propellant remains the highest specific impulse ever measured for a chemical rocket, about 542 s vacuum, tested at Rocketdyne in the 1960s.</li>
+        <li>It was abandoned for good reasons. Fluorine is savagely toxic and corrosive, the exhaust is hydrogen fluoride, and lithium must be carried molten. Nobody flew it. Treat the Δv table as an upper bound on what chemistry allows, not a recommendation.</li>
+        <li>The battery-to-propellant loop in the table is the genuinely interesting piece: the energy store the shield needs and the seed mass the shield needs are the same lithium, spent in that order.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* =====================================================================
+   PHYSICS CORE
+   All SI unless a variable name says otherwise.
+   ===================================================================== */
+
+const C = {
+  g0:9.80665, Re:6371000, mu:3.986004418e14,
+  kB:1.380649e-23, keV:8.617333262e-5, qe:1.602176634e-19,
+  me:9.1093837015e-31, mu0:4*Math.PI*1e-7, sSB:5.670374419e-8,
+  kSG:1.7415e-4,           // Sutton-Graves constant, SI
+  sahaPre:2.4146e21,       // (2*pi*me*kB/h^2)^1.5 , m^-3 K^-1.5
+  Qen:1.0e-19,             // electron-neutral momentum x-section, m^2
+  lnL:10,                  // Coulomb logarithm
+  mAir0:4.81e-26,          // undissociated mean air molecule mass, kg
+  rhoRatio:12,             // real-gas normal-shock density ratio
+  sigAvg:0.40,             // shock-layer conductivity averaging factor
+  kLeak:0.50,              // magnetic obstacles are leaky: fraction of area that drags
+  Je:4.0e8,                // REBCO winding-pack current density at ~20 K, A/m^2
+  rhoCu:8000, kStruct:2.0, // conductor density and structure/cryostat multiplier
+  KnC:0.02,                // continuum bridging knee for the Lorentz coupling
+  lIon0:1e-3, rhoIon:1e-2, // ionisation relaxation length scale: l = lIon0*(rhoIon/rho2)^1.5
+  epsW:0.85,               // TPS surface emissivity
+  epsMLI:3e-4,             // effective MLI emittance around the cold mass
+  cryoWpW:50,              // electrical watts per watt lifted at ~30 K
+  MLi:0.006941, MAir:0.029,
+  chiLi:5.392, chiNO:9.264, chiON:13.6,
+  fNO:0.02                 // NO mole fraction in hot air
+};
+
+/* ---------- US Standard Atmosphere 1976, log-interpolated ---------- */
+const ALT=[0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,130,140,150];
+const RHO=[1.225,7.364e-1,4.135e-1,1.948e-1,8.891e-2,4.008e-2,1.841e-2,8.463e-3,3.996e-3,
+           1.966e-3,1.027e-3,5.681e-4,3.097e-4,1.632e-4,8.283e-5,3.992e-5,1.846e-5,8.220e-6,
+           3.416e-6,1.393e-6,5.604e-7,2.325e-7,9.708e-8,4.289e-8,2.222e-8,8.152e-9,3.831e-9,2.076e-9];
+const TMP=[288.15,255.7,223.3,216.65,216.65,221.6,226.5,236.5,250.4,264.2,270.65,260.8,247.0,
+           233.3,219.6,208.4,198.6,188.9,186.87,188.4,195.1,208.8,240.0,300.0,360.0,469.3,559.6,634.4];
+
+function atm(hm){
+  const h=hm/1000;
+  if(h<=0) return {rho:1.225,T:288.15};
+  if(h>=150) return {rho:2.076e-9*Math.exp(-(h-150)/60), T:634.4+ (h-150)*1.5};
+  let i=0; while(i<ALT.length-2 && ALT[i+1]<h) i++;
+  const f=(h-ALT[i])/(ALT[i+1]-ALT[i]);
+  return {
+    rho:Math.exp(Math.log(RHO[i])*(1-f)+Math.log(RHO[i+1])*f),
+    T:TMP[i]*(1-f)+TMP[i+1]*f
+  };
+}
+
+/* ---------- Tauber-Sutton radiative heating ---------- */
+const FVV=[9,9.25,9.5,9.75,10,10.25,10.5,10.75,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16];
+const FVF=[1.5,4.3,9.7,19.5,35,55,81,115,151,238,359,495,660,850,1065,1313,1550,1780,2040];
+function fV(vk){
+  if(vk<9)  return 1.5*Math.pow(vk/9,34.5);
+  if(vk>=16)return 2040*Math.pow(vk/16,3);
+  let i=0; while(i<FVV.length-2 && FVV[i+1]<vk) i++;
+  const f=(vk-FVV[i])/(FVV[i+1]-FVV[i]);
+  return Math.exp(Math.log(FVF[i])*(1-f)+Math.log(FVF[i+1])*f);
+}
+function qRad(rho,V,Rn){
+  const r=Math.max(rho,1e-13);
+  let a=1.072e6*Math.pow(V,-1.88)*Math.pow(r,-0.325);
+  a=Math.min(Math.max(a,0.3),1.6);
+  const qc=4.736e4*Math.pow(Rn,a)*Math.pow(r,1.22)*fV(V/1000); // W/cm^2
+  return {q:qc*1e4, a:a};
+}
+
+/* ---------- multi-species Saha charge balance ---------- */
+function saha(T,nAir,nLi){
+  const kT=C.keV*T;
+  if(!(kT>0)) return {ne:0,sNO:0,sON:0,sLi:0,nNO:0,nON:0};
+  const pre=C.sahaPre*Math.pow(T,1.5);
+  const sNO=pre*Math.exp(-C.chiNO/kT);
+  const sON=pre*Math.exp(-C.chiON/kT);
+  const sLi=pre*Math.exp(-C.chiLi/kT);
+  const nNO=C.fNO*nAir, nON=(1-C.fNO)*nAir;
+  let ne=1e8;
+  for(let i=0;i<26;i++){
+    const f = nNO*sNO/(sNO+ne) + nON*sON/(sON+ne) + nLi*sLi/(sLi+ne);
+    const nn2 = Math.sqrt(Math.max(ne,1e-6)*Math.max(f,1e-6));
+    if(Math.abs(nn2-ne) < 1e-4*ne){ ne=nn2; break; }
+    ne=nn2;
+  }
+  return {ne:ne, sNO:sNO, sON:sON, sLi:sLi, nNO:nNO, nON:nON};
+}
+
+/* ---------- full flow / plasma / shield state at one point ---------- */
+function state(h,V,p){
+  const A=atm(h), rho=A.rho, Tinf=A.T;
+  const a=Math.sqrt(1.4*287.05*Tinf), M=V/a;
+  const lam=8.11e-8/rho, Kn=lam/(2*p.Rn);
+  const qdyn=0.5*rho*V*V;
+
+  /* heating, bare */
+  const qc0=C.kSG*Math.sqrt(rho/p.Rn)*V*V*V;
+  const R=qRad(rho,V,p.Rn);
+  const q0=qc0+R.q;
+
+  /* shock layer thermodynamics */
+  const h0=0.5*V*V;                                   // J/kg
+  const T2=Math.min(1300*Math.sqrt(h0/1e6),14000);
+  const rho2=C.rhoRatio*rho;
+  const fdis=1/(1+Math.exp(-(T2-4500)/1200));
+  const mbar=C.mAir0/(1+fdis);
+  const n2=rho2/mbar;
+
+  /* lithium seeding */
+  const Ac=Math.PI*p.Rn*p.Rn;
+  const mdotAir=rho*V*Ac;
+  const molAir=mdotAir/C.MAir, molLi=p.mLi/C.MLi;
+  let fLi = (molAir+molLi)>0 ? molLi/(molAir+molLi) : 0;
+  const fLiRaw=fLi;
+  fLi=Math.min(fLi,0.5);
+  const nLi=fLi*n2, nAir=(1-fLi)*n2;
+
+  /* frozen-flow de-rating: electron-impact ionisation needs residence time.
+     Damkohler number = shock thickness / ionisation relaxation length.        */
+  const dlt0=0.15*p.Rn;
+  const lIon=C.lIon0*Math.pow(C.rhoIon/Math.max(rho2,1e-14),1.5);
+  const Da=dlt0/lIon;
+  const fneq=Da/(1+Da);
+
+  const S=saha(T2,nAir,nLi);
+  const neEq=S.ne;
+  const ne=neEq*fneq, xe=ne/n2;
+  const nn=Math.max(n2-ne,1);
+
+  /* transport */
+  const vth=Math.sqrt(8*C.kB*T2/(Math.PI*C.me));
+  const TeV=C.keV*T2;
+  const nuEN=nn*C.Qen*vth;
+  const nuEI=2.91e-12*ne*C.lnL*Math.pow(Math.max(TeV,1e-3),-1.5);
+  const nuC=nuEN+nuEI;
+  const sEN=ne*C.qe*C.qe/(C.me*Math.max(nuEN,1));
+  const sEI=ne*C.qe*C.qe/(C.me*Math.max(nuEI,1));
+  const sig=ne*C.qe*C.qe/(C.me*Math.max(nuC,1));
+  const sigE=C.sigAvg*sig;
+
+  /* plasma diagnostics */
+  const fpe=8.98*Math.sqrt(Math.max(ne,0));           // Hz
+  const nuTot=nuC;
+  const beta=C.qe*p.B/(C.me*Math.max(nuTot,1));       // Hall parameter
+
+  /* --- MHD interaction ---------------------------------------------------
+     The Lorentz force acts on charged particles and reaches the neutral
+     stream only through collisions, so it fades out as the flow rarefies.   */
+  const phi=1/(1+Math.pow(Kn/C.KnC,2));
+  const sigM=sigE*phi;
+  const B=p.on?p.B:0;
+  const Q=sigM*B*B*p.Rn/Math.max(rho*V,1e-12);
+  const gQ=phi*Q/(1+Q);                          // coupling gate, 0..1
+
+  /* Standoff is set by pressure balance, exactly as a planetary magnetopause
+     is: a dipole falls off as r^-3, so p_mag falls as r^-6.                 */
+  const pmag=B*B/(2*C.mu0);
+  const pflow=rho*V*V;
+  const rmpR=B>0?Math.max(Math.pow(pmag/Math.max(pflow,1e-12),1/6),1):1;
+  const Reff=p.Rn*(1+(rmpR-1)*gQ);
+  const stand=Reff/p.Rn;
+  const qFac=Math.sqrt(p.Rn/Reff);
+  const q=q0*qFac;
+
+  const Abody=Math.PI*p.D*p.D/4, Amag=Math.PI*Reff*Reff;
+  const dragFac=1+C.kLeak*Math.max(0,Amag/Abody-1);
+  const dlt=dlt0*stand;
+  const Rm=C.mu0*sigM*(V/C.rhoRatio)*dlt;
+  const Tw=Math.pow(q/(C.epsW*C.sSB),0.25);
+
+  /* power ledger */
+  const Vsh=Math.PI*p.Rn*p.Rn*(0.15*p.Rn);
+  const u2=V/C.rhoRatio;
+  const Jm=sigM*u2*B;
+  const fluxEnth=0.5*rho*V*V*V*Math.PI*Reff*Reff;                    // W through capture area
+  const Parr=(p.zeta*fluxEnth)/0.35;                  // 35 % array wall-plug efficiency
+  const Adew=4*Math.PI*p.Rn*p.Rn;
+  const Qlift=C.epsMLI*C.sSB*Math.pow(Tw,4)*Adew;
+  const Pcryo=(B>0? Qlift*C.cryoWpW : 0);
+  const Pseed=p.mLi*(p.preIon?100e6:2.5e6);
+  const Pfeed=1.5e4, Pavi=2e4;
+  const Pgen=p.regen? 0.25*sigM*u2*u2*B*B*Vsh*0.5 : 0;
+  const Ptot=Parr+Pcryo+Pseed+Pfeed+Pavi;
+  const Pnet=Math.max(Ptot-Pgen,0);
+  const Pbrake=0;                                     // filled by caller (needs drag)
+
+  return {h,V,rho,Tinf,a,M,lam,Kn,qdyn,qc0,qr:R.q,qTS_a:R.a,q0,q,qFac,
+          h0,T2,rho2,fdis,mbar,n2,Ac,mdotAir,molAir,molLi,fLi,fLiRaw,nLi,nAir,
+          ne,neEq,fneq,Da,lIon,xe,nn,S,vth,nuEN,nuEI,sEN,sEI,sig,sigE,phi,sigM,fpe,beta,nuTot,
+          B,Q,gQ,phi,rmpR,Reff,Abody,Amag,pflow,stand,dlt,dlt0,dragFac,pmag,Rm,Tw,Vsh,u2,Jm,fluxEnth,
+          Parr,Qlift,Pcryo,Pseed,Pfeed,Pavi,Pgen,Ptot,Pnet,Pbrake};
+}
+
+/* ---------- trajectory integration ---------- */
+function simulate(p,dt){
+  dt=dt||0.2;
+  const S=Math.PI*p.D*p.D/4, CD0=1.35;
+  let V=p.V0, gam=p.gam0*Math.PI/180, h=p.h0, s=0, t=0, Jheat=0, Eelec=0, mLiUsed=0;
+  const out=[]; let peak={q:0}, maxG=0, guard=0;
+
+  const deriv=(y,dragF)=>{
+    const V=y[0], gam=y[1], hh=y[2];
+    const rho=atm(hh).rho, r=C.Re+hh, g=C.mu/(r*r);
+    const CD=CD0*dragF, CL=CD0*p.LD;
+    const D=0.5*rho*V*V*S*CD, L=0.5*rho*V*V*S*CL;
+    return [-D/p.m-g*Math.sin(gam),
+            L/(p.m*Math.max(V,1))+(V/r-g/Math.max(V,1))*Math.cos(gam),
+            V*Math.sin(gam),
+            V*Math.cos(gam)*C.Re/r];
+  };
+
+  while(h>15000 && V>350 && t<2600 && guard++<40000){
+    const st=state(h,V,p);
+    const rho=st.rho, r=C.Re+h;
+    const CD=CD0*st.dragFac;
+    const D=0.5*rho*V*V*S*CD, L=0.5*rho*V*V*S*CD0*p.LD;
+    const gLoad=Math.sqrt(D*D+L*L)/(p.m*C.g0);
+    st.Pbrake=D*V;
+    st.gLoad=gLoad; st.t=t; st.s=s; st.gam=gam; st.J=Jheat; st.D=D; st.CD=CD;
+    st.Eelec=Eelec; st.mLiUsed=mLiUsed;
+    out.push(st);
+
+    if(st.q>peak.q) peak=st;
+    if(gLoad>maxG) maxG=gLoad;
+
+    let y=[V,gam,h,s];
+    const k1=deriv(y,st.dragFac);
+    const y2=y.map((v,i)=>v+0.5*dt*k1[i]); const k2=deriv(y2,st.dragFac);
+    const y3=y.map((v,i)=>v+0.5*dt*k2[i]); const k3=deriv(y3,st.dragFac);
+    const y4=y.map((v,i)=>v+dt*k3[i]);     const k4=deriv(y4,st.dragFac);
+    for(let i=0;i<4;i++) y[i]+=dt/6*(k1[i]+2*k2[i]+2*k3[i]+k4[i]);
+
+    Jheat+=st.q*dt; Eelec+=st.Pnet*dt; mLiUsed+=p.mLi*dt;
+    V=y[0]; gam=y[1]; h=y[2]; s=y[3]; t+=dt;
+    if(h>135000 && gam>0) break;                       // skip-out
+  }
+  return {pts:out, peak:peak, maxG:maxG, J:Jheat, Eelec:Eelec, mLi:mLiUsed,
+          tEnd:t, sEnd:s, hEnd:h, skip:(h>130000)};
+}
+
+/* ---------- magnet sizing ---------- */
+function magnet(p){
+  const NI=5.657*p.B*p.Rn/C.mu0;              // ampere-turns for B(Rn)=B0
+  const Bcoil=p.B*2.83;                        // on-axis field at the coil itself
+  const Acond=NI/C.Je;                         // total conductor cross-section, m^2
+  const Vcond=Acond*2*Math.PI*p.Rn;
+  const mCond=Vcond*C.rhoCu;
+  const mMag=mCond*C.kStruct;
+  const Estore=(Bcoil*Bcoil/(2*C.mu0))*20*Math.pow(p.Rn,3);
+  return {NI,Bcoil,Acond,mCond,mMag,Estore};
+}
+
+/* ---------- Allen-Eggers closed-form envelope check ---------- */
+function allenEggers(p){
+  const H=7200, S=Math.PI*p.D*p.D/4, CD0=1.35;
+  const BC=p.m/(CD0*S);
+  const sg=Math.abs(Math.sin(p.gam0*Math.PI/180));
+  const nMax=p.V0*p.V0*sg/(2*Math.E*H)/C.g0;
+  const rhoN=BC*sg/H;
+  const hN=H*Math.log(1.225/rhoN);
+  const rhoQ=BC*sg/(3*H);
+  const hQ=H*Math.log(1.225/rhoQ);
+  const Vq=p.V0*Math.exp(-1/6);
+  const qMax=C.kSG*Math.sqrt(rhoQ/p.Rn)*Vq*Vq*Vq;
+  return {BC,nMax,hN,hQ,Vq,qMax,rhoQ,H};
+}
+
+/* ---------- number formatting ---------- */
+function sci(x,d){
+  d=d||3;
+  if(!isFinite(x)) return '—';
+  if(x===0) return '0';
+  const s=x<0?'−':''; x=Math.abs(x);
+  const e=Math.floor(Math.log10(x));
+  if(e>=-2 && e<5) return s+x.toFixed(Math.max(0,Math.min(6,d-1-e)));
+  const m=x/Math.pow(10,e);
+  return s+m.toFixed(d-1)+'×10<sup>'+e+'</sup>';
+}
+function eng(x,d){ // plain fixed for readable ranges
+  d=(d===undefined)?2:d;
+  if(!isFinite(x)) return '—';
+  return x.toFixed(d);
+}
+function W(x){ // watts with prefix
+  const a=Math.abs(x);
+  if(a>=1e9) return (x/1e9).toFixed(2)+' GW';
+  if(a>=1e6) return (x/1e6).toFixed(2)+' MW';
+  if(a>=1e3) return (x/1e3).toFixed(1)+' kW';
+  return x.toFixed(0)+' W';
+}
+function J(x){
+  const a=Math.abs(x);
+  if(a>=1e12) return (x/1e12).toFixed(2)+' TJ';
+  if(a>=1e9) return (x/1e9).toFixed(2)+' GJ';
+  if(a>=1e6) return (x/1e6).toFixed(1)+' MJ';
+  if(a>=1e3) return (x/1e3).toFixed(1)+' kJ';
+  return x.toFixed(0)+' J';
+}
+/* =====================================================================
+   INSTRUMENTATION LAYER
+   ===================================================================== */
+const $=id=>document.getElementById(id);
+
+/* ---------- generic plotter ---------- */
+function niceTicks(mn,mx,n){
+  const span=mx-mn; if(!(span>0)) return [mn];
+  const raw=span/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), r=raw/mag;
+  const step=(r<1.5?1:r<3?2:r<7?5:10)*mag;
+  const out=[]; for(let v=Math.ceil(mn/step)*step; v<=mx+step*1e-9; v+=step) out.push(v);
+  return out;
+}
+function fmtTick(v){
+  const a=Math.abs(v);
+  if(a===0) return '0';
+  if(a>=1e4||a<1e-2){ const e=Math.floor(Math.log10(a)); return '10'+String(e).replace(/-/g,'⁻').replace(/[0-9]/g,d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[d]); }
+  return (a<1?v.toFixed(2):a<10?v.toFixed(1):v.toFixed(0));
+}
+function plot(cv,o){
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const Wd=Math.max(cv.clientWidth||340,200), Ht=o.h||190;
+  cv.width=Wd*dpr; cv.height=Ht*dpr; cv.style.height=Ht+'px';
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,Wd,Ht);
+  const P={l:o.padL||46,r:12,t:9,b:23}, iw=Wd-P.l-P.r, ih=Ht-P.t-P.b;
+  const L=v=>Math.log10(Math.max(v,1e-300));
+  const xa=o.x, ya=o.y;
+  const xmn=xa.log?L(xa.min):xa.min, xmx=xa.log?L(xa.max):xa.max;
+  const ymn=ya.log?L(ya.min):ya.min, ymx=ya.log?L(ya.max):ya.max;
+  const tx=v=>{let f=((xa.log?L(v):v)-xmn)/(xmx-xmn||1); if(xa.invert)f=1-f; return P.l+f*iw;};
+  const ty=v=>{let f=((ya.log?L(v):v)-ymn)/(ymx-ymn||1); if(ya.invert)f=1-f; return P.t+(1-f)*ih;};
+
+  // grid
+  g.font='9px ui-monospace,monospace'; g.textBaseline='middle';
+  const xt=xa.log?decades(xa.min,xa.max):niceTicks(xa.min,xa.max,5);
+  const yt=ya.log?decades(ya.min,ya.max):niceTicks(ya.min,ya.max,4);
+  g.strokeStyle='#16232f'; g.lineWidth=1;
+  xt.forEach(v=>{const X=Math.round(tx(v))+.5; g.beginPath(); g.moveTo(X,P.t); g.lineTo(X,P.t+ih); g.stroke();});
+  yt.forEach(v=>{const Y=Math.round(ty(v))+.5; g.beginPath(); g.moveTo(P.l,Y); g.lineTo(P.l+iw,Y); g.stroke();});
+  g.fillStyle='#546a80'; g.textAlign='center';
+  xt.forEach(v=>g.fillText(fmtTick(v),tx(v),Ht-11));
+  g.textAlign='right';
+  yt.forEach(v=>g.fillText(fmtTick(v),P.l-6,ty(v)));
+  g.fillStyle='#3f5568'; g.textAlign='left';
+  if(xa.label) g.fillText(xa.label,P.l+2,Ht-11);
+  if(ya.label){g.save();g.translate(11,P.t+4);g.rotate(-Math.PI/2);g.textAlign='right';g.fillText(ya.label,0,0);g.restore();}
+
+  // reference lines
+  (o.marks||[]).forEach(m=>{
+    g.strokeStyle=m.color; g.lineWidth=1; g.setLineDash(m.dash||[3,3]); g.beginPath();
+    if(m.y!==undefined){const Y=ty(m.y); g.moveTo(P.l,Y); g.lineTo(P.l+iw,Y);} 
+    else {const X=tx(m.x); g.moveTo(X,P.t); g.lineTo(X,P.t+ih);}
+    g.stroke(); g.setLineDash([]);
+    if(m.label){g.fillStyle=m.color; g.textAlign='right'; g.font='8.5px ui-monospace,monospace';
+      if(m.y!==undefined) g.fillText(m.label,P.l+iw-3,ty(m.y)-6); else {g.save();g.translate(tx(m.x)-4,P.t+30);g.rotate(-Math.PI/2);g.fillText(m.label,0,0);g.restore();}}
+  });
+
+  // series
+  (o.series||[]).forEach(s=>{
+    if(!s.data||!s.data.length) return;
+    g.lineWidth=s.w||1.4; g.setLineDash(s.dash||[]);
+    if(s.ramp){
+      for(let i=1;i<s.data.length;i++){
+        const A=s.data[i-1],B=s.data[i]; if(!isFinite(A[1])||!isFinite(B[1]))continue;
+        g.strokeStyle=s.ramp(B[2]); g.beginPath(); g.moveTo(tx(A[0]),ty(A[1])); g.lineTo(tx(B[0]),ty(B[1])); g.stroke();
+      }
+    } else {
+      g.strokeStyle=s.color; g.beginPath(); let pen=false;
+      s.data.forEach(d=>{ if(!isFinite(d[1])||d[1]<=0&&ya.log){pen=false;return;}
+        const X=tx(d[0]),Y=ty(d[1]); if(!pen){g.moveTo(X,Y);pen=true;}else g.lineTo(X,Y);});
+      g.stroke();
+    }
+    g.setLineDash([]);
+  });
+
+  // cursor
+  if(o.cursor && isFinite(o.cursor[0]) && isFinite(o.cursor[1])){
+    const X=tx(o.cursor[0]),Y=ty(o.cursor[1]);
+    g.strokeStyle='rgba(207,220,234,.28)'; g.lineWidth=1; g.beginPath();
+    g.moveTo(X,P.t); g.lineTo(X,P.t+ih); g.stroke();
+    g.fillStyle='#cfdcea'; g.beginPath(); g.arc(X,Y,3,0,7); g.fill();
+  }
+  g.strokeStyle='#22354a'; g.lineWidth=1; g.strokeRect(P.l+.5,P.t+.5,iw,ih);
+}
+function decades(mn,mx){
+  const a=Math.ceil(Math.log10(mn)), b=Math.floor(Math.log10(mx));
+  const step=Math.ceil((b-a+1)/7)||1, o=[];
+  for(let e=a;e<=b;e+=step) o.push(Math.pow(10,e));
+  return o;}
+function heatRamp(q){ // W/m^2 -> colour
+  const f=Math.max(0,Math.min(1,(Math.log10(Math.max(q,1))-3)/3.6));
+  const r=Math.round(70+185*f), gr=Math.round(95+120*Math.pow(f,1.7)), b=Math.round(140-95*f);
+  return `rgb(${r},${gr},${b})`;
+}
+
+/* ---------- parameters ---------- */
+const IDS=['V0','G0','M','D','RN','LD','QL','B','ML','Z'];
+function readP(){
+  return {
+    V0:+$('V0').value*1000, gam0:+$('G0').value, h0:122000,
+    m:+$('M').value*1000, D:+$('D').value, Rn:+$('RN').value, LD:+$('LD').value,
+    qLim:+$('QL').value*1e4, B:+$('B').value, mLi:+$('ML').value/1000, zeta:+$('Z').value/100,
+    on:$('SH').checked, preIon:$('PI').checked, regen:$('RG').checked
+  };
+}
+function showP(p){
+  $('v-V0').textContent=(p.V0/1000).toFixed(2);
+  $('v-G0').textContent=p.gam0.toFixed(2).replace('-','−');
+  $('v-M').textContent=(p.m/1000).toFixed(1);
+  $('v-D').textContent=p.D.toFixed(1);
+  $('v-RN').textContent=p.Rn.toFixed(2);
+  $('v-LD').textContent=p.LD.toFixed(2);
+  $('v-QL').textContent=(p.qLim/1e4).toFixed(0);
+  $('v-B').textContent=p.B.toFixed(3);
+  $('v-ML').textContent=(p.mLi*1000).toFixed(0);
+  $('v-Z').textContent=(p.zeta*100).toFixed(2);
+}
+
+/* ---------- state ---------- */
+let P0, SIM, BARE, AE, idx=0, playing=false, tab='primer', prevRes={};
+
+function recompute(){
+  P0=readP(); showP(P0);
+  SIM=simulate(P0,0.2);
+  const pb=Object.assign({},P0,{on:false,B:0});
+  BARE=simulate(pb,0.2);
+  AE=allenEggers(P0);
+  $('scrub').max=Math.max(SIM.pts.length-1,1);
+  idx=Math.min(idx,SIM.pts.length-1);
+  prevRes={};
+  drawAll();
+}
+
+/* ---------- telemetry strip ---------- */
+function strip(st){
+  const cells=[
+    ['t',st.t.toFixed(1),'s'],
+    ['altitude',(st.h/1000).toFixed(1),'km'],
+    ['velocity',(st.V/1000).toFixed(3),'km/s'],
+    ['mach',st.M.toFixed(1),''],
+    ['q̇ stag',(st.q/1e4).toFixed(1),'W/cm²'],
+    ['wall temp',st.Tw.toFixed(0),'K'],
+    ['decel',st.gLoad.toFixed(2),'g'],
+    ['interaction Q',st.Q.toFixed(2),''],
+    ['n<sub>e</sub>',sci(st.ne,2),'m⁻³'],
+    ['ship power',W(st.Pnet),'']
+  ];
+  $('strip').innerHTML=cells.map(c=>
+    `<div class="cell"><div class="k">${c[0]}</div><div class="v">${c[1]}<span class="u">${c[2]}</span></div></div>`).join('');
+}
+
+/* ---------- live algebra tape ---------- */
+const TABS=[['primer','Concept'],['flow','Flow'],['heat','Heating'],['plas','Plasma'],['em','Shield'],['pow','Power']];
+function eqBlock(dom,title,sym,sub,res,note){
+  return `<div class="eq dom-${dom}"><div class="t">${title}</div><div class="sym">${sym}</div>`+
+         `<div class="sub">= ${sub}</div><div class="res" data-res>= ${res}</div>`+
+         (note?`<div class="note">${note}</div>`:'')+`</div>`;
+}
+const U=s=>`<span class="u">${s}</span>`;
+
+function tapeFlow(st,p){
+  const regime=st.Kn>1?'free-molecular':st.Kn>0.1?'transitional — continuum MHD invalid':st.Kn>0.01?'slip':'continuum';
+  let f='';
+  f+=eqBlock('flow','Ambient density','ρ<sub>∞</sub>(h) — US Std. Atm. 1976, log-interpolated',
+    `interp(h = <n>${(st.h/1000).toFixed(2)}</n> ${U('km')})`,
+    `<n>${sci(st.rho,3)}</n> ${U('kg·m⁻³')}`,
+    `Ambient temperature there is ${st.Tinf.toFixed(1)} K.`);
+  f+=eqBlock('flow','Mach number','M = V / √(γRT<sub>∞</sub>)',
+    `<n>${st.V.toFixed(0)}</n> ${U('m/s')} ÷ √(1.4 · 287 ${U('J/kg·K')} · <n>${st.Tinf.toFixed(1)}</n> ${U('K')})`,
+    `<n>${st.M.toFixed(1)}</n>`,
+    'Above 90 km the continuum speed of sound is a bookkeeping device, not a physical wave speed.');
+  f+=eqBlock('flow','Mean free path','λ = m̄ / (√2 · π d² ρ<sub>∞</sub>) ≈ 8.11×10⁻⁸ / ρ<sub>∞</sub>',
+    `8.11×10⁻⁸ ÷ <n>${sci(st.rho,3)}</n> ${U('kg·m⁻³')}`,
+    `<n>${sci(st.lam,3)}</n> ${U('m')}`);
+  f+=eqBlock('flow','Knudsen number','Kn = λ / (2R<sub>n</sub>)',
+    `<n>${sci(st.lam,3)}</n> ${U('m')} ÷ (2 · <n>${p.Rn.toFixed(2)}</n> ${U('m')})`,
+    `<n>${sci(st.Kn,3)}</n> &nbsp;→&nbsp; ${regime}`,
+    'The whole magnetohydrodynamic argument needs a collisional shock layer. Below Kn ≈ 0.1 you have one; above it you do not.');
+  f+=eqBlock('flow','Dynamic pressure','q<sub>∞</sub> = ½ρ<sub>∞</sub>V²',
+    `0.5 · <n>${sci(st.rho,3)}</n> ${U('kg·m⁻³')} · (<n>${st.V.toFixed(0)}</n> ${U('m/s')})²`,
+    `<n>${sci(st.qdyn,3)}</n> ${U('Pa')}`);
+  f+=eqBlock('flow','Deceleration','n = √(D²+L²) / (m·g₀)',
+    `<n>${sci(st.D,3)}</n> ${U('N')} ÷ (<n>${(p.m/1000).toFixed(1)}</n> ${U('t')} · 9.807 ${U('m/s²')})`,
+    `<n>${st.gLoad.toFixed(2)}</n> ${U('g')}`,
+    `Drag coefficient in use is ${st.CD.toFixed(2)} — that is the baseline 1.35 multiplied by the Lorentz augmentation factor ${st.dragFac.toFixed(3)}.`);
+  return f;
+}
+
+function tapeHeat(st,p){
+  let f='';
+  f+=eqBlock('heat','Convective stagnation heating — Sutton–Graves','q̇<sub>c</sub> = k √(ρ<sub>∞</sub>/R<sub>n</sub>) V³ ,&nbsp; k = 1.7415×10⁻⁴',
+    `1.7415×10⁻⁴ · √(<n>${sci(st.rho,3)}</n> ${U('kg·m⁻³')} ÷ <n>${p.Rn.toFixed(2)}</n> ${U('m')}) · (<n>${st.V.toFixed(0)}</n> ${U('m/s')})³`,
+    `<n>${sci(st.qc0,3)}</n> ${U('W·m⁻²')} = <n>${(st.qc0/1e4).toFixed(2)}</n> ${U('W·cm⁻²')}`,
+    'Cubic in velocity, only square-root in density. That is why peak heating happens high and fast, long before peak dynamic pressure.');
+  f+=eqBlock('heat','Radiative heating — Tauber–Sutton','q̇<sub>r</sub> = 4.736×10⁴ · R<sub>n</sub><sup>a</sup> · ρ<sub>∞</sub><sup>1.22</sup> · f(V)',
+    `4.736×10⁴ · <n>${p.Rn.toFixed(2)}</n><sup>${st.qTS_a.toFixed(2)}</sup> · <n>${sci(st.rho,3)}</n><sup>1.22</sup> · f(<n>${(st.V/1000).toFixed(2)}</n> ${U('km/s')})`,
+    `<n>${sci(st.qr,3)}</n> ${U('W·m⁻²')} = <n>${(st.qr/1e4).toFixed(3)}</n> ${U('W·cm⁻²')}`,
+    st.V<9000?'Below about 9 km/s the shock layer barely radiates — this term is a rounding error on a low-Earth-orbit return.':'Above 9 km/s radiation climbs faster than anything else in the problem, and a magnetic shield that pushes the shock further out makes it <em>worse</em> by thickening the radiating slab.');
+  f+=eqBlock('heat','Total bare flux','q̇₀ = q̇<sub>c</sub> + q̇<sub>r</sub>',
+    `<n>${sci(st.qc0,3)}</n> + <n>${sci(st.qr,3)}</n> ${U('W·m⁻²')}`,
+    `<n>${(st.q0/1e4).toFixed(2)}</n> ${U('W·cm⁻²')}`);
+  f+=eqBlock('heat','After magnetic standoff','q̇ = q̇₀ · (1 + 0.4Q)<sup>−1/2</sup>',
+    `<n>${(st.q0/1e4).toFixed(2)}</n> ${U('W/cm²')} · (1 + 0.4·<n>${st.Q.toFixed(3)}</n>)<sup>−1/2</sup>`,
+    `<n>${(st.q/1e4).toFixed(2)}</n> ${U('W·cm⁻²')} &nbsp;—&nbsp; ${((1-st.qFac)*100).toFixed(1)} % reduction`,
+    'Heat flux scales as R<sub>eff</sub><sup>−1/2</sup>. Pushing the shock out is exactly equivalent to flying a blunter nose you did not have to carry.');
+  f+=eqBlock('heat','Radiation-equilibrium wall','T<sub>w</sub> = (q̇ / εσ<sub>SB</sub>)<sup>1/4</sup>',
+    `(<n>${sci(st.q,3)}</n> ${U('W/m²')} ÷ (0.85 · 5.67×10⁻⁸ ${U('W/m²K⁴')}))<sup>1/4</sup>`,
+    `<n>${st.Tw.toFixed(0)}</n> ${U('K')}`,
+    st.Tw>1900?'Past roughly 1900 K you are out of reusable ceramic territory and into ablators or actively cooled metallics.':'Within the reach of coated carbon–carbon or reinforced ceramic tiles.');
+  f+=eqBlock('heat','Integrated heat load','J = ∫ q̇ dt',
+    `Σ q̇ · 0.2 ${U('s')} over the ${st.t.toFixed(0)} ${U('s')} flown so far`,
+    `<n>${(st.J/1e6).toFixed(1)}</n> ${U('MJ·m⁻²')}`,
+    'Load sizes the thickness of the heat shield; flux sizes its surface temperature. They are different design drivers and a shield can help one while hurting the other.');
+  f+=eqBlock('heat','Shield-smog absorption <span class="pill">essay term</span>','τ = n<sub>Li</sub> σ<sub>abs</sub> Δ ,&nbsp; transmitted = e<sup>−τ</sup>',
+    `<n>${sci(st.nLi,2)}</n> ${U('m⁻³')} · 1×10⁻²¹ ${U('m²')} · <n>${(0.15*p.Rn).toFixed(3)}</n> ${U('m')}`,
+    `τ = <n>${(st.nLi*1e-21*0.15*p.Rn).toFixed(3)}</n> → <n>${((1-Math.exp(-st.nLi*1e-21*0.15*p.Rn))*100).toFixed(1)}</n> ${U('% absorbed')}`,
+    'An absorbing seed cloud does not destroy the energy. It moves the emitting surface outward, and roughly half of what it absorbs is re-radiated back to space instead of into the vehicle. That is the real benefit, and it is a factor of two, not a factor of ten.');
+  return f;
+}
+
+function tapePlasma(st,p){
+  let f='';
+  if(st.fLiRaw>0.10) f+=`<div class="flag warn">Seed mole fraction is ${(st.fLiRaw*100).toFixed(0)} %. Past about 10 % this is no longer seeded air — it is a lithium plasma with different chemistry, different radiation and different transport. The numbers below stop meaning what they say.</div>`;
+  if(st.Kn>0.1) f+=`<div class="flag bad">Kn = ${sci(st.Kn,2)}. There is no continuum shock layer at this altitude, so every equilibrium quantity below is a formal calculation with no physical referent.</div>`;
+  f+=eqBlock('plas','Stagnation enthalpy','h₀ = ½V²',
+    `0.5 · (<n>${st.V.toFixed(0)}</n> ${U('m/s')})²`,
+    `<n>${(st.h0/1e6).toFixed(2)}</n> ${U('MJ·kg⁻¹')}`,
+    'For scale: TNT releases about 4.6 MJ/kg. A vehicle at orbital speed carries roughly seven times its own mass in high explosive, as kinetic energy.');
+  f+=eqBlock('plas','Shock-layer temperature','T₂ ≈ 1300 · √(h₀ in MJ/kg)',
+    `1300 · √<n>${(st.h0/1e6).toFixed(2)}</n>`,
+    `<n>${st.T2.toFixed(0)}</n> ${U('K')}`,
+    'A real-gas fit. The ideal-gas normal-shock relation would give five times this, because it has nowhere to put the energy; in reality dissociation and ionisation swallow most of it.');
+  f+=eqBlock('plas','Post-shock number density','n₂ = 12·ρ<sub>∞</sub> / m̄ ,&nbsp; m̄ dissociation-blended',
+    `12 · <n>${sci(st.rho,3)}</n> ${U('kg/m³')} ÷ <n>${sci(st.mbar,3)}</n> ${U('kg')}`,
+    `<n>${sci(st.n2,3)}</n> ${U('m⁻³')}`,
+    `Dissociation fraction at ${st.T2.toFixed(0)} K is ${(st.fdis*100).toFixed(0)} %, so the mean particle mass has dropped from 4.81×10⁻²⁶ toward 2.41×10⁻²⁶ kg.`);
+  f+=eqBlock('plas','Captured air vs. seed feed','f<sub>Li</sub> = (ṁ<sub>Li</sub>/M<sub>Li</sub>) / (ρ<sub>∞</sub>V·πR<sub>n</sub>²/M<sub>air</sub> + ṁ<sub>Li</sub>/M<sub>Li</sub>)',
+    `(<n>${(p.mLi*1000).toFixed(0)}</n> ${U('g/s')} ÷ 6.94 ${U('g/mol')}) / (<n>${sci(st.mdotAir,3)}</n> ${U('kg/s')} ÷ 29 ${U('g/mol')} + …)`,
+    `<n>${(st.fLiRaw*100).toFixed(2)}</n> ${U('mol %')} lithium`,
+    `The belt-fed injector is competing against ${sci(st.mdotAir,2)} kg/s of swallowed air. That number changes by five orders of magnitude across the descent, so a fixed feed rate is wildly over- or under-seeded at one end or the other.`);
+  f+=eqBlock('plas','Saha balance','n<sub>e</sub> = Σ<sub>j</sub> n<sub>j</sub> S<sub>j</sub>/(S<sub>j</sub>+n<sub>e</sub>) ,&nbsp; S<sub>j</sub> = 2.41×10²¹ T<sup>3/2</sup> e<sup>−χ<sub>j</sub>/k<sub>B</sub>T</sup>',
+    `χ: Li <n>5.39</n> ${U('eV')} · NO <n>9.26</n> ${U('eV')} · N,O <n>13.6</n> ${U('eV')} &nbsp;at k<sub>B</sub>T = <n>${(C.keV*st.T2).toFixed(3)}</n> ${U('eV')}`,
+    `n<sub>e</sub> = <n>${sci(st.ne,3)}</n> ${U('m⁻³')}`,
+    `S<sub>Li</sub> = ${sci(st.S.sLi,2)}, S<sub>NO</sub> = ${sci(st.S.sNO,2)}, S<sub>N,O</sub> = ${sci(st.S.sON,2)} m⁻³. Lithium's 5.39 eV against nitrogen's 13.6 eV is the whole argument for seeding: at these temperatures that exponential is worth several orders of magnitude in electron density.`);
+  f+=eqBlock('plas','Ionisation fraction','x<sub>e</sub> = n<sub>e</sub> / n₂',
+    `<n>${sci(st.ne,3)}</n> ÷ <n>${sci(st.n2,3)}</n> ${U('m⁻³')}`,
+    `<n>${sci(st.xe,3)}</n>`,
+    'Watch this against density as you descend: the gas gets denser and colder-shocked, so the <em>fraction</em> ionised collapses even while the absolute electron count is still climbing. That crossover is where the shield loses its grip.');
+  f+=eqBlock('plas','Electron thermal speed','v̄<sub>e</sub> = √(8k<sub>B</sub>T₂ / πm<sub>e</sub>)',
+    `√(8 · 1.381×10⁻²³ · <n>${st.T2.toFixed(0)}</n> ÷ (π · 9.109×10⁻³¹))`,
+    `<n>${sci(st.vth,3)}</n> ${U('m·s⁻¹')}`);
+  f+=eqBlock('plas','Electron–neutral collisions','ν<sub>en</sub> = n<sub>n</sub> Q<sub>en</sub> v̄<sub>e</sub> ,&nbsp; Q<sub>en</sub> ≈ 1×10⁻¹⁹ m²',
+    `<n>${sci(st.nn,3)}</n> ${U('m⁻³')} · 1×10⁻¹⁹ ${U('m²')} · <n>${sci(st.vth,3)}</n> ${U('m/s')}`,
+    `<n>${sci(st.nuEN,3)}</n> ${U('s⁻¹')}`);
+  f+=eqBlock('plas','Electrical conductivity','1/σ = 1/σ<sub>en</sub> + 1/σ<sub>ei</sub> ,&nbsp; σ<sub>en</sub> = n<sub>e</sub>e²/(m<sub>e</sub>ν<sub>en</sub>) , σ<sub>ei</sub> = 1.53×10⁻²T<sup>3/2</sup>/lnΛ',
+    `σ<sub>en</sub> = <n>${sci(st.sEN,3)}</n> , σ<sub>ei</sub> = <n>${sci(st.sEI,3)}</n> ${U('S/m')}`,
+    `σ = <n>${sci(st.sig,3)}</n> ${U('S·m⁻¹')} → σ<sub>eff</sub> = 0.40σ = <n>${sci(st.sigE,3)}</n> ${U('S·m⁻¹')}`,
+    'For comparison: seawater is about 5 S/m, graphite about 10⁵ S/m. Reentry plasma is a mediocre conductor, and that is the central difficulty of the entire concept.');
+  f+=eqBlock('plas','Plasma frequency','f<sub>pe</sub> = 8.98 √n<sub>e</sub>',
+    `8.98 · √<n>${sci(st.ne,3)}</n> ${U('m⁻³')}`,
+    `<n>${sci(st.fpe,3)}</n> ${U('Hz')} = <n>${(st.fpe/1e9).toFixed(2)}</n> ${U('GHz')}`,
+    st.fpe>3.5e10?'The sheath is opaque to everything below W-band. A steerable phased array cannot see, drive or modulate the plasma it is supposed to be controlling — this is the same physics as reentry radio blackout, and it is the sharpest practical objection to the array in the concept.':'Transparent to Ka-band and above; an array can still couple into the layer here.');
+  return f;
+}
+
+function tapeShield(st,p){
+  const MG=magnet(p), mfrac=MG.mMag/p.m*100;
+  let f='';
+  if(st.Q<1 && p.B>0) f+=`<div class="flag warn">Q = ${st.Q.toFixed(2)} &lt; 1 here. The field is not coupled to the flow: the plasma is too resistive to carry the currents that would push it. More seed, not more field, is the fix at this point in the descent.</div>`;
+  f+=eqBlock('em','Coil ampere-turns','B(z) = μ₀NIa²/(2(a²+z²)<sup>3/2</sup>) ,&nbsp; a = z = R<sub>n</sub> ⇒ NI = 5.657·B₀·R<sub>n</sub>/μ₀',
+    `5.657 · <n>${p.B.toFixed(3)}</n> ${U('T')} · <n>${p.Rn.toFixed(2)}</n> ${U('m')} ÷ 1.2566×10⁻⁶`,
+    `<n>${(MG.NI/1e6).toFixed(2)}</n> ${U('MA·turns')} ,&nbsp; field at the coil itself <n>${MG.Bcoil.toFixed(2)}</n> ${U('T')}`,
+    `ITER's toroidal field coils run about 10 MA·turns. This is a fusion-scale magnet flying inside a ${st.Tw.toFixed(0)} K radiation field.`);
+  f+=eqBlock('em','Magnet mass','m = k<sub>str</sub> · (NI/J<sub>e</sub>) · 2πR<sub>n</sub> · ρ<sub>cond</sub> ,&nbsp; J<sub>e</sub> = 2×10⁸ A/m², k = 2.5',
+    `2.5 · (<n>${(MG.NI/1e6).toFixed(2)}</n> ${U('MA·t')} ÷ 2×10⁸ ${U('A/m²')}) · <n>${(2*Math.PI*p.Rn).toFixed(1)}</n> ${U('m')} · 8000 ${U('kg/m³')}`,
+    `<n>${(MG.mMag/1000).toFixed(2)}</n> ${U('t')} = <n>${mfrac.toFixed(0)}</n> ${U('% of entry mass')}`,
+    mfrac>40?'This magnet weighs a serious fraction of the vehicle. At some point it is cheaper to carry the ablator you were trying to avoid — that trade is the entire reason nobody has flown magnetic shielding.':'A credible mass fraction, on the same order as a conventional thermal protection system.');
+  f+=eqBlock('em','Stored field energy','E = (B<sub>coil</sub>²/2μ₀) · V<sub>field</sub> ,&nbsp; V ≈ 20R<sub>n</sub>³',
+    `(<n>${MG.Bcoil.toFixed(2)}</n> ${U('T')})² ÷ 2μ₀ · <n>${(20*Math.pow(p.Rn,3)).toFixed(0)}</n> ${U('m³')}`,
+    `<n>${J(MG.Estore)}</n>`,
+    `A quench dumps this into the cold mass. For reference, ${J(MG.Estore)} is about ${(MG.Estore/4.6e6).toFixed(0)} kg of TNT equivalent — the protection circuit is a flight-critical system.`);
+  f+=eqBlock('em','Pressure balance','p<sub>mag</sub> = B₀²/2μ₀ &nbsp;against&nbsp; p<sub>flow</sub> = ρ<sub>∞</sub>V²',
+    `(<n>${p.B.toFixed(3)}</n>)² ÷ 2μ₀ = <n>${sci(st.pmag,3)}</n> ${U('Pa')} &nbsp;vs&nbsp; <n>${sci(st.rho,2)}</n>·<n>${st.V.toFixed(0)}</n>² = <n>${sci(st.pflow,3)}</n> ${U('Pa')}`,
+    `ratio = <n>${sci(st.pmag/Math.max(st.pflow,1e-12),3)}</n>`,
+    'This is the same balance that sizes the Earth\'s own magnetopause against the solar wind. The vehicle is building a miniature magnetosphere in front of itself.');
+  f+=eqBlock('em','Magnetopause standoff','r<sub>mp</sub>/R<sub>n</sub> = (p<sub>mag</sub>/p<sub>flow</sub>)<sup>1/6</sup> &nbsp;— a dipole falls as r⁻³, so p<sub>mag</sub> falls as r⁻⁶',
+    `(<n>${sci(st.pmag/Math.max(st.pflow,1e-12),3)}</n>)<sup>1/6</sup>`,
+    `<n>${st.rmpR.toFixed(3)}</n>× &nbsp;→&nbsp; r<sub>mp</sub> = <n>${(st.rmpR*p.Rn).toFixed(2)}</n> ${U('m')}`,
+    'The sixth root is the villain of this whole architecture. Doubling the field buys 12 % more standoff. Ten times the field buys 47 % more. There is no configuration in which brute force wins.');
+  f+=eqBlock('em','Magnetic interaction parameter','Q = σ<sub>eff</sub>B₀²R<sub>n</sub>/(ρ<sub>∞</sub>V) &nbsp;·&nbsp; continuum gate Φ = 1/(1+(Kn/0.02)²)',
+    `<n>${sci(st.sigE,3)}</n> ${U('S/m')} · (<n>${p.B.toFixed(3)}</n>)² · <n>${p.Rn.toFixed(2)}</n> ÷ (<n>${sci(st.rho,2)}</n> · <n>${st.V.toFixed(0)}</n>) &nbsp;;&nbsp; Φ = <n>${st.phi.toFixed(3)}</n>`,
+    `Q = <n>${st.Q.toFixed(2)}</n> → coupling g = Φ·Q/(1+Q) = <n>${st.gQ.toFixed(3)}</n>`,
+    st.Q>3?'Q is well above one, so the flow is fully coupled to the field and the standoff is set purely by pressure balance. Note what this means: once you are coupled, extra conductivity buys nothing. Seeding only helps where Q is near or below one.':'Q is near or below one. Here — and only here — raising the seed rate directly raises the shield\'s authority.');
+  f+=eqBlock('em','Effective nose radius','R<sub>eff</sub> = R<sub>n</sub>(1 + (r<sub>mp</sub>/R<sub>n</sub> − 1)·g) ,&nbsp; q̇/q̇₀ = (R<sub>n</sub>/R<sub>eff</sub>)<sup>1/2</sup>',
+    `<n>${p.Rn.toFixed(2)}</n>(1 + <n>${(st.rmpR-1).toFixed(3)}</n> · <n>${st.gQ.toFixed(3)}</n>) = <n>${st.Reff.toFixed(2)}</n> ${U('m')}`,
+    `q̇/q̇₀ = <n>${st.qFac.toFixed(3)}</n> &nbsp;→&nbsp; ${((1-st.qFac)*100).toFixed(1)} % less flux`,
+    'Combining the two exponents, stagnation heat flux scales as B<sup>−1/6</sup>. That is the honest headline number for magnetic thermal protection, and it is why the concept keeps being studied and never flown.');
+  f+=eqBlock('em','Magnetic parachute','C<sub>D</sub>A/C<sub>D</sub>A₀ = 1 + k(πR<sub>eff</sub>²/A<sub>body</sub> − 1) ,&nbsp; k = 0.5',
+    `1 + 0.5(<n>${st.Amag.toFixed(1)}</n> ${U('m²')} ÷ <n>${st.Abody.toFixed(1)}</n> ${U('m²')} − 1)`,
+    `<n>${st.dragFac.toFixed(3)}</n>×`,
+    'Area scales as B<sup>2/3</sup> — four times better than the flux benefit. Most of what this shield actually buys you comes in here: extra drag high up bleeds velocity before the vehicle reaches dense air, which lowers the total heat load far more than the standoff lowers the peak flux.');
+  f+=eqBlock('em','Hall parameter','β = eB₀/(m<sub>e</sub>ν<sub>tot</sub>) = ω<sub>c</sub>τ',
+    `1.602×10⁻¹⁹ · <n>${p.B.toFixed(3)}</n> ÷ (9.109×10⁻³¹ · <n>${sci(st.nuTot,3)}</n> ${U('s⁻¹')})`,
+    `<n>${st.beta.toFixed(2)}</n>`,
+    st.beta>1?'β &gt; 1: electrons complete a gyro-orbit between collisions, so the induced current does not flow along the electric field. A scalar conductivity is then optimistic — current leaks into the Hall direction and the useful Lorentz force falls by roughly 1/(1+β²). This is the least forgiving physics in the architecture and this model does not include it.':'β &lt; 1: collisions dominate the gyromotion, so treating σ as a scalar is defensible.');
+  f+=eqBlock('em','Magnetic Reynolds number','R<sub>m</sub> = μ₀σ<sub>eff</sub>u₂Δ &nbsp;(shock-layer scales, not body scales)',
+    `1.2566×10⁻⁶ · <n>${sci(st.sigE,2)}</n> · <n>${st.u2.toFixed(0)}</n> ${U('m/s')} · <n>${st.dlt.toFixed(3)}</n> ${U('m')}`,
+    `<n>${sci(st.Rm,3)}</n>`,
+    st.Rm<0.3?'R<sub>m</sub> ≪ 1, so the plasma does not drag the field lines with it. The applied field keeps its imposed shape, which is the assumption every equation above depends on.':'R<sub>m</sub> approaching unity — the flow is beginning to convect the field, and the prescribed-field assumption is failing.');
+  f+=eqBlock('em','Yaw authority from a deliberate asymmetry','F<sub>y</sub> ≈ k<sub>a</sub>·(C<sub>D</sub>A − C<sub>D</sub>A₀)·½ρ<sub>∞</sub>V² ,&nbsp; k<sub>a</sub> = 0.15',
+    `0.15 · <n>${(st.dragFac-1).toFixed(3)}</n> · <n>${st.Abody.toFixed(1)}</n> ${U('m²')} · <n>${sci(st.qdyn,3)}</n> ${U('Pa')}`,
+    `<n>${sci(0.15*(st.dragFac-1)*st.Abody*st.qdyn,3)}</n> ${U('N')}`,
+    'Steering by unbalancing the toroidal field so the magnetopause sits off-axis. With a moment arm of about a body radius this is real control authority — but it exists only while the bubble is bigger than the vehicle, which is a narrow altitude band.');
+  return f;
+}
+
+function tapePower(st,p){
+  const PW=[['Phased array',st.Parr,'n2'],['Cryogenics',st.Pcryo,'em'],['Seed conditioning',st.Pseed,'li'],
+            ['Pellet feed',st.Pfeed,'dim'],['Avionics',st.Pavi,'dim']];
+  let f='';
+  f+=eqBlock('pow','Phased array','P<sub>array</sub> = ζ · (½ρ<sub>∞</sub>V³·πR<sub>n</sub>²) / η ,&nbsp; η = 0.35',
+    `<n>${(p.zeta*100).toFixed(1)}</n> % · <n>${W(st.fluxEnth)}</n> ÷ 0.35`,
+    `<n>${W(st.Parr)}</n>`,
+    `The freestream is delivering ${W(st.fluxEnth)} of enthalpy through the capture area. The array only has to couple a few percent of that to matter — but see the plasma tab: for most of the entry it physically cannot, because the sheath is opaque below its own plasma frequency.`);
+  f+=eqBlock('pow','Cryogenic lift','Q̇<sub>lift</sub> = ε<sub>MLI</sub> σ<sub>SB</sub> T<sub>w</sub>⁴ A<sub>dewar</sub> ,&nbsp; ε<sub>MLI</sub> = 3×10⁻⁴',
+    `3×10⁻⁴ · 5.67×10⁻⁸ · (<n>${st.Tw.toFixed(0)}</n> ${U('K')})⁴ · <n>${(4*Math.PI*p.Rn*p.Rn).toFixed(1)}</n> ${U('m²')}`,
+    `<n>${st.Qlift.toFixed(0)}</n> ${U('W')} at ~30 K → ×50 = <n>${W(st.Pcryo)}</n> ${U('electrical')}`,
+    'Fifty electrical watts per watt lifted at 30 K is a realistic cryocooler figure, roughly a fifth of Carnot. Note this load peaks exactly when the heating does — the magnet is coldest where the vehicle is hottest.');
+  f+=eqBlock('pow','Seed conditioning','P<sub>seed</sub> = ṁ<sub>Li</sub> · e<sub>spec</sub>',
+    `<n>${(p.mLi*1000).toFixed(0)}</n> ${U('g/s')} · <n>${p.preIon?'100':'2.5'}</n> ${U('MJ/kg')} (${p.preIon?'melt + vaporise + ionise':'melt + vaporise only'})`,
+    `<n>${W(st.Pseed)}</n>`,
+    p.preIon?'Pre-ionising costs 75 MJ/kg in ionisation potential alone. The alternative is to let the 7000 K shock layer do it for free — which it will, since it is already well above lithium\'s ionisation temperature.':'Shock-heated seeding: inject solid pellets and let the shock layer ionise them. Lithium\'s latent heat of vaporisation alone is 21 MJ/kg, so even this is not free.');
+  f+=eqBlock('pow','Total ship-supplied load','P = Σ subsystems − P<sub>MHD gen</sub>',
+    PW.map(r=>`${r[0]} <n>${W(r[1])}</n>`).join(' + ')+(st.Pgen>0?` − recovered <n>${W(st.Pgen)}</n>`:''),
+    `<n>${W(st.Pnet)}</n>`,
+    '');
+  f+=eqBlock('pow','MHD generator recovery','P<sub>gen</sub> = k(1−k)·σ<sub>eff</sub>u₂²B²·V<sub>shock</sub>·η<sub>conv</sub> ,&nbsp; k = 0.5',
+    `0.25 · <n>${sci(st.sigE,2)}</n> · (<n>${st.u2.toFixed(0)}</n>)² · (<n>${p.B.toFixed(3)}</n>)² · <n>${st.Vsh.toFixed(3)}</n> ${U('m³')} · 0.5`,
+    `<n>${W(st.Pgen)}</n> ${p.regen?'':U('(not enabled)')}`,
+    'The same coil that deflects the flow can tap it. The shield is, in principle, its own power source — this is the copper pipe again, read backwards as a generator instead of a brake.');
+  f+=eqBlock('pow','For scale — braking power','P<sub>brake</sub> = D · V',
+    `<n>${sci(st.D,3)}</n> ${U('N')} · <n>${st.V.toFixed(0)}</n> ${U('m/s')}`,
+    `<n>${W(st.Pbrake)}</n>`,
+    `The vehicle is shedding kinetic energy at ${W(st.Pbrake)} right now, and every watt of it comes free from the trajectory. The shield's job is to <em>route</em> that power away from the structure, not to supply it. Any architecture where the ship has to generate power comparable to P<sub>brake</sub> has misunderstood the problem.`);
+  return f;
+}
+
+/* ================= CONCEPT PRIMER TAB ================= */
+let plev='a';
+const PLEVS=[['a','Age 10'],['b','High school'],['c','College']];
+
+function primerA(){ return `
+<div class="pr big">
+<p class="lede">Coming home from space is a problem about <em>fire</em>. This machine is an idea for holding the fire away from the ship using a magnet.</p>
+
+<h5>1 · A magnet in a copper pipe</h5>
+<p>Drop a marble down a copper pipe and it falls straight through. Drop a <b>strong magnet</b> down the same pipe and something strange happens: it drifts down slowly, like it is falling through honey. Nothing is touching it. There is no glue and no air brake.</p>
+<p>What happened is that a moving magnet makes little whirlpools of electricity in the metal around it. Those whirlpools are themselves tiny magnets, and they are always pointed the wrong way on purpose &mdash; they push back. The faster the magnet tries to fall, the harder they push. <b>You can brake something without touching it, as long as the stuff around it can carry electricity.</b></p>
+
+<h5>2 · Why coming home makes fire</h5>
+<p>A spaceship coming home is going about <b>17,000 miles an hour</b>. That is roughly twenty times faster than a rifle bullet. At that speed the air in front of the ship cannot get out of the way in time, so it gets squashed. And squashed air gets hot.</p>
+<p>Not oven hot. The air packed in front of the ship reaches around <b>6,000 degrees</b> &mdash; about as hot as the surface of the Sun. That glowing cushion is the fire you see on a returning capsule. The ship is not burning. The <em>air</em> is.</p>
+
+<h5>3 · The trick</h5>
+<p>Here is the part that makes the whole idea work. When air gets that hot, it stops behaving like air. The heat is violent enough to knock little pieces &mdash; electrons &mdash; loose from the atoms. Air with loose electrons in it can <b>carry electricity</b>. We call it plasma.</p>
+<p>So look what we have. Around the nose of the ship there is now a layer of stuff that carries electricity. That is a copper pipe. And if we put a very strong magnet inside the ship&hellip; <em>the ship is the magnet and the fire is the pipe.</em></p>
+<p>The magnet pushes on the hot glowing air, and the hot glowing air pushes back on the magnet. The fire gets held out at arm's length instead of pressing against the paint. Nothing has to stick out into the heat. Nothing has to move.</p>
+
+<h5>4 · A pinch of lithium</h5>
+<p>There is a catch. The air is only a <em>bad</em> copper pipe. It carries electricity, but weakly, so the magnet gets a poor grip.</p>
+<p>The fix is to throw something in that loses its electrons very easily. <b>Lithium</b> &mdash; the soft silver metal inside phone batteries &mdash; is one of the easiest of all. The ship carries frozen lithium pellets on a belt, like bullets, and feeds them into the hot part.</p>
+<p>The amount is tiny: about <b>four lithium atoms for every thousand air atoms</b>. But that pinch can make the fire carry electricity <b>thirty times better</b>. The magnet finally gets a real grip.</p>
+
+<h5>5 · Steering</h5>
+<p>Now the best part. If you make the magnet <b>lopsided</b> &mdash; stronger on the left than on the right &mdash; then the pushing is lopsided too. The fire gets held further away on one side than the other, and that turns the ship.</p>
+<p>That is a steering wheel with <b>no moving parts</b>. No flaps, no fins, nothing poking out into 6,000-degree air where it would melt. You just change the magnet.</p>
+
+<h5>6 · The honest part</h5>
+<p>Grown-up engineers have to say what does <em>not</em> work, and this idea has a big one.</p>
+<p>Making the magnet <b>twice as strong</b> does not push the fire twice as far away. It pushes it about <b>twelve percent</b> further. Meanwhile the magnet itself gets twice as heavy, and you have to carry that weight all the way to space and back. Very quickly the magnet weighs more than everything it is protecting.</p>
+<p>So the magnet is not a magic shield that replaces the heat tiles. It is a <em>helper</em>. It works best very high up, where the air is thin and a spaceship is hardest to steer &mdash; and it stops working almost completely down low, where the air gets thick and cold and stops carrying electricity.</p>
+<p>Move the sliders on the left. Everything on this screen is doing that arithmetic, live.</p>
+</div>`; }
+
+function primerB(){ return `
+<div class="pr">
+<p class="lede">Six subsystems, and what each one is actually for. The physics word for the whole idea is <b>magnetohydrodynamics</b> &mdash; the behaviour of an electrically conducting fluid in a magnetic field.</p>
+
+<h5>The setting</h5>
+<p>A vehicle enters at 7.8 km/s carrying about <span class="k">&frac12;V&sup2; = 30 MJ</span> of kinetic energy per kilogram. All of it has to go somewhere before touchdown. A bow shock stands off the nose and converts that motion into heat: the gas behind it reaches <b>6,000 K</b>, hot enough that collisions strip electrons off molecules. The shock layer becomes a <b>plasma</b> &mdash; a gas with an electrical conductivity <span class="k">&sigma;</span>, measured in siemens per metre, just like a wire.</p>
+<p>That single fact is the entire opening. A conducting fluid moving through a magnetic field has a current driven in it, <span class="k">J = &sigma;(u &times; B)</span>, and that current feels a force back, <span class="k">F = J &times; B</span>, opposing the motion that made it. Lenz's law, in air. Every subsystem below exists to exploit or to survive that one loop.</p>
+
+<h5>The six systems</h5>
+
+<div class="sysbox s1"><div class="nm">1 &middot; Blunt body &amp; thermal protection</div><div class="jb">
+The baseline everything else is measured against. The nose is blunt <span class="c">on purpose</span>: heat flux goes as <span class="k">1/&radic;R<sub>n</sub></span>, so a fat nose stands the shock off and dumps most of the energy into air that gets swept away rather than into the structure. The TPS material sets the number you must stay under &mdash; the <b>TPS limit</b> slider. Everything the magnet achieves is scored against this line.</div></div>
+
+<div class="sysbox s2"><div class="nm">2 &middot; Lithium seeder</div><div class="jb">
+Belt-fed frozen pellets injected into the stagnation region. The point is <b>ionisation energy</b>: nitrogen needs 14.5 eV to give up an electron, lithium only <b>5.39 eV</b>. Because free-electron count depends on that energy <span class="c">exponentially</span>, a 0.4 mol&nbsp;% pinch of lithium can out-supply all the surrounding air. In the model, 3 g/s at 45 km takes conductivity from <b>1.3 to 40 S/m</b>. Seeding is the difference between a magnet that grips and one that slips.</div></div>
+
+<div class="sysbox s3"><div class="nm">3 &middot; Superconducting coil</div><div class="jb">
+A REBCO-tape loop around the nose carrying millions of ampere-turns, producing a dipole field. It has no moving parts and does no work &mdash; it just <span class="c">is</span> a magnet. Two hard consequences: Newton's third law means the force pushing the plasma away also pushes back on the coil, so it needs real structure (this drives the mass); and superconductors need <b>~30 K</b> while the nose sits at <b>1,900 K</b>, ten centimetres away.</div></div>
+
+<div class="sysbox s4"><div class="nm">4 &middot; Power store</div><div class="jb">
+Not a reactor. Peak draw is around <b>12 MW</b> for a few minutes &mdash; roughly 3.5 GJ, which is a battery, not a power station. For scale, the vehicle is already shedding <b>1.2 GW</b> through drag, free of charge. The shield's job is to <span class="c">redirect</span> that river, not to supply it.</div></div>
+
+<div class="sysbox s5"><div class="nm">5 &middot; Phased array</div><div class="jb">
+Distributed emitters that push the plasma harder in some places than others, deliberately deforming the standoff surface into bulges &mdash; trim tabs made of field rather than metal. <b>The known weakness:</b> plasma reflects any wave below its own plasma frequency, which here peaks near <b>200 GHz</b>. That is the same physics as radio blackout. The array is blind exactly when the plasma is thickest, and must work above W-band or by direct current injection.</div></div>
+
+<div class="sysbox s1"><div class="nm">6 &middot; Li/F&#8322; propulsion &amp; the loop</div><div class="jb">
+Lithium&ndash;fluorine&ndash;hydrogen holds the record for measured chemical specific impulse, <b>542 s</b>, tested at Rocketdyne in the 1960s and never flown &mdash; fluorine is savagely toxic and the exhaust is hydrogen fluoride. Its appeal here is that <span class="c">the same element</span> is the battery anode, the seed, and the fuel. The energy store the shield needs and the seed mass the shield needs are the same lithium, spent in that order. Our model says the pack contains <b>~30&times;</b> more lithium than the seeder burns, so the loop closes.</div></div>
+
+<h5>What the console shows you</h5>
+<p>The centre column plots the flight. The right column &mdash; the other tabs &mdash; shows every formula <b>re-substituting its numbers as the vehicle falls</b>, so you can watch which term is doing the work at any instant. The verdict panel on the left grades whether the field is strong enough, and the &ldquo;Size B&#8320;&rdquo; button searches for the field that buys a 1.5&times; margin.</p>
+<p>Try this: set B&#8320; to zero, note the peak heat flux, then raise it. Watch how the <em>altitude</em> of peak heating moves, not just its magnitude. That movement is where most of the benefit actually comes from &mdash; and the College tab explains why.</p>
+</div>`; }
+
+function primerC(){ return `
+<div class="pr">
+<p class="lede">The model is a single closed loop evaluated at every timestep. Nothing here is a lookup table of results &mdash; the entry profile and the shield performance are the <em>same</em> calculation, which is why they cannot be designed separately.</p>
+
+<h5>The dependency chain, one timestep</h5>
+<div class="chain">
+<div class="lnk c-flow"><span class="o">h, V, &gamma;</span><div class="d">Vehicle state carried in from the previous RK4 step.</div></div>
+<div class="ar">&#8595;</div>
+<div class="lnk c-flow"><span class="o">&rho;<sub>&infin;</sub>(h), T<sub>&infin;</sub>(h)</span><div class="d">US Standard 1976, log-interpolated. The only external input.</div></div>
+<div class="ar">&#8595;</div>
+<div class="lnk c-heat"><span class="o">h&#8320; = &frac12;V&sup2; + c<sub>p</sub>T<sub>&infin;</sub> &nbsp;&rarr;&nbsp; T&#8322; &asymp; 1300&radic;h&#8320;</span><div class="d">Normal-shock jump with a real-gas fit; &rho;&#8322; = 12&rho;<sub>&infin;</sub>. Velocity becomes temperature.</div></div>
+<div class="ar">&#8595;</div>
+<div class="lnk c-plas"><span class="o">Saha &rarr; n<sub>e</sub>(T&#8322;, &rho;&#8322;, x<sub>Li</sub>)</span><div class="d">Multi-species fixed point over NO, N/O and seeded Li. n<sub>e</sub> &prop; exp(&minus;E<sub>i</sub>/2kT&#8322;) &mdash; the exponential that makes seeding worth doing.</div></div>
+<div class="ar">&#8595;</div>
+<div class="lnk c-plas"><span class="o">&sigma; = n<sub>e</sub>e&sup2; / m<sub>e</sub>(&nu;<sub>en</sub> + &nu;<sub>ei</sub>)</span><div class="d">Not Spitzer &mdash; this gas is weakly ionised, so electron&ndash;neutral collisions dominate and Spitzer would be a fantasy ceiling.</div></div>
+<div class="ar">&#8595;</div>
+<div class="lnk c-em"><span class="o">Q = &sigma;B&sup2;R<sub>n</sub> / &rho;<sub>&infin;</sub>V &nbsp;&nbsp; &Phi; = 1/(1+(Kn/0.02)&sup2;) &nbsp;&nbsp; g = &Phi;&middot;Q/(1+Q)</span><div class="d">Magnetic force over inertial force, then gated by collisionality.</div></div>
+<div class="ar">&#8595;</div>
+<div class="lnk c-em"><span class="o">r<sub>mp</sub>/R<sub>n</sub> = (B&sup2;/2&mu;&#8320; &divide; &rho;<sub>&infin;</sub>V&sup2;)<sup>1/6</sup> &nbsp;&rarr;&nbsp; R<sub>eff</sub> = R<sub>n</sub>[1 + (r<sub>mp</sub>/R<sub>n</sub> &minus; 1)g]</span><div class="d">Magnetopause pressure balance &mdash; the same relation that sizes a planetary magnetosphere. This is the hinge of the whole model.</div></div>
+<div class="ar">&#8595;</div>
+<div class="lnk c-heat"><span class="o">q&#775; = k&radic;(&rho;<sub>&infin;</sub>/R<sub>eff</sub>)&middot;V&sup3; &nbsp;&nbsp;&nbsp; C<sub>D</sub>A = C<sub>D</sub>A&#8320;[1 + &frac12;(&pi;R<sub>eff</sub>&sup2;/A &minus; 1)]</span><div class="d">One geometric quantity, R<sub>eff</sub>, feeds <b>both</b> the heating and the drag. That shared dependency is the entire result.</div></div>
+<div class="ar">&#8595;</div>
+<div class="lnk c-flow"><span class="o">D = &frac12;&rho;<sub>&infin;</sub>V&sup2;C<sub>D</sub>A &nbsp;&rarr;&nbsp; V&#775;, &gamma;&#775;, h&#775;</span><div class="d">3-DOF equations of motion, RK4, dt = 0.2 s.</div></div>
+<div class="fb">&#8630; and back to the top. <b>This is why it is a loop, not a pipeline.</b> B changes R<sub>eff</sub>, which changes drag, which changes the trajectory, which changes &rho; and V, which changes T&#8322;, n<sub>e</sub>, &sigma;, Q &mdash; and therefore changes what B was worth in the first place.</div>
+</div>
+
+<h5>Why the loop matters more than the standoff</h5>
+<p>Treat the shield as a filter on a fixed trajectory and you get one answer. Solve it as a loop and you get a better one. Raising B enlarges <span class="k">R<sub>eff</sub></span>, which enlarges the drag area, which decelerates the vehicle <em>higher up</em>, which means peak heating now occurs at a lower <span class="k">&rho;<sub>&infin;</sub></span> and a lower V. That trajectory shift is worth more than the standoff term it came from.</p>
+<p>You can read it straight off the summary table: at the same field, peak flux falls <b>23 %</b> but integrated heat load falls <b>27 %</b>. The shield's real product is a <em>magnetic parachute</em>, and thermal relief is the side effect.</p>
+
+<h5>The exponent chain &mdash; where B<sup>&minus;1/6</sup> comes from</h5>
+<p>A dipole falls as <span class="k">r<sup>&minus;3</sup></span>, so its pressure falls as <span class="k">r<sup>&minus;6</sup></span>. Balancing that against the ram pressure and taking the sixth root propagates into everything downstream:</p>
+<table class="exp">
+<tr><td>p<sub>mag</sub> &prop; B&sup2;</td><td>magnetic pressure</td></tr>
+<tr><td>r<sub>mp</sub> &prop; (B&sup2;)<sup>1/6</sup> = B<sup>1/3</sup></td><td>standoff, once g &rarr; 1</td></tr>
+<tr><td>q&#775; &prop; R<sub>eff</sub><sup>&minus;1/2</sup> &prop; <b>B<sup>&minus;1/6</sup></b></td><td>heat flux &mdash; nearly immune to field strength</td></tr>
+<tr><td>C<sub>D</sub>A &prop; R<sub>eff</sub>&sup2; &prop; <b>B<sup>2/3</sup></b></td><td>drag area &mdash; four times the exponent</td></tr>
+<tr><td>m<sub>coil</sub> &prop; NI &prop; B&middot;R<sub>n</sub></td><td>what you pay, linearly</td></tr>
+<tr><td>E<sub>stored</sub> &prop; B&sup2;</td><td>what you risk, quadratically</td></tr>
+</table>
+<p>Read the last three rows together and the engineering verdict writes itself: <b>you pay linearly in mass and quadratically in stored energy to buy B<sup>&minus;1/6</sup> in heat flux.</b> Brute force loses. The only reason the concept survives at all is the <span class="k">B<sup>2/3</sup></span> line &mdash; drag, not shielding.</p>
+
+<h5>Steering: where the moment comes from</h5>
+<p>Make the dipole azimuthally asymmetric, by tilting <b>m</b> or by biasing the array, and the standoff becomes a function of azimuth: <span class="k">r<sub>mp</sub>(&phi;) &prop; B(&phi;)<sup>1/3</sup></span>. The pressure integral over the magnetopause surface no longer passes through the centre of mass, and you get a side force <span class="k">F<sub>y</sub> &asymp; &frac12;&rho;<sub>&infin;</sub>V&sup2;&middot;&Delta;A</span> plus a moment.</p>
+<p>The decisive detail is the <em>lever arm</em>. It is <span class="k">r<sub>mp</sub></span>, not <span class="k">R<sub>n</sub></span>. High up, where <span class="k">r<sub>mp</sub>/R<sub>n</sub></span> reaches 2&ndash;6, a small asymmetry acts at several metres and produces real authority. Low down, <span class="k">r<sub>mp</sub> &rarr; R<sub>n</sub></span>, the arm collapses to the body itself and the mechanism has nothing left to push against. <b>The steering claim is strong exactly where aerodynamic surfaces are weakest &mdash; thin air, high altitude &mdash; and dies where flaps start working.</b> The two are complements, not competitors.</p>
+
+<h5>Which assumption is doing the load-bearing</h5>
+<p><b>Prescribed field.</b> The magnetic Reynolds number <span class="k">R<sub>m</sub> = &mu;&#8320;&sigma;<sub>eff</sub>u&#8322;&Delta;</span> comes out near <b>0.05</b>. Because R<sub>m</sub> &#8810; 1, the induced field never back-reacts on the applied one, so B can be treated as fixed geometry and the full MHD system decouples. If R<sub>m</sub> exceeded unity, none of this arithmetic would be legitimate &mdash; you would have to solve the induction equation alongside the flow.</p>
+<p><b>Scalar conductivity.</b> This is the weak one. The Hall parameter <span class="k">&beta; = eB/m<sub>e</sub>&nu;</span> runs from 1 to 8 across the useful envelope. Once &beta; &gt; 1, current no longer flows along E, and a scalar &sigma; understates the difficulty badly. A real design needs a tensor conductivity and has to handle current leaking through the Hall channel. The console reports &beta; and flags it rather than modelling it &mdash; that is the honest boundary of this tool.</p>
+
+<h5>Why the window closes at both ends</h5>
+<p>The operating band is not assumed anywhere. It falls out of two independent collapses at opposite ends of the same chain:</p>
+<p><b>Above ~95 km</b>, <span class="k">&Phi;</span> collapses. Collisionality gates the coupling <em>twice</em>, for two distinct physical reasons: electrons must collide to conduct a bulk current at all, and that current must collide again to hand its momentum to the neutral stream. Neither is optional. Above the continuum limit the Lorentz force has nothing to grip.</p>
+<p><b>Below ~50 km</b>, <span class="k">n<sub>e</sub></span> collapses. V has already bled off, so h&#8320; and T&#8322; fall, and Saha's exponential does the rest &mdash; conductivity drops off a cliff and Q &rarr; 0. This is the crossover you can see directly on the ionisation plot: absolute electron density still climbing with air density, while the ionised <em>fraction</em> falls through six decades.</p>
+<p>Between them sits a corridor of roughly <b>55&ndash;95 km</b>. That corridor is an output of the algebra, not an input to it &mdash; and it happens to be the altitude band where entry vehicles have the least control authority and the tightest margins.</p>
+</div>`; }
+
+function tapePrimer(){
+  const pills=PLEVS.map(([k,n])=>`<button data-plev="${k}" class="${k===plev?'on':''}">${n}</button>`).join('');
+  const body=plev==='a'?primerA():plev==='b'?primerB():primerC();
+  return `<div class="plev" id="plevBar">${pills}</div>`+body;
+}
+
+function drawTape(st,p){
+  const body=$('tapeBody');
+  if(tab==='primer'){
+    if(body.dataset.plev!==plev){
+      body.innerHTML=tapePrimer(); body.dataset.plev=plev; body.scrollTop=0;
+      body.querySelectorAll('#plevBar button').forEach(b=>b.onclick=()=>{ plev=b.dataset.plev; drawTape(st,p); });
+      body.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{
+        const t=$('tabs').querySelector('button[data-tab="'+b.dataset.goto+'"]'); if(t) t.click(); });
+    }
+    $('tapeAlt').textContent='concept walk-through \u00b7 three levels';
+    return;
+  }
+  body.dataset.plev='';
+  const fns={flow:tapeFlow,heat:tapeHeat,plas:tapePlasma,em:tapeShield,pow:tapePower};
+  const html=fns[tab](st,p);
+  body.innerHTML=html;
+  const res=body.querySelectorAll('[data-res]');
+  res.forEach((el,i)=>{const k=tab+i; if(prevRes[k]!==undefined && prevRes[k]!==el.innerHTML) el.classList.add('flash'); prevRes[k]=el.innerHTML;});
+  $('tapeAlt').textContent='h = '+(st.h/1000).toFixed(1)+' km  ·  V = '+(st.V/1000).toFixed(2)+' km/s';
+}
+
+/* ---------- tables ---------- */
+function reactorClass(P){
+  const M=P/1e6;
+  if(M<0.05) return 'spacecraft class — ISS solar arrays deliver about 0.12 MW';
+  if(M<0.5)  return 'below a mainline locomotive (about 3 MW)';
+  if(M<5)    return 'a mainline locomotive is about 3 MW';
+  if(M<30)   return 'a large ship\'s auxiliary plant';
+  if(M<300)  return 'warship powerplant — a submarine reactor is roughly 200 MW thermal';
+  if(M<1500) return 'utility generating unit';
+  return 'a full power station, and then some';
+}
+function tables(){
+  const S=SIM, Bp=BARE, p=P0;
+  const pk=S.peak, pb=Bp.peak;
+  const peakP=S.pts.reduce((a,b)=>b.Pnet>a?b.Pnet:a,0);
+  const peakQ=pk.Q;
+  const peakG=S.pts.reduce((a,b)=>b.gQ>a?b.gQ:a,0);
+  const peakNe=S.pts.reduce((a,b)=>b.ne>a?b.ne:a,0);
+  const bo=S.pts.filter(x=>x.fpe>2.2e9).length*0.2;
+  const boB=Bp.pts.filter(x=>x.fpe>2.2e9).length*0.2;
+  const d=(a,b)=>{const r=(b-a)/Math.max(Math.abs(a),1e-9)*100; return (r>0?'+':'−')+Math.abs(r).toFixed(0)+' %';};
+
+  $('tSum').innerHTML=`<thead><tr><th>Quantity</th><th>Bare</th><th>Shielded</th><th>Change</th></tr></thead><tbody>
+  <tr class="hi"><td>Peak stagnation flux <span class="u">W/cm²</span></td><td>${(pb.q/1e4).toFixed(1)}</td><td>${(pk.q/1e4).toFixed(1)}</td><td>${d(pb.q,pk.q)}</td></tr>
+  <tr><td>Altitude at peak flux <span class="u">km</span></td><td>${(pb.h/1000).toFixed(1)}</td><td>${(pk.h/1000).toFixed(1)}</td><td>${(pk.h-pb.h>0?'+':'−')+Math.abs((pk.h-pb.h)/1000).toFixed(1)} km</td></tr>
+  <tr><td>Velocity at peak flux <span class="u">km/s</span></td><td>${(pb.V/1000).toFixed(2)}</td><td>${(pk.V/1000).toFixed(2)}</td><td>—</td></tr>
+  <tr><td>Integrated heat load <span class="u">MJ/m²</span></td><td>${(Bp.J/1e6).toFixed(0)}</td><td>${(S.J/1e6).toFixed(0)}</td><td>${d(Bp.J,S.J)}</td></tr>
+  <tr><td>Peak wall temperature <span class="u">K</span></td><td>${pb.Tw.toFixed(0)}</td><td>${pk.Tw.toFixed(0)}</td><td>${(pk.Tw-pb.Tw>0?'+':'−')+Math.abs(pk.Tw-pb.Tw).toFixed(0)} K</td></tr>
+  <tr><td>Peak deceleration <span class="u">g</span></td><td>${Bp.maxG.toFixed(2)}</td><td>${S.maxG.toFixed(2)}</td><td>${d(Bp.maxG,S.maxG)}</td></tr>
+  <tr><td>Time to 15 km <span class="u">s</span></td><td>${Bp.tEnd.toFixed(0)}</td><td>${S.tEnd.toFixed(0)}</td><td>${d(Bp.tEnd,S.tEnd)}</td></tr>
+  <tr><td>Downrange <span class="u">km</span></td><td>${(Bp.sEnd/1000).toFixed(0)}</td><td>${(S.sEnd/1000).toFixed(0)}</td><td>${d(Bp.sEnd,S.sEnd)}</td></tr>
+  <tr><td>S-band blackout <span class="u">s</span></td><td>${boB.toFixed(0)}</td><td>${bo.toFixed(0)}</td><td>—</td></tr>
+  <tr><td>Interaction parameter Q at peak heating</td><td>0</td><td>${peakQ.toFixed(1)}</td><td>—</td></tr>
+  <tr><td>Peak coupling gate g <span class="u">0 – 1</span></td><td>0</td><td>${peakG.toFixed(3)}</td><td>—</td></tr>
+  <tr><td>Peak electron density <span class="u">m⁻³</span></td><td>—</td><td>${sci(peakNe,2)}</td><td>—</td></tr>
+  <tr><td>Allen–Eggers closed form <span class="u">ballistic, no lift</span></td><td colspan="3" style="text-align:right">${AE.nMax.toFixed(2)} g at ${(AE.hN/1000).toFixed(0)} km &nbsp;·&nbsp; ${(AE.qMax/1e4).toFixed(0)} W/cm² at ${(AE.hQ/1000).toFixed(0)} km</td></tr>
+  </tbody>`;
+
+  const Eb=S.Eelec, mBat=Eb/(250*3600), mLiInBat=mBat*0.07, MG=magnet(p);
+  const pbr=S.pts.reduce((a,b)=>b.Pbrake>a?b.Pbrake:a,0);
+  $('tClose').innerHTML=`<tbody>
+  <tr><td>Peak ship-supplied electrical power</td><td>${W(peakP)}</td></tr>
+  <tr><td>Nearest analogue</td><td>${reactorClass(peakP)}</td></tr>
+  <tr class="hi"><td>Total electrical energy, whole entry</td><td>${J(Eb)}</td></tr>
+  <tr><td>Peak braking power dissipated by drag</td><td>${W(pbr)}</td></tr>
+  <tr><td>Store as Li-ion at 250 Wh/kg</td><td>${mBat.toFixed(0)} kg of cells</td></tr>
+  <tr><td>Lithium contained in that pack at 7 % by mass</td><td>${mLiInBat.toFixed(1)} kg</td></tr>
+  <tr><td>Seed lithium actually consumed</td><td>${S.mLi.toFixed(1)} kg</td></tr>
+  <tr class="hi"><td>Closure ratio — Li in the pack ÷ Li burnt as seed</td><td>${(mLiInBat/Math.max(S.mLi,1e-6)).toFixed(2)}× ${mLiInBat>S.mLi?'— the pack carries its own seed':'— you must carry extra lithium'}</td></tr>
+  <tr><td>Peak power as fraction of braking power</td><td>${(peakP/Math.max(pbr,1)*100).toFixed(2)} %</td></tr>
+  <tr class="hi"><td>Battery pack as fraction of entry mass</td><td>${(mBat/p.m*100).toFixed(0)} % ${mBat>0.35*p.m?'— this does not close. Cut the array coupling.':'— carryable.'}</td></tr>
+  <tr><td>Superconducting coil, ${(MG.NI/1e6).toFixed(2)} MA·turns</td><td>${(MG.mMag/1000).toFixed(2)} t — ${(MG.mMag/p.m*100).toFixed(0)} % of entry mass</td></tr>
+  <tr><td>Stored field energy (quench hazard)</td><td>${J(MG.Estore)}</td></tr>
+  <tr class="hi"><td>Does this need a reactor?</td><td>${peakP<5e6?'No. A burst store carries it — the whole entry lasts minutes.':peakP<5e7?'No, but the burst store is heavy. This is the regime worth arguing about.':'You are asking for a power station on a spacecraft. Reduce the array coupling first.'}</td></tr>
+</tbody>`;
+
+  const isps=[[542,'Li / F₂ / H₂ tri-propellant'],[400,'Li / F₂ bipropellant'],[452,'LOX / LH₂ reference'],[311,'N₂O₄ / MMH reference']];
+  let rows='<thead><tr><th>Combination</th><th>I<sub>sp</sub> (s)</th><th>Δv at m₀/m<sub>f</sub>=1.5</th><th>= 2.0</th><th>= 3.0</th></tr></thead><tbody>';
+  isps.forEach(([I,n])=>{
+    const dv=r=>(I*9.80665*Math.log(r)/1000).toFixed(2)+' km/s';
+    rows+=`<tr${I===542?' class="hi"':''}><td>${n}</td><td>${I}</td><td>${dv(1.5)}</td><td>${dv(2)}</td><td>${dv(3)}</td></tr>`;
+  });
+  rows+=`<tr><td colspan="5" style="text-align:left;color:var(--dim);font-family:var(--sans);padding-top:9px">
+  At ${(P0.m/1000).toFixed(1)} t entry mass, a mass ratio of 2.0 means ${(P0.m/2000).toFixed(1)} t of propellant.
+  542 s is the highest specific impulse ever measured on a chemical rocket and it was measured once, on a test stand, in the 1960s. Nothing has flown it.</td></tr></tbody>`;
+  $('tProp').innerHTML=rows;
+}
+
+/* ---------- verdict ---------- */
+function verdict(){
+  const pk=SIM.peak.q, lim=P0.qLim, m=lim/Math.max(pk,1);
+  let cls,txt,why;
+  if(!P0.on || P0.B===0){cls='s-no';txt='SHIELD OFF';why=`Bare peak flux is ${(BARE.peak.q/1e4).toFixed(0)} W/cm² against a ${(lim/1e4).toFixed(0)} W/cm² limit.`;}
+  else if(m<1){cls='s-no';txt='INSUFFICIENT';why=`Peak flux ${(pk/1e4).toFixed(0)} W/cm² exceeds the ${(lim/1e4).toFixed(0)} W/cm² TPS limit by ${((1/m-1)*100).toFixed(0)} %. Raise B₀, raise the seed rate, or fly shallower.`;}
+  else if(m<1.3){cls='s-marg';txt='MARGINAL';why=`Margin ${m.toFixed(2)}×. Inside the limit but with nothing left for dispersions, and the standoff correlation itself is only good to a factor of two.`;}
+  else if(m<2){cls='s-ok';txt='SATISFACTORY';why=`Margin ${m.toFixed(2)}×. Peak flux ${(pk/1e4).toFixed(0)} W/cm² against a ${(lim/1e4).toFixed(0)} W/cm² limit.`;}
+  else {cls='s-plus';txt='MORE THAN SATISFACTORY';why=`Margin ${m.toFixed(2)}×. Peak flux is ${(pk/1e4).toFixed(0)} W/cm² against a ${(lim/1e4).toFixed(0)} W/cm² limit — you could trade some of this back for a lighter magnet or a steeper, faster entry.`;}
+  const MG=magnet(P0), mf=MG.mMag/P0.m*100;
+  if(P0.on&&P0.B>0) why+=` The coil is ${(MG.mMag/1000).toFixed(1)} t, ${mf.toFixed(0)} % of entry mass.`;
+  if(P0.on&&mf>50) why+=' At that mass fraction you are carrying a magnet instead of a heat shield, which is a trade a real programme would lose.';
+  $('vstate').className='state '+cls; $('vstate').textContent=txt;
+  $('vbar').style.width=Math.min(m/2.5*100,100)+'%';
+  $('vbar').style.background=cls==='s-no'?'var(--bad)':cls==='s-marg'?'var(--warn)':cls==='s-ok'?'var(--oi)':'var(--em)';
+  $('vwhy').innerHTML=why;
+}
+
+/* ---------- draw everything ---------- */
+function drawAll(){
+  const st=SIM.pts[Math.min(idx,SIM.pts.length-1)], p=P0;
+  strip(st); drawTape(st,p); verdict(); tables();
+  $('clock').textContent=`t = ${st.t.toFixed(1)} s`;
+  $('scrub').value=idx;
+
+  const km=x=>x/1000, kms=x=>x/1000, wcm=x=>x/1e4;
+  const hv=SIM.pts.map(s=>[kms(s.V),km(s.h),s.q]);
+  const hvB=BARE.pts.map(s=>[kms(s.V),km(s.h)]);
+  plot($('cHV'),{h:200,x:{min:0,max:Math.max(P0.V0/1000*1.05,8)},y:{min:15,max:125,label:'h  km'},
+    series:[{data:hvB,color:'#40566b',w:1.1,dash:[3,3]},{data:hv,ramp:heatRamp,w:2.2}],
+    cursor:[kms(st.V),km(st.h)]});
+
+  const tmax=Math.max(SIM.tEnd,BARE.tEnd);
+  plot($('cQ'),{h:200,x:{min:0,max:tmax,label:'t  s'},
+    y:{min:0,max:Math.max(wcm(BARE.peak.q),wcm(P0.qLim))*1.15,label:'q̇  W/cm²'},
+    marks:[{y:wcm(P0.qLim),color:'#ff4d5e',label:'TPS limit'}],
+    series:[{data:BARE.pts.map(s=>[s.t,wcm(s.q)]),color:'#5b7189',w:1.2,dash:[4,3]},
+            {data:SIM.pts.map(s=>[s.t,wcm(s.q)]),color:'#ff9d3f',w:1.9}],
+    cursor:[st.t,wcm(st.q)]});
+
+  plot($('cNE'),{h:200,x:{min:15,max:122,label:'h  km',invert:true},
+    y:{min:1e-9,max:3,log:true,label:'normalised'},
+    series:[{data:SIM.pts.map(s=>[km(s.h),s.ne/1e21]),color:'#ff3b4e',w:1.8},
+            {data:SIM.pts.map(s=>[km(s.h),s.xe]),color:'#8b6cff',w:1.6},
+            {data:SIM.pts.map(s=>[km(s.h),s.rho/1.225]),color:'#5b7189',w:1.3,dash:[3,3]}],
+    cursor:[km(st.h),st.ne/1e21]});
+
+  const qMax=Math.max(SIM.pts.reduce((a,b)=>b.Q>a?b.Q:a,0)*3,10);
+  plot($('cQm'),{h:200,x:{min:15,max:122,label:'h  km',invert:true},y:{min:1e-4,max:qMax,log:true,label:'Q'},
+    marks:[{y:1,color:'#ff4d5e',label:'Q = 1'},
+           {x:SIM.pts.reduce((a,s)=>s.Kn>0.1?Math.min(a,km(s.h)):a,122),color:'#ffc14d',label:'Kn = 0.1'}],
+    series:[{data:SIM.pts.map(s=>[km(s.h),s.Q]),color:'#8b6cff',w:1.9}],
+    cursor:[km(st.h),st.Q]});
+
+  const pMax=Math.max(SIM.pts.reduce((a,b)=>b.Ptot>a?b.Ptot:a,1e3)*2,1e5);
+  plot($('cP'),{h:200,x:{min:0,max:SIM.tEnd,label:'t  s'},y:{min:1e2,max:pMax,log:true,label:'P  W'},
+    series:[{data:SIM.pts.map(s=>[s.t,s.Pnet]),color:'#5ee68a',w:2},
+            {data:SIM.pts.map(s=>[s.t,s.Parr]),color:'#8b6cff',w:1.3},
+            {data:SIM.pts.map(s=>[s.t,s.Pcryo]),color:'#3fd8e0',w:1.3},
+            {data:SIM.pts.map(s=>[s.t,s.Pseed]),color:'#ff3b4e',w:1.3,dash:[3,2]}],
+    cursor:[st.t,st.Pnet]});
+
+  plot($('cF'),{h:200,x:{min:15,max:122,label:'h  km',invert:true},y:{min:1e7,max:1e12,log:true,label:'f  Hz'},
+    marks:[{y:2.2e9,color:'#5b7189',label:'S 2.2 GHz'},{y:8.4e9,color:'#5b7189',label:'X 8.4'},
+           {y:3.2e10,color:'#5b7189',label:'Ka 32'},{y:9.4e10,color:'#5b7189',label:'W 94'}],
+    series:[{data:SIM.pts.map(s=>[km(s.h),s.fpe]),color:'#ff3b4e',w:1.9}],
+    cursor:[km(st.h),st.fpe]});
+}
+
+/* ---------- auto-size B ---------- */
+function autoSizeB(){
+  const btn=$('autoB'); btn.disabled=true; btn.textContent='Solving…';
+  setTimeout(()=>{
+    const target=1.5;
+    let lo=0, hi=3.0, best=null;
+    const test=B=>{const p=Object.assign(readP(),{B:B,on:true}); return simulate(p,0.6).peak.q;};
+    const lim=readP().qLim;
+    if(test(hi)>lim/target){ best=null; }
+    else { for(let i=0;i<16;i++){const mid=(lo+hi)/2; if(test(mid)<=lim/target){hi=mid;} else {lo=mid;} } best=hi; }
+    btn.disabled=false; btn.textContent='Size B₀ for margin';
+    if(best===null){ $('vwhy').innerHTML='No field up to 3 T reaches a 1.5× margin here. Heat flux only falls as B<sup>−1/6</sup>, so field strength is close to useless as a lever. Fly shallower, use a larger nose radius, or accept a higher TPS limit.'; return; }
+    $('B').value=Math.min(best*1.02,3.0).toFixed(3);
+    $('SH').checked=true;
+    recompute();
+  },30);
+}
+
+/* ---------- wiring ---------- */
+function buildTabs(){
+  $('tabs').innerHTML=TABS.map(([k,n])=>`<button data-tab="${k}" class="${k===tab?'on':''}">${n}</button>`).join('');
+  $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    tab=b.dataset.tab; prevRes={};
+    $('tabs').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.tab===tab));
+    drawTape(SIM.pts[Math.min(idx,SIM.pts.length-1)],P0);
+  });
+}
+let raf=null;
+function queue(){ if(raf) return; raf=requestAnimationFrame(()=>{raf=null; recompute();}); }
+IDS.forEach(i=>$(i).addEventListener('input',queue));
+['SH','PI','RG'].forEach(i=>$(i).addEventListener('change',queue));
+$('scrub').addEventListener('input',e=>{idx=+e.target.value; drawAll();});
+$('peak').onclick=()=>{idx=SIM.pts.indexOf(SIM.peak); drawAll();};
+$('autoB').onclick=autoSizeB;
+$('reset').onclick=()=>{
+  const dflt={V0:7.8,G0:-1.6,M:12,D:5,RN:1.5,LD:0.3,QL:70,B:0.8,ML:12,Z:0.5};
+  IDS.forEach(k=>$(k).value=dflt[k]);
+  $('SH').checked=true; $('PI').checked=false; $('RG').checked=false; idx=0; recompute();
+};
+$('play').onclick=()=>{playing=!playing; $('play').textContent=playing?'❚❚ Pause':'▶ Play'; if(playing) tick();};
+function tick(){
+  if(!playing) return;
+  idx+=8;
+  if(idx>=SIM.pts.length){idx=0;}
+  drawAll();
+  setTimeout(()=>requestAnimationFrame(tick),55);
+}
+let rz; window.addEventListener('resize',()=>{clearTimeout(rz); rz=setTimeout(drawAll,150);});
+
+buildTabs();
+recompute();
+$('ic-note').textContent='interface at 122 km';
+
+</script>
+</body>
+</html>

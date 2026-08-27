@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yodacon — The Losing Team's Starship</title>
+<style>
+:root{
+  --void:#05070a;
+  --crt:#0d3d12;
+  --crt-lit:#1d7a24;
+  --phos:#5cff5c;
+  --phos-dim:#2f9b34;
+  --chrome-hi:#dfe4e6;
+  --chrome:#9aa3a7;
+  --chrome-lo:#4c5457;
+  --bezel:#2b3134;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--void);
+  color:var(--phos);
+  font-family:"Courier New",Courier,monospace;
+  font-weight:700;
+  letter-spacing:.06em;
+  min-height:100vh;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, #fff9 0 1px, transparent 1px),
+    radial-gradient(1px 1px at 78% 9%, #fff7 0 1px, transparent 1px),
+    radial-gradient(1px 1px at 34% 62%, #fff6 0 1px, transparent 1px),
+    radial-gradient(1px 1px at 61% 41%, #fff8 0 1px, transparent 1px),
+    radial-gradient(1px 1px at 88% 74%, #fff5 0 1px, transparent 1px),
+    radial-gradient(1px 1px at 22% 88%, #fff6 0 1px, transparent 1px),
+    radial-gradient(1px 1px at 48% 12%, #fff5 0 1px, transparent 1px);
+  background-attachment:fixed;
+}
+/* CRT scanlines over everything */
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:99;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,.28) 0 1px,transparent 1px 3px);
+  mix-blend-mode:multiply;
+}
+.frame{max-width:1180px;margin:0 auto;padding:18px 16px 60px;position:relative}
+/* ---- chrome rails, like the splash screen edges ---- */
+.rail{position:fixed;top:0;bottom:0;width:26px;z-index:5;
+  background:linear-gradient(to right,#1a1e20,var(--chrome-lo) 18%,var(--chrome-hi) 42%,var(--chrome) 58%,#1a1e20);
+  box-shadow:0 0 18px #000 inset;}
+.rail.l{left:0}.rail.r{right:0}
+@media(max-width:820px){.rail{display:none}}
+
+/* ---- masthead ---- */
+header{text-align:center;padding:26px 0 6px;position:relative}
+h1{
+  margin:0;font-size:clamp(38px,9vw,104px);line-height:.92;
+  color:#7dff62;
+  text-shadow:0 0 2px #000,4px 4px 0 #063d06,0 0 26px #4cff4c88;
+  -webkit-text-stroke:2px #0a2a0a;
+}
+.tag{margin:10px 0 0;color:var(--phos-dim);font-size:13px}
+.telemetry{
+  font-size:11px;color:#c26bd8;letter-spacing:.12em;margin-top:12px;
+  text-shadow:0 0 8px #c26bd855;
+}
+.telemetry span{margin:0 10px;white-space:nowrap}
+
+/* ---- the arc of spheres, like the splash bracket ---- */
+.arc{display:flex;justify-content:center;gap:14px;margin:22px 0 10px;flex-wrap:wrap}
+
+/* ---- plasma spheres ---- */
+.orb{
+  width:44px;height:44px;border-radius:50%;position:relative;cursor:pointer;
+  background:
+    radial-gradient(circle at 32% 28%, #eafcff 0 6%, #7fe9ff 18%, #2aa7d8 42%, #10506e 72%, #041722 100%);
+  box-shadow:0 0 0 2px #0009, 0 0 14px #2aa7d855, inset -6px -8px 14px #000a;
+  transition:transform .18s ease, box-shadow .25s ease, filter .25s ease;
+  flex:0 0 auto;
+}
+.orb::before{
+  content:"";position:absolute;inset:0;border-radius:50%;opacity:0;
+  transition:opacity .3s ease;
+  background:
+    conic-gradient(from 0deg, #5cff5c, #35d0ff, #b46bff, #5cff5c);
+  filter:blur(4px) saturate(1.6);
+  mix-blend-mode:screen;
+  animation:churn 3.2s linear infinite;
+}
+.orb::after{
+  content:"";position:absolute;inset:14% 22% 52% 20%;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,#fff 0 40%,#fff0 70%);
+  opacity:.85;pointer-events:none;
+}
+@keyframes churn{to{transform:rotate(360deg)}}
+.orb:hover,.orb:focus-visible,.panel:hover .orb{
+  transform:scale(1.16);
+  filter:saturate(1.5) brightness(1.25);
+  box-shadow:0 0 0 2px #0009, 0 0 30px #6cffb0aa, inset -6px -8px 14px #000a;
+  outline:none;
+}
+.orb:hover::before,.orb:focus-visible::before,.panel:hover .orb::before{opacity:.75}
+
+/* ---- HUD glass panels (the 4 "buttons") ---- */
+.console{
+  display:grid;
+  grid-template-columns:1fr minmax(240px,320px) 1fr;
+  gap:18px;align-items:start;margin-top:14px;
+}
+@media(max-width:900px){.console{grid-template-columns:1fr}.readout-wrap{order:-1}}
+.stack{display:flex;flex-direction:column;gap:16px}
+
+.panel{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  padding:14px 16px;cursor:pointer;position:relative;overflow:hidden;
+  color:var(--phos);font:inherit;font-size:clamp(15px,2vw,22px);line-height:1.15;
+  border:3px solid var(--chrome);
+  border-radius:6px;
+  background-color:var(--crt);
+  background-image:
+    linear-gradient(45deg,rgba(92,255,92,.10) 25%,transparent 25%,transparent 75%,rgba(92,255,92,.10) 75%),
+    linear-gradient(45deg,rgba(92,255,92,.10) 25%,transparent 25%,transparent 75%,rgba(92,255,92,.10) 75%);
+  background-size:8px 8px;
+  background-position:0 0,4px 4px;
+  box-shadow:
+    0 0 0 1px #000,
+    inset 0 0 0 2px var(--chrome-lo),
+    inset 0 2px 0 rgba(255,255,255,.18),
+    0 6px 18px #000a;
+  transition:background-color .2s, box-shadow .25s, transform .12s;
+}
+.panel .lbl{flex:1;text-shadow:0 0 10px #5cff5c66}
+.panel .idx{font-size:11px;color:var(--phos-dim);letter-spacing:.2em}
+.panel:hover,.panel:focus-visible,.panel.active{
+  background-color:var(--crt-lit);
+  box-shadow:0 0 0 1px #000, inset 0 0 0 2px #cfe6d0,
+             inset 0 2px 0 rgba(255,255,255,.3), 0 0 26px #4cff4c55, 0 6px 18px #000a;
+  outline:none;
+}
+.panel:active{transform:translateY(2px)}
+/* sweeping glass glare */
+.panel::before{
+  content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.22),transparent);
+  transition:left .55s ease;pointer-events:none;
+}
+.panel:hover::before{left:120%}
+
+/* the pilot-file readout in the middle */
+.readout-wrap{
+  border:14px solid transparent;border-radius:38px;
+  background:
+    linear-gradient(#000,#000) padding-box,
+    linear-gradient(160deg,var(--chrome-hi),var(--chrome-lo) 40%,var(--chrome-hi) 62%,#2a2f31) border-box;
+  box-shadow:0 0 0 2px #000, 0 10px 30px #000c, inset 0 0 40px #000;
+  min-height:420px;padding:22px 20px;
+  display:flex;flex-direction:column;
+}
+.readout{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  font-size:13px;line-height:1.7;letter-spacing:.04em;
+  text-shadow:0 0 8px #5cff5c55;
+}
+.readout .rt{font-size:15px;color:#9dff9d;margin:0 0 10px}
+.readout p{margin:0 0 10px;font-weight:400;color:#7ee87e}
+.readout .idle{text-align:center;color:var(--phos-dim);font-weight:700}
+.readout ul{margin:6px 0 0;padding-left:18px;font-weight:400;color:#7ee87e}
+.readout a{color:#9dff9d}
+
+/* right-side status HUD, from the in-flight shot */
+.status{position:fixed;right:34px;top:50%;transform:translateY(-50%);width:150px;z-index:6;
+  display:flex;flex-direction:column;gap:5px;font-size:11px}
+@media(max-width:1320px){.status{display:none}}
+.scell{
+  border:2px solid var(--chrome);border-radius:3px;background:var(--crt);
+  padding:5px 7px;box-shadow:inset 0 0 0 1px #000a;
+  text-shadow:0 0 6px #5cff5c55;
+}
+.meter{height:8px;background:#08210a;border:1px solid #0a2a0a;margin-top:2px}
+.meter i{display:block;height:100%;background:linear-gradient(#7dff62,#2f9b34)}
+.scell.r{text-align:right}
+.big{font-size:14px;color:#9dff9d}
+
+/* ---- lore ---- */
+.lore{margin-top:52px}
+.lore h2{
+  font-size:22px;color:#9dff9d;margin:34px 0 12px;
+  border-bottom:2px solid #1d7a2455;padding-bottom:8px;
+  text-shadow:0 0 12px #4cff4c44;
+}
+.lore p{font-weight:400;color:#8fe98f;line-height:1.85;font-size:14.5px;max-width:76ch;letter-spacing:.02em}
+.lore .drop::first-letter{font-size:2.6em;line-height:.8;float:left;padding:6px 10px 0 0;color:#c26bd8}
+blockquote{
+  margin:26px 0;padding:14px 20px;border-left:4px solid #c26bd8;
+  color:#c9a6d8;font-weight:400;font-style:italic;background:#c26bd80d;
+}
+.plate{
+  border:3px solid var(--chrome);border-radius:6px;background:#071a08;
+  padding:16px 18px;margin:22px 0;box-shadow:inset 0 0 0 2px var(--chrome-lo),0 6px 18px #000a;
+}
+.plate h3{margin:0 0 10px;font-size:14px;color:#9dff9d;letter-spacing:.16em}
+.plate ul{margin:0;padding-left:18px;font-weight:400;color:#8fe98f;line-height:1.9;font-size:13.5px}
+.plate a{color:#7fe9ff;text-decoration:none;border-bottom:1px dotted #7fe9ff66;word-break:break-word}
+.plate a:hover{color:#fff;background:#0d3d12}
+footer{margin-top:52px;text-align:center;color:var(--phos-dim);font-size:11px;line-height:2}
+footer a{color:#7fe9ff;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="rail l"></div><div class="rail r"></div>
+
+<div class="frame">
+<header>
+  <h1>YODACON</h1>
+  <p class="tag">THE LOSING TEAM &nbsp;·&nbsp; THE SHIP THAT GOT BUILT ANYWAY &nbsp;·&nbsp; MIT LICENSE</p>
+  <p class="telemetry">
+    <span>249 1054</span><span>orbit 24987</span><span>249 4545 SET</span><span>249 1054 SET</span><span>vec ok</span>
+  </p>
+  <div class="arc">
+    <div class="orb" tabindex="0" aria-hidden="true"></div>
+    <div class="orb" tabindex="0" aria-hidden="true"></div>
+    <div class="orb" tabindex="0" aria-hidden="true"></div>
+    <div class="orb" tabindex="0" aria-hidden="true"></div>
+    <div class="orb" tabindex="0" aria-hidden="true"></div>
+  </div>
+</header>
+
+<div class="console">
+  <div class="stack">
+    <button class="panel" data-key="lore"><span class="orb"></span><span class="lbl">The<br>Lore</span><span class="idx">01</span></button>
+    <button class="panel" data-key="conex"><span class="orb"></span><span class="lbl">Con<br>Ex</span><span class="idx">02</span></button>
+  </div>
+
+  <div class="readout-wrap">
+    <div class="readout" id="readout">
+      <div class="idle">No Pilot File Loaded</div>
+    </div>
+  </div>
+
+  <div class="stack">
+    <button class="panel" data-key="reentry"><span class="orb"></span><span class="lbl">Re<br>Entry</span><span class="idx">03</span></button>
+    <button class="panel" data-key="archive"><span class="orb"></span><span class="lbl">The<br>Archive</span><span class="idx">04</span></button>
+  </div>
+</div>
+
+<aside class="status" aria-hidden="true">
+  <div class="scell" style="height:120px">&nbsp;</div>
+  <div class="scell">Shield:<div class="meter"><i style="width:92%"></i></div>Fuel:<div class="meter"><i style="width:78%"></i></div></div>
+  <div class="scell">Nav System Off</div>
+  <div class="scell">Secondary Weapon</div>
+  <div class="scell" style="height:74px;display:flex;align-items:center;justify-content:center">No Target</div>
+  <div class="scell r">Free:<b>20</b><br><br>Credits:<br><span class="big">10,000</span></div>
+</aside>
+
+<!-- ============================ LORE ============================ -->
+<main class="lore">
+
+  <h2>&gt; THE GROUP FORMERLY KNOWN AS THE OUTSIDERS</h2>
+  <p class="drop">Alaska had too many children and not enough school. The solution was portables — plywood boxes on blocks, parked in the snow outside the building that was already full. We were the kids in them. Our core rooms rotated between those arctic portables, and the building called us what we were: <em>the Outsiders</em>. Not a nickname anyone chose. A location.</p>
+
+  <p>Getting there was its own long instrument. I was the last stop on a long bus ride, to a place that was not a city and not even outside a city — the buses still delivered kids to postboxes. Postboxes were snow-powered waiting areas. Chains on the wheels. A flashing white light on the roof. Sparkling strobes of white thrown against falling snow, and ice grown thick on the windows in the back of the bus, where you scratched a hole with a fingernail to see whether your stop had arrived yet.</p>
+
+  <h2>&gt; THE NAMING CONTEST</h2>
+  <p>The next year, they split the Outsiders into teams and let us rename our own home rooms. This was not cosmetic. A team name meant the teachers on that team shared subjects across the same core students — the name was the roster, the schedule, the people you'd have for a year. So the contest ran for a week, and the students made it into a war of insignia and icons. Everyone was drawing crests in the margins.</p>
+
+  <p>I had <strong>Infini-D</strong>. Actual 3D sculpting software, on an actual Mac, in the middle of a middle-school popularity contest. So while other teams drew, I <em>rendered</em>. My team's name was the <strong>Yodacons</strong>, and the Yodacon became a ship — modeled, lit, and rendered as promotional material for a home room.</p>
+
+  <p>It came down to two names on the board: the Yodacons, or the Tauruses. The students argued for a week. Then the teachers' vote shifted the final verdict, and the outside-portable core group was given its new title: <strong>Taurus</strong>.</p>
+
+  <blockquote>The losers were never winners. That is the sad beginning of the Yodacon name.</blockquote>
+
+  <h2>&gt; RED AND WHITE CHESS PIECES</h2>
+  <p>The Yodacons lost the name and kept the room. We got a drama-based leader and the lesson plan continued. The advanced classes were for the Outsiders — for the other ones, the inside ones — so we did algebra and calculus with red and white chess pieces, working the same problems by different methods, for fun, because <em>don't get left behind</em> was the whole curriculum underneath the curriculum. That is what the losing team did with a year: it kept doing the math anyway, and it enjoyed it.</p>
+
+  <h2>&gt; GIVING THE SHIP A PURPOSE</h2>
+  <p>But the ship existed. A 3D-rendered starship, built by a fourteen-year-old for a home room that never got the name, cannot be left to have been done in vain. So we give it a purpose. This organization is the revival: the Yodacon flies again, out of the old <strong>ConEx</strong> Escape Velocity references, out of a meme, a personal story, a moment in time preserved by a popularity contest in a child's life.</p>
+
+  <p>Yodacon.org is the crew of shipmates on the Yodacon. Our intention is to <strong>expand upon the original game</strong> — to take the ship out of a lost vote and put it back into a universe where it can actually be flown, traded, refueled, and landed. Everything here is MIT licensed, because the whole point is that it belongs to the people who show up for it.</p>
+
+  <h2>&gt; CONEX — WHERE THE YODACON IS DOCKED</h2>
+  <p><strong>ConEx</strong> is Paul Richeson's plugin for Ambrosia's <em>Escape Velocity</em>, and it is where the Yodacon was published into the archives. ConEx 1.2 shipped 10 new ships for a government called Consolidated Express, 11 systems, and 35 linked missions that teach you how to fly — with instructions to be sure to land on Conex, Exeon, and Cenron, because their backgrounds will amaze you. It was posted in December 1999. It has been downloaded a few thousand times by people who are no longer fourteen.</p>
+
+  <p>We have the original archive. The work is to open it, pull the resources out into individual files, fix what 1999 left broken, and get the result hosted where people can still play it.</p>
+
+  <h2>&gt; TEAM YODACON — THE GAME</h2>
+  <p>Team Yodacon is a space commodity trading game. Its signature system is the landing. We use lithium-injected pellets, cooked with lasers and X-ray emitters, to create rotating comforting pillows of glide — a steerable plasma envelope that shapes your atmospheric reentry trajectory. The real physics of reentry heating drives the controls, and those controls are integral to the landing process. You do not press "land." You fly it down.</p>
+
+  <p>Then: set the bird down safely at the station dock. Refuel. Walk the outfitters and dream about upgrades, or about a different ship entirely. Or get a drink at the bar and be distracted there, waiting on the mini-games — the charisma ladder, the Royal Finkel table — while the winners process runs the way the EV Bible explains it.</p>
+
+  <div class="plate">
+    <h3>ARCHIVE &amp; TOOLING RESOURCES</h3>
+    <ul>
+      <li><a href="http://www.cytheraguides.com/archives/ambrosia_addons/ev/">Cythera Guides — Ambrosia EV add-on archive</a> (ConEx12.sit, ConEx12u.sit)</li>
+      <li><a href="https://github.com/vasi/evnova-utils">vasi/evnova-utils</a> — Nova-side resource tooling; near-identical shape to what EV needs</li>
+      <li><a href="https://github.com/andrews05/EV-Nova-CE/releases">andrews05/EV-Nova-CE releases</a></li>
+      <li><a href="https://download.escape-velocity.games/tools/">escape-velocity.games tools mirror</a></li>
+      <li><a href="https://download.escape-velocity.games/tools/EV%20Nova/Documentation/Nova%20Bible.txt">The Nova Bible</a> — resource formats, mission bits, the winners process</li>
+      <li><a href="https://systemless.org/escape-velocity-override/">systemless.org — Escape Velocity Override</a> (target host for a fixed-up ConEx)</li>
+      <li><a href="https://www.reddit.com/r/evnova/comments/g3ie3x/ambrosia_and_registration/">r/evnova — Ambrosia and registration</a></li>
+      <li><a href="https://www.youtube.com/watch?v=XTzUsw34FRw">Reference: building a plugin like a 14-year-old would</a></li>
+    </ul>
+  </div>
+
+  <footer>
+    YODACON.ORG &nbsp;·&nbsp; MIT LICENSE &nbsp;·&nbsp; THE SHIP OUTLIVED THE VOTE<br>
+    Escape Velocity is Ambrosia Software's. ConEx is Paul Richeson's. The Yodacon is ours.
+  </footer>
+</main>
+</div>
+
+<script>
+const CONTENT = {
+  lore: {
+    t: "01 — THE LORE",
+    h: `<p>Alaska overflowed its schools and answered with portables in the snow. We were the kids out there, the core group the building called <b>the Outsiders</b>.</p>
+        <p>The year after, a week-long naming contest. Insignia, icons, and one kid with Infini-D rendering an actual starship. It came down to <b>Yodacon</b> or <b>Taurus</b>. The teachers' vote made it Taurus.</p>
+        <p>The losing team kept the room, got a drama-based leader, and did calculus with red and white chess pieces. <b>Don't get left behind.</b></p>`
+  },
+  conex: {
+    t: "02 — CONEX 1.2",
+    h: `<p><b>Paul Richeson's</b> Escape Velocity plugin — the archive where the Yodacon was published. Posted 1999/12/04. Rated 4.00. 3,400 downloads.</p>
+        <p>10 ships for Consolidated Express · 11 systems · 35 linked missions that teach you to fly.</p>
+        <p>&quot;Be sure to land on Conex, Exeon, and Cenron, their backgrounds will amaze you.&quot;</p>
+        <p>We hold the original <b>.sit</b>. Next: crack it open, extract every resource to individual files, fix the 1999 bugs.</p>`
+  },
+  reentry: {
+    t: "03 — REENTRY",
+    h: `<p>Lithium-injected pellets, cooked with lasers and X-ray emitters, forming <b>rotating comforting pillows of glide</b>.</p>
+        <p>A steerable plasma envelope shapes the trajectory. Real reentry-heating math drives the stick.</p>
+        <p>Landing is a flown maneuver, not a menu item. Then: dock, refuel, outfitters, the bar, the mini-games, the charisma ladder.</p>`
+  },
+  archive: {
+    t: "04 — THE ARCHIVE",
+    h: `<p>Everything needed to rebuild a 1999 plugin in the present day — the Cythera Guides archive, the Nova Bible, EV Nova CE, evnova-utils, and the escape-velocity.games tool mirror.</p>
+        <p>Target outcome: a repaired ConEx, hosted on systemless.org's emulator page, playable again.</p>
+        <p><i>Scroll for the full resource plate.</i></p>`
+  }
+};
+const readout = document.getElementById('readout');
+const IDLE = '<div class="idle">No Pilot File Loaded</div>';
+let locked = null;
+
+function show(k){
+  const c = CONTENT[k];
+  readout.innerHTML = '<div class="rt">' + c.t + '</div>' + c.h;
+}
+function clear(){
+  if (locked) { show(locked); } else { readout.innerHTML = IDLE; }
+}
+document.querySelectorAll('.panel').forEach(p => {
+  const k = p.dataset.key;
+  p.addEventListener('mouseenter', () => show(k));
+  p.addEventListener('focus',      () => show(k));
+  p.addEventListener('mouseleave', clear);
+  p.addEventListener('blur',       clear);
+  p.addEventListener('click', () => {
+    locked = (locked === k) ? null : k;
+    document.querySelectorAll('.panel').forEach(o => o.classList.toggle('active', o.dataset.key === locked));
+    clear();
+  });
+});
+</script>
+</body>
+</html>

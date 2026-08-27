@@ -1,0 +1,51 @@
+
+<!-- saved from url=(0034)https://escape-velocity.games/docs -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>Escape Velocity: Documentation</title>
+  <link rel="stylesheet" href="./Escape Velocity_ Documentation_files/furtive.min.css">
+</head>
+<body class="measure p2">
+  <div class="py2 txt--center">
+    <h1>EV Documentation</h1>
+    <h4>
+      <nav>
+        <a href="https://escape-velocity.games/">Home</a>
+        <a href="https://escape-velocity.games/docs">Documentation</a>
+        <a href="https://escape-velocity.games/more">More</a>
+        <a href="https://escape-velocity.games/community">Community</a>
+      </nav>
+    </h4>
+  </div>
+  <div class="py2 bg--off-white txt--center">
+    <h3>Community Edition</h3>
+    <p>The current Windows download is <a href="https://github.com/andrews05/EV-Nova-CE/releases">Community Edition</a>, which improves everything.</p>
+    <h3>WineNova</h3>
+    <p><a href="https://download.escape-velocity.games/extras/EV%20Nova%20User%20Guide.pdf">Wine Nova Documentation</a> (pdf)</p>
+    <h3> Keygen </h3>
+    <p><a href="https://www.reddit.com/r/evnova/comments/g3ie3x/ambrosia_and_registration/" target="_blank">This anonymous post</a>(<a href="https://download.escape-velocity.games/ambrosia_and_registration.txt" target="_blank">mirrored</a>) on reddit explains the registration system used by EV, and includes a <a href="https://download.escape-velocity.games/tools/" target="_blank">couple of python scripts</a> which allow a user with a valid key to generate a new one. Additionally, someone has built a similar service as a discord bot. The game will only play mods if the game is 'registered' so having this around is essential for preserving the game for posterity. Eventually, Andrew Welch released a <a href="https://www.macintoshrepository.org/63637-ambrosia-software-decoderring" target="_blank">utility</a> to generate keys for Ambrosia games... officially?</p>
+    <h3> Modding </h3>
+    <p>Much like its contemporary DOOM, Escape Velocity has a fairly open-ended game engine which allows end users to replace assets and game data. With tools that where widely available at the time (ResEdit et al) users where empowered to make plugins (what you'd now call mods) and TCs (Total Conversion mods.)</p>
+    <p>There are hundreds of plugins to try, which may improve (or break) gameplay, alter the game, whatever. They where a unique form of self expression enjoyed by the community.</p>
+    <h3> Download Plugins </h3>
+    <p>In addition to the selected TCs available <a href="https://escape-velocity.games/">on the main page</a> there is a wealth of others to explore <a href="http://www.cytheraguides.com/archives/ambrosia_addons/evn/" target="_blank">On CytheraGuides's backup</a>, <a href="https://archive.org/details/EscapeVelocityPluginCollection" target="_blank">in the archive</a> or <a href="https://ev.appcraft.name/" target="_blank">in this other archive</a></p>
+    <h3> Convert Plugins </h3>
+    <p> Because the mac plugins use a Classic Mac OS specific pseudo-database format called a resource fork, the windows port needed to reimplement the data format. In order to use mac (usually .bin or compressed versions thereof) plugins with nova for windows, you'll need to <a href="https://download.escape-velocity.games/tools/Plug-in%20Extractor.zip">convert the files</a>.
+    </p><h3> Install Plugins </h3>
+    <p>Game data is stored in two directories: Nova Data and Nova Plugins. The game data is read from Data first, then the contents of Plugins overrides it. To install a plugin simply put it in the Nova Plugins directory. Some TCs replace the Nova Data directory (The only exception seems to be Polycon.)
+    </p><h3> Data Format </h3>
+    <p>The format for the data files is exhaustively documented in the <a href="https://download.escape-velocity.games/tools/Nova%20Bible.txt" target="_blank">Nova Bible</a> which I won't attempt to summarize here. But playing with the data files and making the game your own is part of the fun-I'd encourage anyone to try! Available editors include <a href="https://andrews05.github.io/evstuff/#utilities" target="_blank">Mission Computer</a> (Mac) <a href="https://download.escape-velocity.games/tools/EVNEW.exe" target="_blank">EVNEW</a> (Windows, <a href="https://download.escape-velocity.games/tools/EVNEW_source.zip" target="_blank">source available</a>) and <a href="https://download.escape-velocity.games/tools/RezEditor.jar" target="_blank">RezEditor</a> (JVM). Due to <a href="https://en.wikipedia.org/wiki/Resource_fork" target="_blank">technical constraints</a> mac plugins have issues unzipping on other platforms, but the above linked conversion tool can handle entire compressed archives.</p>
+    <h3> Nova Resolution Patcher </h3>
+    <p>Allows you to run (windows) Nova at different resolitions. <a href="https://download.escape-velocity.games/tools/WinNovaResPatcher.zip">Mirrored here</a>. TODO: Create a nova image with this pre-installed.</p>
+    <h3> Fun technical details of WinNova</h3>
+    <p><a href="https://github.com/Olde-Skuul/burgerlib" target="_blank">BurgerLib</a> includes the REZ format used by WinNova. <a href="https://sourceforge.net/projects/spriteworld/files/SpriteWorld/" target="_blank">Spriteworld</a> was also used in Nova</p>
+    <h3>Nova/Rez ports of EVO and EV plugins</h3>
+    <p>There was a legacy application called Space Port which attempts to convert EV Override and EV Classic plugins. Geek has generously run spaceport on all of them and made them available:</p>
+    <p><a href="https://archive.org/details/ev_20250301" target="_blank">Classic</a></p>
+    <p><a href="https://archive.org/details/EVO_Ported" target="_blank">Override</a></p>
+    <p>Please note that these plugins aren't expected to work out of the box and will require further polish to get them working, but all of that work can now be done inside Nova tools.</p>
+
+  <p></p>
+
+  </div>
+
+</body></html>

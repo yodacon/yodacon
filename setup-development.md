@@ -91,7 +91,7 @@ than the logical change.
 A convenience `Makefile` wraps CMake, so the entry point is just `make`:
 
 ```sh
-git clone <our fork> konex && cd konex
+git submodule update --init vendor/konex && cd vendor/konex
 make deps     # brew install cmake sdl2 (one time)
 make check    # report what the build needs and whether it is present
 make          # configure + compile
@@ -143,14 +143,22 @@ Plan: fork `jbussdieker/konex`, then carry the fork in this repo as a git submod
 the site repo and the engine version stay pinned together.
 
 ```sh
-gh repo fork jbussdieker/konex --org <ORG> --clone=false
-git submodule add git@github.com:<ORG>/konex.git vendor/konex
+gh repo fork jbussdieker/konex --clone=false
+git submodule add -b macos-port git@github.com:vonglurt/konex.git vendor/konex
 ```
 
-**Blocked:** no GitHub organization named `yodacon` exists yet, and the authenticated
-account (`vonglurt`) is a member of no organizations — `yodacon` itself lives under the
-personal account. Need the real org name, or a decision to fork personally and transfer
-later. Until then the working port lives on a local `macos-port` branch.
+**Decided 27 Aug 2026:** the fork lives under the personal account as
+[`vonglurt/konex`](https://github.com/vonglurt/konex), on branch `macos-port`. There is
+no GitHub organization yet; forming one is a good idea and the repo transfers in one
+step when it exists. It is wired into this repo as a submodule:
+
+```sh
+git submodule update --init vendor/konex
+cd vendor/konex && make
+```
+
+`vendor/` also holds unrelated, untracked reference material — `vendor/docs` alone is
+about 2.4 GB. Do not run a bare `git add -A` in this repo.
 
 ## Go port
 

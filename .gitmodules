@@ -1,4 +1,4 @@
 [submodule "vendor/konex"]
 	path = vendor/konex
-	url = git@github.com:vonglurt/konex.git
+	url = https://github.com/vonglurt/konex.git
 	branch = macos-port

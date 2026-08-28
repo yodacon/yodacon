@@ -263,6 +263,21 @@ tbody tr:last-child td{border-bottom:none}
 .jump{color:var(--em);border-bottom:1px dotted var(--em);cursor:pointer}
 .jump:hover{color:var(--ink);border-bottom-color:var(--ink)}
 
+/* ---------- approach mode switch, gauges, overheat ---------- */
+.modes{display:flex;gap:6px;margin:0 0 14px}
+.modes button{flex:1;border:1px solid var(--rule2);padding:7px 6px;font-size:9.5px;letter-spacing:.12em}
+.modes button.on{color:var(--void);background:var(--em);border-color:var(--em)}
+.modes button.on:hover{color:var(--void)}
+.orbit-derived{border:1px dashed var(--rule2);padding:8px 10px;margin:2px 0 14px;font-size:10.5px;color:var(--ink2);line-height:1.6}
+.orbit-derived n{color:var(--ink);font-style:normal;font-variant-numeric:tabular-nums}
+.orbit-derived .ob{color:var(--dim);font-family:var(--sans);margin-top:4px;display:block}
+input[type=range]:disabled{opacity:.35;cursor:default}
+.ohwrap{display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.ohwrap .k{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+.ohbar{flex:1;height:7px;background:var(--rule);position:relative;overflow:hidden}
+.ohbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--heat),var(--li));transition:width .15s}
+.ohval{font-size:10.5px;color:var(--ink2);min-width:42px;text-align:right;font-variant-numeric:tabular-nums}
+
 /* ---------- footer notes ---------- */
 .foot{border-top:1px solid var(--rule);padding:26px 22px 60px;background:var(--panel2)}
 .foot .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:26px;max-width:1500px}
@@ -287,11 +302,30 @@ tbody tr:last-child td{border-bottom:none}
 
   <!-- ============ LEFT RAIL: CONTROLS ============ -->
   <div class="rail">
+    <div class="sect">Approach</div>
+    <div class="modes">
+      <button id="mDirect" class="on">Direct entry</button>
+      <button id="mOrbit">From orbit</button>
+    </div>
+    <div id="orbitCtls" style="display:none">
+      <div class="ctl"><label>Apoapsis altitude <span class="val"><n id="v-OAP">400</n><em>km</em></span></label>
+        <input type="range" id="OAP" min="150" max="3000" step="10" value="400"></div>
+      <div class="ctl"><label>Periapsis altitude <span class="val"><n id="v-OPE">250</n><em>km</em></span></label>
+        <input type="range" id="OPE" min="130" max="600" step="5" value="250"></div>
+      <div class="ctl"><label>Burn point ν — 0° = periapsis <span class="val"><n id="v-BTA">180</n><em>deg</em></span></label>
+        <input type="range" id="BTA" min="0" max="180" step="5" value="180"></div>
+      <div class="ctl"><label>Deorbit Δv, retrograde <span class="val"><n id="v-DV">120</n><em>m/s</em></span></label>
+        <input type="range" id="DV" min="0" max="600" step="5" value="120"></div>
+      <div class="orbit-derived" id="orbitOut">—</div>
+    </div>
+
     <div class="sect">Entry state <b id="ic-note"></b></div>
+    <div id="directCtls">
     <div class="ctl"><label>Entry velocity <span class="val"><n id="v-V0">7.80</n><em>km/s</em></span></label>
       <input type="range" id="V0" min="6.5" max="12" step="0.05" value="7.8"></div>
     <div class="ctl"><label>Flight path angle γ₀ <span class="val"><n id="v-G0">−1.60</n><em>deg</em></span></label>
       <input type="range" id="G0" min="-8" max="-0.6" step="0.05" value="-1.6"></div>
+    </div>
 
     <div class="sect">Vehicle</div>
     <div class="ctl"><label>Entry mass <span class="val"><n id="v-M">12.0</n><em>t</em></span></label>
@@ -317,6 +351,14 @@ tbody tr:last-child td{border-bottom:none}
       <label class="tg"><input type="checkbox" id="PI"><span class="box"></span><span>Pre-ionise seed (vs. shock-heated)</span></label>
       <label class="tg"><input type="checkbox" id="RG"><span class="box"></span><span>Recover MHD generator power</span></label>
     </div>
+    <div class="sect">Stores &amp; limits <b>the resources you fly on</b></div>
+    <div class="ctl"><label>Battery store <span class="val"><n id="v-BAT">4.0</n><em>GJ</em></span></label>
+      <input type="range" id="BAT" min="0.5" max="12" step="0.1" value="4"></div>
+    <div class="ctl"><label>Lithium seed tank <span class="val"><n id="v-LIT">40</n><em>kg</em></span></label>
+      <input type="range" id="LIT" min="2" max="150" step="1" value="40"></div>
+    <div class="ctl"><label>TPS heat-load capacity <span class="val"><n id="v-HC">600</n><em>MJ/m²</em></span></label>
+      <input type="range" id="HC" min="100" max="2000" step="25" value="600"></div>
+
     <div class="btnrow">
       <button class="pri" id="autoB">Size B₀ for margin</button>
       <button id="reset">Reset</button>
@@ -341,7 +383,35 @@ tbody tr:last-child td{border-bottom:none}
 
     <div class="strip" id="strip"></div>
 
+    <div class="ohwrap"><span class="k">Overheat</span><div class="ohbar"><i id="ohbar"></i></div><span class="ohval" id="ohval">0 %</span></div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>Flight gauges</h3><div class="cap">Cockpit cluster at the scrubbed instant — dials, not tables</div>
+      <canvas id="cGA"></canvas>
+    </div>
+
+    <div class="verdict" id="outcome" style="margin:0 0 16px">
+      <div class="lead">Entry outcome &amp; resource ledger</div>
+      <div class="state" id="ostate">—</div>
+      <div class="why" id="owhy"></div>
+    </div>
+
     <div class="grid2">
+      <div class="card">
+        <h3>Orbit &amp; approach</h3><div class="cap">Altitudes exaggerated ×6 · <span id="landInd">—</span></div>
+        <canvas id="cORB"></canvas>
+        <div class="legend"><span><i style="background:#40566b"></i>start orbit</span><span><i style="background:var(--em)"></i>post-burn</span><span><i style="background:var(--heat)"></i>entry</span><span><i style="background:var(--n2)"></i>skip orbit</span><span><i style="background:var(--warn)"></i>ballistic projection</span><span><i style="background:var(--oi)"></i>atmospheric impact</span></div>
+      </div>
+      <div class="card">
+        <h3>Control authority handover</h3><div class="cap">Where plasma braking hands the ship to atmospheric steering</div>
+        <canvas id="cAU"></canvas>
+        <div class="legend"><span><i style="background:var(--n2)"></i>MHD side force</span><span><i style="background:var(--em)"></i>aerodynamic lift</span><span><i style="background:var(--warn)"></i>handover</span></div>
+      </div>
+      <div class="card">
+        <h3>Shield cross-section</h3><div class="cap" id="shCap">Toroid curls, magnetopause, particle containment</div>
+        <canvas id="cSH"></canvas>
+        <div class="legend"><span><i style="background:var(--n2)"></i>field curls</span><span><i style="background:var(--em)"></i>magnetopause</span><span><i style="background:var(--li)"></i>seed ions</span><span><i style="background:var(--dim)"></i>neutrals</span></div>
+      </div>
       <div class="card">
         <h3>Entry corridor</h3><div class="cap">Altitude vs. velocity — the classic h–V plane</div>
         <canvas id="cHV"></canvas>
@@ -402,6 +472,7 @@ tbody tr:last-child td{border-bottom:none}
         <li>Shock-layer state from a real-gas fit T₂ ≈ 1300·√(h₀ in MJ/kg), density ratio 12, mean molecular mass blended through dissociation near 3500 K.</li>
         <li>Electron density from a multi-species <b>Saha</b> charge balance solved by fixed-point iteration over NO (9.26 eV), N/O (13.6 eV) and seeded Li (5.39 eV).</li>
         <li>Conductivity from electron–neutral and Coulomb collision frequencies in series; Q, Hall parameter and magnetic Reynolds number follow.</li>
+        <li><b>Gameplay layer</b> on top of the physics: a deorbit planner (conic to the interface, Oberth readout), finite battery / lithium / TPS heat-load budgets with in-flight consequences (coil quench, seed dry-out, burn-through), a KSP-style overheat meter, skip-outs resolved to their recapture orbit, and a two-track landing projection (ballistic vs. atmospheric) from the scrubbed state.</li>
       </ul>
     </div>
     <div>
@@ -638,11 +709,20 @@ function state(h,V,p){
           Parr,Qlift,Pcryo,Pseed,Pfeed,Pavi,Pgen,Ptot,Pnet,Pbrake};
 }
 
-/* ---------- trajectory integration ---------- */
+/* ---------- trajectory integration ----------
+   Beyond the physics, this now runs the resource game: a finite battery
+   (empty -> the coil quenches and the shield is gone), a finite lithium
+   tank (dry -> unseeded plasma), a cumulative TPS heat-load budget, and a
+   KSP-style overheat meter that integrates time spent above the TPS flux
+   limit. p.limits gates the game-over breaks so envelope sweeps (bare
+   comparison, B-sizing) still integrate the full trajectory.              */
 function simulate(p,dt){
   dt=dt||0.2;
   const S=Math.PI*p.D*p.D/4, CD0=1.35;
   let V=p.V0, gam=p.gam0*Math.PI/180, h=p.h0, s=0, t=0, Jheat=0, Eelec=0, mLiUsed=0;
+  let battE=(p.batt!==undefined)?p.batt:Infinity;
+  let liLeft=(p.liTank!==undefined)?p.liTank:Infinity;
+  let oh=0, reason=null, quenchT=null, dryT=null, shieldAlive=true;
   const out=[]; let peak={q:0}, maxG=0, guard=0;
 
   const deriv=(y,dragF)=>{
@@ -657,18 +737,31 @@ function simulate(p,dt){
   };
 
   while(h>15000 && V>350 && t<2600 && guard++<40000){
-    const st=state(h,V,p);
-    const rho=st.rho, r=C.Re+h;
+    let pNow=p;
+    if(!shieldAlive || liLeft<=0){
+      pNow=Object.assign({},p);
+      if(!shieldAlive){pNow.on=false; pNow.B=0;}
+      if(liLeft<=0) pNow.mLi=0;
+    }
+    const st=state(h,V,pNow);
+    const rho=st.rho;
     const CD=CD0*st.dragFac;
     const D=0.5*rho*V*V*S*CD, L=0.5*rho*V*V*S*CD0*p.LD;
     const gLoad=Math.sqrt(D*D+L*L)/(p.m*C.g0);
     st.Pbrake=D*V;
     st.gLoad=gLoad; st.t=t; st.s=s; st.gam=gam; st.J=Jheat; st.D=D; st.CD=CD;
+    st.L=L;
+    st.Fmhd=0.15*Math.max(st.dragFac-1,0)*st.Abody*st.qdyn;  // asymmetric-bubble side force
     st.Eelec=Eelec; st.mLiUsed=mLiUsed;
+    st.oh=oh;
+    st.batt=isFinite(battE)?Math.max(battE,0)/p.batt:1;
+    st.li=isFinite(liLeft)?Math.max(liLeft,0)/p.liTank:1;
+    st.shieldAlive=shieldAlive;
     out.push(st);
 
     if(st.q>peak.q) peak=st;
     if(gLoad>maxG) maxG=gLoad;
+    if(p.limits && gLoad>12){reason='overg'; break;}
 
     let y=[V,gam,h,s];
     const k1=deriv(y,st.dragFac);
@@ -677,12 +770,95 @@ function simulate(p,dt){
     const y4=y.map((v,i)=>v+dt*k3[i]);     const k4=deriv(y4,st.dragFac);
     for(let i=0;i<4;i++) y[i]+=dt/6*(k1[i]+2*k2[i]+2*k3[i]+k4[i]);
 
-    Jheat+=st.q*dt; Eelec+=st.Pnet*dt; mLiUsed+=p.mLi*dt;
+    Jheat+=st.q*dt; Eelec+=st.Pnet*dt; mLiUsed+=pNow.mLi*dt;
+    battE-=st.Pnet*dt; liLeft-=pNow.mLi*dt;
+    if(battE<=0 && shieldAlive){shieldAlive=false; quenchT=t;}
+    if(liLeft<=0 && dryT===null && p.mLi>0) dryT=t;
+    /* overheat meter: charges while flux sits above ~92 % of the TPS limit,
+       relaxes below it. Saturation = burn-through. Time constant ~22 s.   */
+    oh=Math.max(0, oh + dt*((st.q/p.qLim)-0.92)/22);
+    if(p.limits && oh>=1){reason='burnup'; break;}
+    if(p.limits && p.Jcap!==undefined && Jheat>p.Jcap){reason='tps'; break;}
     V=y[0]; gam=y[1]; h=y[2]; s=y[3]; t+=dt;
     if(h>135000 && gam>0) break;                       // skip-out
   }
-  return {pts:out, peak:peak, maxG:maxG, J:Jheat, Eelec:Eelec, mLi:mLiUsed,
-          tEnd:t, sEnd:s, hEnd:h, skip:(h>130000)};
+  if(!reason) reason=(h>130000)?'skip':(t>=2600||guard>=40000)?'timeout':'landed';
+  const res={pts:out, peak:peak, maxG:maxG, J:Jheat, Eelec:Eelec, mLi:mLiUsed,
+          tEnd:t, sEnd:s, hEnd:h, VEnd:V, gamEnd:gam, skip:(h>130000),
+          reason:reason, oh:oh, quenchT:quenchT, dryT:dryT,
+          battLeft:isFinite(battE)?Math.max(battE,0):0,
+          liRem:isFinite(liLeft)?Math.max(liLeft,0):0};
+  if(reason==='skip') res.skipOrbit=orbitFromState(h,V,gam);
+  return res;
+}
+
+/* ---------- orbital mechanics: setup burns, skip-outs, projections ---------- */
+/* Conic elements from an instantaneous state. Used to answer "you skipped
+   out — what orbit are you on now, and when do you come back?"            */
+function orbitFromState(h,V,gam){
+  const r=C.Re+h, eps=V*V/2-C.mu/r, hA=r*V*Math.cos(gam);
+  if(eps>=0) return {esc:true, eps:eps};
+  const a=-C.mu/(2*eps), e=Math.sqrt(Math.max(1+2*eps*hA*hA/(C.mu*C.mu),0));
+  return {esc:false, a:a, e:e, ra:a*(1+e), rp:a*(1-e),
+          T:2*Math.PI*Math.sqrt(a*a*a/C.mu)};
+}
+
+/* Deorbit planner: elliptical start orbit, tangential retrograde burn of
+   dv m/s at true anomaly bta, propagated as a conic to the 122 km entry
+   interface. Returns the interface state plus everything the orbit view
+   needs to draw both ellipses. The Oberth readout is d(energy) = v·dv.    */
+function orbitEntry(o){
+  const ra=C.Re+o.ap*1000, rp=C.Re+o.pe*1000;
+  const a=(ra+rp)/2, e=(ra-rp)/Math.max(ra+rp,1);
+  const nu=o.bta*Math.PI/180;
+  const slr=a*(1-e*e);
+  const r=slr/(1+e*Math.cos(nu));
+  const v=Math.sqrt(C.mu*(2/r-1/a));
+  const hA=Math.sqrt(C.mu*slr);
+  const vr=(C.mu/hA)*e*Math.sin(nu);
+  const vPe=Math.sqrt(C.mu*(2/rp-1/a));
+  const v2=Math.max(v-o.dv,10);
+  const gam=Math.asin(Math.max(-1,Math.min(1,vr/Math.max(v,1))));
+  const eps=v2*v2/2-C.mu/r;
+  const h2=r*v2*Math.cos(gam);
+  const out={a:a,e:e,ra:ra,rp:rp,nu:nu,r:r,v:v,v2:v2,eps:eps,h2:h2,ok:false,
+             dEhere:v*o.dv/1e6, dEpe:vPe*o.dv/1e6};
+  if(eps>=0){out.note='Burn leaves the ship unbound — no entry.'; return out;}
+  const a2=-C.mu/(2*eps);
+  const e2=Math.sqrt(Math.max(1+2*eps*h2*h2/(C.mu*C.mu),0));
+  const slr2=h2*h2/C.mu;
+  const rp2=a2*(1-e2);
+  out.a2=a2; out.e2=e2; out.rp2=rp2; out.slr2=slr2;
+  const c2=Math.max(-1,Math.min(1,(slr2/r-1)/Math.max(e2,1e-9)));
+  let nu2=Math.acos(c2); if(vr<0) nu2=-nu2;
+  out.nu2=nu2; out.om2=nu-nu2;              // transfer periapsis direction, world frame
+  const ri=C.Re+122000;
+  if(rp2>ri){out.note='Transfer periapsis '+((rp2-C.Re)/1000).toFixed(0)+' km — above the 122 km interface. No entry: the ship coasts on this ellipse forever.'; return out;}
+  const vi=Math.sqrt(2*(eps+C.mu/ri));
+  const cgi=Math.max(-1,Math.min(1,h2/(ri*vi)));
+  out.Vi=vi; out.gami=-Math.acos(cgi)*180/Math.PI;
+  out.nui=-Math.acos(Math.max(-1,Math.min(1,(slr2/ri-1)/Math.max(e2,1e-9))));
+  out.ok=true;
+  return out;
+}
+
+/* Target landing indicator, ballistic half: propagate the current state
+   with drag switched off — the pure conic the ship would fly in vacuum.
+   The atmospheric projection is the simulator's own future.               */
+function propBallistic(st0){
+  let V=st0.V, gam=st0.gam, h=st0.h, s=st0.s, t=0, guard=0;
+  const pts=[[s,h]];
+  while(h>0 && h<3.5e6 && t<7000 && guard++<9000){
+    const dtb=h>200000?5:1;
+    const r=C.Re+h, g=C.mu/(r*r);
+    V+=-g*Math.sin(gam)*dtb;
+    gam+=(V/r-g/Math.max(V,1))*Math.cos(gam)*dtb;
+    h+=V*Math.sin(gam)*dtb;
+    s+=V*Math.cos(gam)*C.Re/r*dtb;
+    t+=dtb;
+    pts.push([s,h]);
+  }
+  return {pts:pts, s:s, h:h, t:t, impact:h<=0};
 }
 
 /* ---------- magnet sizing ---------- */
@@ -839,13 +1015,18 @@ function heatRamp(q){ // W/m^2 -> colour
 }
 
 /* ---------- parameters ---------- */
-const IDS=['V0','G0','M','D','RN','LD','QL','B','ML','Z'];
+const IDS=['V0','G0','M','D','RN','LD','QL','B','ML','Z','OAP','OPE','BTA','DV','BAT','LIT','HC'];
+let entryMode='direct';
 function readP(){
   return {
     V0:+$('V0').value*1000, gam0:+$('G0').value, h0:122000,
     m:+$('M').value*1000, D:+$('D').value, Rn:+$('RN').value, LD:+$('LD').value,
     qLim:+$('QL').value*1e4, B:+$('B').value, mLi:+$('ML').value/1000, zeta:+$('Z').value/100,
-    on:$('SH').checked, preIon:$('PI').checked, regen:$('RG').checked
+    on:$('SH').checked, preIon:$('PI').checked, regen:$('RG').checked,
+    mode:entryMode,
+    ap:+$('OAP').value, pe:+$('OPE').value, bta:+$('BTA').value, dv:+$('DV').value,
+    batt:+$('BAT').value*1e9, liTank:+$('LIT').value, Jcap:+$('HC').value*1e6,
+    limits:true
   };
 }
 function showP(p){
@@ -859,15 +1040,37 @@ function showP(p){
   $('v-B').textContent=p.B.toFixed(3);
   $('v-ML').textContent=(p.mLi*1000).toFixed(0);
   $('v-Z').textContent=(p.zeta*100).toFixed(2);
+  $('v-OAP').textContent=p.ap.toFixed(0);
+  $('v-OPE').textContent=p.pe.toFixed(0);
+  $('v-BTA').textContent=p.bta.toFixed(0);
+  $('v-DV').textContent=p.dv.toFixed(0);
+  $('v-BAT').textContent=(p.batt/1e9).toFixed(1);
+  $('v-LIT').textContent=p.liTank.toFixed(0);
+  $('v-HC').textContent=(p.Jcap/1e6).toFixed(0);
+}
+function orbitReadout(o){
+  const el=$('orbitOut');
+  if(!o.ok){ el.innerHTML=o.note; return; }
+  el.innerHTML='Interface: V₀ = <n>'+(o.Vi/1000).toFixed(2)+'</n> km/s · γ₀ = <n>'+
+    o.gami.toFixed(2).replace('-','−')+'</n>°'+
+    '<span class="ob">Oberth: Δε = v·Δv — this burn removes '+o.dEhere.toFixed(2)+
+    ' MJ/kg; the same Δv at periapsis would remove '+o.dEpe.toFixed(2)+' MJ/kg.</span>';
 }
 
 /* ---------- state ---------- */
-let P0, SIM, BARE, AE, idx=0, playing=false, tab='primer', prevRes={};
+let P0, SIM, BARE, AE, ORB=null, idx=0, playing=false, tab='primer', prevRes={};
 
 function recompute(){
-  P0=readP(); showP(P0);
+  P0=readP();
+  ORB=null;
+  if(P0.mode==='orbit'){
+    ORB=orbitEntry(P0);
+    if(ORB.ok){ P0.V0=ORB.Vi; P0.gam0=ORB.gami; }
+    orbitReadout(ORB);
+  }
+  showP(P0);
   SIM=simulate(P0,0.2);
-  const pb=Object.assign({},P0,{on:false,B:0});
+  const pb=Object.assign({},P0,{on:false,B:0,limits:false});
   BARE=simulate(pb,0.2);
   AE=allenEggers(P0);
   $('scrub').max=Math.max(SIM.pts.length-1,1);
@@ -888,7 +1091,10 @@ function strip(st){
     ['decel',st.gLoad.toFixed(2),'g'],
     ['interaction Q',st.Q.toFixed(2),''],
     ['n<sub>e</sub>',sci(st.ne,2),'m⁻³'],
-    ['ship power',W(st.Pnet),'']
+    ['ship power',W(st.Pnet),''],
+    ['TPS soak',(st.J/Math.max(P0.Jcap,1)*100).toFixed(0),'%'],
+    ['battery',((st.batt===undefined?1:st.batt)*100).toFixed(0),'%'],
+    ['Li tank',((st.li===undefined?1:st.li)*100).toFixed(0),'%']
   ];
   $('strip').innerHTML=cells.map(c=>
     `<div class="cell"><div class="k">${c[0]}</div><div class="v">${c[1]}<span class="u">${c[2]}</span></div></div>`).join('');
@@ -1330,10 +1536,352 @@ function verdict(){
   $('vwhy').innerHTML=why;
 }
 
+/* ---------- raw canvas helper (cached sizing, for hand-drawn instruments) ---------- */
+function ctx2d(cv,Ht){
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const Wd=Math.max(cv.clientWidth||340,200);
+  if(cv.width!==Math.round(Wd*dpr)||cv.height!==Math.round(Ht*dpr)){
+    cv.width=Math.round(Wd*dpr); cv.height=Math.round(Ht*dpr); cv.style.height=Ht+'px';
+  }
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,Wd,Ht);
+  return {g:g,W:Wd,H:Ht};
+}
+
+/* ---------- gauge cluster ---------- */
+function drawGauges(st){
+  const o=ctx2d($('cGA'),120), g=o.g, W=o.W, H=o.H;
+  const defs=[
+    {k:'G-LOAD',u:'g',min:0,max:15,red:[8,15],v:st.gLoad,f:v=>v.toFixed(1)},
+    {k:'FLUX/LIM',u:'%',min:0,max:160,red:[100,160],v:st.q/P0.qLim*100,f:v=>v.toFixed(0)},
+    {k:'WALL',u:'K',min:0,max:2600,red:[1900,2600],v:st.Tw,f:v=>v.toFixed(0)},
+    {k:'TPS SOAK',u:'%',min:0,max:100,red:[85,100],v:st.J/Math.max(P0.Jcap,1)*100,f:v=>v.toFixed(0)},
+    {k:'BATTERY',u:'%',min:0,max:100,red:[0,15],v:(st.batt===undefined?1:st.batt)*100,f:v=>v.toFixed(0)},
+    {k:'LI TANK',u:'%',min:0,max:100,red:[0,10],v:(st.li===undefined?1:st.li)*100,f:v=>v.toFixed(0)}
+  ];
+  const n=defs.length, cw=W/n;
+  defs.forEach((d,i)=>{
+    const cx=cw*i+cw/2, cy=62, R=Math.min(cw*0.36,40);
+    const a0=Math.PI*0.75, a1=Math.PI*2.25;
+    const A=v=>a0+(a1-a0)*Math.max(0,Math.min(1,(v-d.min)/(d.max-d.min)));
+    g.lineWidth=5; g.strokeStyle='#1c2c3e';
+    g.beginPath(); g.arc(cx,cy,R,a0,a1); g.stroke();
+    g.strokeStyle='rgba(255,77,94,.5)';
+    g.beginPath(); g.arc(cx,cy,R,A(d.red[0]),A(d.red[1])); g.stroke();
+    const inRed=d.v>=d.red[0]&&d.v<=d.red[1];
+    g.strokeStyle=inRed?'#ff4d5e':'#3fd8e0'; g.lineWidth=3;
+    g.beginPath(); g.arc(cx,cy,R-6,a0,A(d.v)); g.stroke();
+    const an=A(d.v);
+    g.strokeStyle='#cfdcea'; g.lineWidth=1.5;
+    g.beginPath();
+    g.moveTo(cx+Math.cos(an)*(R-14),cy+Math.sin(an)*(R-14));
+    g.lineTo(cx+Math.cos(an)*(R+3),cy+Math.sin(an)*(R+3));
+    g.stroke();
+    g.fillStyle='#5b7189'; g.font='8px ui-monospace,monospace'; g.textAlign='center';
+    g.fillText(d.k,cx,H-8);
+    g.fillStyle=inRed?'#ff4d5e':'#cfdcea'; g.font='11px ui-monospace,monospace';
+    g.fillText(d.f(d.v)+(d.u==='%'?'%':''),cx,cy+4);
+    if(d.u!=='%'){g.fillStyle='#5b7189'; g.font='7.5px ui-monospace,monospace'; g.fillText(d.u,cx,cy+14);}
+  });
+}
+
+/* ---------- orbit & approach view ---------- */
+function drawOrbit(st){
+  const o=ctx2d($('cORB'),260), g=o.g, W=o.W, H=o.H;
+  const KX=6;                                        // radial altitude exaggeration
+  const rd=r=>C.Re+KX*(r-C.Re);
+  const inOrbit=(P0.mode==='orbit'&&ORB);
+  const BAL=st?propBallistic(st):null;
+  let rmax=rd(C.Re+320000);
+  if(inOrbit) rmax=Math.max(rmax,rd(ORB.ra));
+  if(SIM.skipOrbit&&!SIM.skipOrbit.esc) rmax=Math.max(rmax,rd(SIM.skipOrbit.ra));
+  if(BAL) BAL.pts.forEach(p=>{rmax=Math.max(rmax,rd(C.Re+p[1]));});
+  rmax*=1.05;
+  const cx=W/2, cy=H/2, sc=Math.min(W,H)/2*0.96/rmax;
+  const px=(r,ph)=>[cx+rd(r)*sc*Math.cos(ph), cy-rd(r)*sc*Math.sin(ph)];
+
+  // planet, sensible-atmosphere band, MHD corridor band, interface ring
+  g.fillStyle='#122031'; g.beginPath(); g.arc(cx,cy,C.Re*sc,0,7); g.fill();
+  const ring=(h1,h2,colr)=>{
+    const R1=rd(C.Re+h1)*sc, R2=rd(C.Re+h2)*sc;
+    g.strokeStyle=colr; g.lineWidth=Math.max(R2-R1,0.5);
+    g.beginPath(); g.arc(cx,cy,(R1+R2)/2,0,7); g.stroke();
+  };
+  ring(0,122000,'rgba(63,216,224,.07)');
+  ring(55000,95000,'rgba(139,108,255,.13)');         // where the plasma brake works
+  g.strokeStyle='#2a415c'; g.lineWidth=1;
+  g.beginPath(); g.arc(cx,cy,C.Re*sc,0,7); g.stroke();
+  g.strokeStyle='rgba(63,216,224,.35)'; g.setLineDash([2,4]);
+  g.beginPath(); g.arc(cx,cy,rd(C.Re+122000)*sc,0,7); g.stroke(); g.setLineDash([]);
+
+  const ellipse=(a,e,om,col,dash)=>{
+    g.strokeStyle=col; g.lineWidth=1.3; g.setLineDash(dash||[]);
+    g.beginPath(); let pen=false;
+    for(let i=0;i<=360;i++){
+      const nu=i*Math.PI/180, r=a*(1-e*e)/(1+e*Math.cos(nu));
+      if(r<C.Re+10000||!isFinite(r)||r<0){pen=false;continue;}
+      const P=px(r,om+nu);
+      if(!pen){g.moveTo(P[0],P[1]);pen=true;} else g.lineTo(P[0],P[1]);
+    }
+    g.stroke(); g.setLineDash([]);
+  };
+
+  let phi0=1.9;                                      // world angle of the entry-interface point
+  if(inOrbit){
+    ellipse(ORB.a,ORB.e,0,'#40566b',[3,3]);          // start orbit
+    const bp=px(ORB.r,ORB.nu);                       // burn point
+    g.fillStyle='#3fd8e0'; g.beginPath(); g.arc(bp[0],bp[1],3.4,0,7); g.fill();
+    g.fillStyle='#5b7189'; g.font='8.5px ui-monospace,monospace'; g.textAlign='left';
+    g.fillText('burn −'+P0.dv.toFixed(0)+' m/s',bp[0]+6,bp[1]-4);
+    if(ORB.a2!==undefined) ellipse(ORB.a2,ORB.e2,ORB.om2,'#3fd8e0',[5,3]);  // post-burn transfer
+    if(ORB.ok) phi0=ORB.om2+ORB.nui;
+  }
+  const entryValid=!(inOrbit&&!ORB.ok);
+
+  if(entryValid&&SIM.pts.length){
+    // flown entry, shaded by heat flux
+    g.lineWidth=2;
+    for(let i=1;i<SIM.pts.length;i++){
+      const A=SIM.pts[i-1], B=SIM.pts[i];
+      const P1=px(C.Re+A.h,phi0+A.s/C.Re), P2=px(C.Re+B.h,phi0+B.s/C.Re);
+      g.strokeStyle=heatRamp(B.q);
+      g.beginPath(); g.moveTo(P1[0],P1[1]); g.lineTo(P2[0],P2[1]); g.stroke();
+    }
+    // skip-out: the recaptured orbit
+    if(SIM.reason==='skip'&&SIM.skipOrbit&&!SIM.skipOrbit.esc){
+      const so=SIM.skipOrbit, rex=C.Re+SIM.hEnd, phex=phi0+SIM.sEnd/C.Re;
+      const slr=so.a*(1-so.e*so.e);
+      let nuex=Math.acos(Math.max(-1,Math.min(1,(slr/rex-1)/Math.max(so.e,1e-9))));
+      ellipse(so.a,so.e,phex-nuex,'#8b6cff',[4,3]);
+      const apP=px(so.ra,phex-nuex+Math.PI);
+      g.fillStyle='#8b6cff'; g.beginPath(); g.arc(apP[0],apP[1],3,0,7); g.fill();
+      g.font='8.5px ui-monospace,monospace'; g.textAlign='center';
+      g.fillText('Ap '+((so.ra-C.Re)/1000).toFixed(0)+' km',apP[0],apP[1]-7);
+    }
+    // target landing indicator: ballistic projection + markers
+    if(BAL){
+      g.strokeStyle='rgba(255,193,77,.8)'; g.lineWidth=1; g.setLineDash([2,3]);
+      g.beginPath(); let pen=false;
+      BAL.pts.forEach(p=>{
+        const P=px(C.Re+Math.max(p[1],0),phi0+p[0]/C.Re);
+        if(!pen){g.moveTo(P[0],P[1]);pen=true;} else g.lineTo(P[0],P[1]);
+      });
+      g.stroke(); g.setLineDash([]);
+      if(BAL.impact){
+        const P=px(C.Re,phi0+BAL.s/C.Re);
+        g.fillStyle='#ffc14d'; g.beginPath(); g.arc(P[0],P[1],3,0,7); g.fill();
+      }
+    }
+    if(SIM.reason==='landed'){
+      const P=px(C.Re,phi0+SIM.sEnd/C.Re);
+      g.fillStyle='#5ee68a'; g.beginPath(); g.arc(P[0],P[1],3.4,0,7); g.fill();
+    }
+    // the ship
+    if(st){
+      const P=px(C.Re+st.h,phi0+st.s/C.Re);
+      g.fillStyle='#cfdcea'; g.beginPath(); g.arc(P[0],P[1],3,0,7); g.fill();
+      g.strokeStyle='rgba(207,220,234,.5)'; g.lineWidth=1;
+      g.beginPath(); g.arc(P[0],P[1],6,0,7); g.stroke();
+    }
+  }
+
+  // landing-indicator readout
+  const li=$('landInd');
+  if(!entryValid) li.textContent='no entry on this transfer';
+  else{
+    const balTxt=BAL&&BAL.impact?('ballistic +'+((BAL.s-(st?st.s:0))/1000).toFixed(0)+' km'):'ballistic: no impact';
+    const atmTxt=SIM.reason==='landed'?('atmo +'+((SIM.sEnd-(st?st.s:0))/1000).toFixed(0)+' km'):
+                 SIM.reason==='skip'?'atmo: skip-out':'atmo: lost';
+    li.textContent=atmTxt+' · '+balTxt;
+  }
+}
+
+/* ---------- control authority handover ---------- */
+function drawAuthority(st){
+  const km=x=>x/1000;
+  let hX=null;
+  for(const s of SIM.pts){ if(s.L>s.Fmhd&&s.L>50){hX=km(s.h);break;} }
+  const fmax=SIM.pts.reduce((a,b)=>Math.max(a,b.L,b.Fmhd),100);
+  plot($('cAU'),{h:200,x:{min:15,max:122,label:'h  km',invert:true},
+    y:{min:1,max:fmax*3,log:true,label:'F  N'},
+    marks:hX?[{x:hX,color:'#ffc14d',label:'handover '+hX.toFixed(0)+' km'}]:[],
+    series:[{data:SIM.pts.map(s=>[km(s.h),Math.max(s.Fmhd,0.9)]),color:'#8b6cff',w:1.8},
+            {data:SIM.pts.map(s=>[km(s.h),Math.max(s.L,0.9)]),color:'#3fd8e0',w:1.8}],
+    cursor:st?[km(st.h),Math.max(st.L,0.9)]:undefined});
+}
+
+/* ---------- shield cross-section: toroid curls & particle containment ---------- */
+const SHP={parts:[],t:0};
+function shRegimeOf(st){
+  if(!st) return 'gas';
+  if(st.Kn>0.1) return 'free';
+  if(P0&&P0.on&&P0.B>0&&st.shieldAlive!==false&&st.gQ>0.12) return 'coupled';
+  return 'gas';
+}
+function drawShield(){
+  const cv=$('cSH'); if(!cv||!SIM||!SIM.pts.length) return;
+  const st=SIM.pts[Math.min(idx,SIM.pts.length-1)];
+  const o=ctx2d(cv,240), g=o.g, W=o.W, H=o.H;
+  const reg=shRegimeOf(st);
+  const bx=W*0.68, cy=H/2, Rb=30;
+  const stand=Math.min(Math.max(st.stand||1,1),3.2);
+  const Rm=Rb*stand;
+  SHP.t++;
+
+  // freestream direction ticks
+  g.strokeStyle='rgba(91,113,137,.4)'; g.lineWidth=1;
+  for(let i=0;i<4;i++){
+    const y=H*0.14+i*H*0.24, xo=((SHP.t*2.2)%34);
+    g.beginPath(); g.moveTo(8+xo,y); g.lineTo(24+xo,y); g.stroke();
+  }
+
+  // bow glow, shaded by flux, standing at the effective obstacle
+  const glowX=bx-Rm, glowA=Math.max(0,Math.min(0.55,(Math.log10(Math.max(st.q,1))-3)/6));
+  if(glowA>0.02){
+    const gr=g.createRadialGradient(glowX,cy,2,glowX,cy,Rm*1.5);
+    gr.addColorStop(0,heatRamp(st.q).replace('rgb','rgba').replace(')',','+glowA+')'));
+    gr.addColorStop(1,'rgba(0,0,0,0)');
+    g.fillStyle=gr; g.beginPath(); g.arc(glowX,cy,Rm*1.5,0,7); g.fill();
+  }
+
+  // dipole field curls, front-to-back, both hemispheres
+  const coupled=(reg==='coupled');
+  g.lineWidth=1.1;
+  [0.55,0.8,1.05].forEach((k,ki)=>{
+    const L=Rm*(k+0.25);
+    g.strokeStyle='rgba(139,108,255,'+(coupled?0.55-ki*0.13:0.2-ki*0.04)+')';
+    [1,-1].forEach(sgn=>{
+      g.beginPath(); let pen=false;
+      for(let d=10;d<=170;d+=4){
+        const th=d*Math.PI/180, r=L*Math.sin(th)*Math.sin(th);
+        const X=bx-r*Math.cos(th), Y=cy-sgn*r*Math.sin(th);
+        if(!pen){g.moveTo(X,Y);pen=true;} else g.lineTo(X,Y);
+      }
+      g.stroke();
+    });
+  });
+
+  // magnetopause — the energy reflector
+  if(P0.on&&P0.B>0&&st.shieldAlive!==false){
+    g.strokeStyle=coupled?'rgba(63,216,224,.85)':'rgba(63,216,224,.25)';
+    g.lineWidth=coupled?1.8:1;
+    g.setLineDash(coupled?[]:[3,4]);
+    g.beginPath(); g.arc(bx,cy,Rm,Math.PI*0.55,Math.PI*1.45); g.stroke();
+    g.setLineDash([]);
+  }
+
+  // neutral cushion in the collapsed regime
+  if(reg==='gas'){
+    const gr=g.createRadialGradient(bx-Rb,cy,4,bx-Rb,cy,Rb*1.7);
+    gr.addColorStop(0,'rgba(139,163,189,.30)');
+    gr.addColorStop(1,'rgba(139,163,189,0)');
+    g.fillStyle=gr; g.beginPath(); g.arc(bx-Rb,cy,Rb*1.7,0,7); g.fill();
+  }
+
+  // the vehicle
+  g.fillStyle='#1a2836';
+  g.beginPath();
+  g.arc(bx,cy,Rb,Math.PI*0.5,Math.PI*1.5,true);
+  g.lineTo(W-6,cy+Rb); g.lineTo(W-6,cy-Rb); g.closePath();
+  g.fill();
+  g.strokeStyle='#3a5470'; g.lineWidth=1; g.stroke();
+  g.fillStyle='#ff3b4e'; g.fillRect(bx-4,cy-Rb*0.55,4,Rb*1.1);   // the coil
+
+  // particles
+  const vsc=2.0+Math.min(st.V/4000,2.5);
+  const rate=reg==='free'?1:2;
+  for(let i=0;i<rate;i++){
+    if(SHP.parts.length<110&&Math.random()<0.8){
+      const ion=reg==='coupled'?Math.random()<0.8:false;
+      SHP.parts.push({x:-4,y:Math.random()*H,vx:vsc,vy:0,ion:ion,ph:Math.random()*7,a:1});
+    }
+  }
+  SHP.parts=SHP.parts.filter(p=>{
+    const dx=p.x-bx, dy=p.y-cy, dist=Math.hypot(dx,dy);
+    if(reg==='coupled'&&p.ion){
+      if(dist<Rm*1.3){
+        const nx=dx/dist, ny=dy/dist;
+        const push=(Rm*1.3-dist)/(Rm*1.3);
+        p.vx+=nx*push*1.6; p.vy+=ny*push*1.6;
+        const sp=Math.hypot(p.vx,p.vy); const cap=vsc*1.25;
+        if(sp>cap){p.vx*=cap/sp; p.vy*=cap/sp;}
+      }
+      p.ph+=0.55; p.y+=Math.sin(p.ph)*0.8;             // gyration
+    } else if(reg==='gas'){
+      if(dist<Rb*2.1){ p.vx*=0.86; p.vy+=(Math.random()-0.5)*0.7; p.a-=0.03; }
+    }
+    p.x+=p.vx; p.y+=p.vy;
+    if(dist<Rb+2&&Math.abs(p.y-cy)<Rb+2&&p.x>bx-Rb-2) return false;  // hit the body
+    return p.x<W+6&&p.y>-8&&p.y<H+8&&p.a>0;
+  });
+  SHP.parts.forEach(p=>{
+    g.fillStyle=p.ion?'rgba(255,59,78,'+(0.85*p.a)+')':'rgba(139,163,189,'+(0.6*p.a)+')';
+    g.fillRect(p.x,p.y,1.8,1.8);
+  });
+
+  // regime caption
+  const cap=$('shCap');
+  if(reg==='free') cap.textContent='FREE-MOLECULAR (Kn > 0.1) — air too thin for a shock layer: the curls have nothing to grip, particles arrive ballistically';
+  else if(reg==='coupled') cap.textContent='COUPLED — seeded plasma turned at the magnetopause ('+stand.toFixed(2)+'× standoff); the reflector is holding';
+  else cap.textContent='COLLAPSED — the layer is neutral gas, not plasma: magnetic containment gone, the air cushions aerodynamically only';
+}
+(function shLoop(){ try{drawShield();}catch(e){} requestAnimationFrame(shLoop); })();
+
+/* ---------- outcome & resource ledger ---------- */
+function outcomePanel(){
+  const el=$('ostate'), why=$('owhy');
+  if(P0.mode==='orbit'&&ORB&&!ORB.ok){
+    el.className='state s-marg'; el.textContent='NO ENTRY';
+    why.innerHTML=ORB.note+' Push the deorbit Δv or move the burn point.';
+    return;
+  }
+  const R=SIM.reason;
+  let cls='s-ok', txt='', wy='';
+  if(R==='landed'){cls='s-ok'; txt='LANDED';
+    wy='Corridor flown to the 15 km handover at '+(SIM.VEnd||0).toFixed(0)+' m/s, '+
+       (SIM.sEnd/1000).toFixed(0)+' km downrange, '+SIM.tEnd.toFixed(0)+' s.';}
+  else if(R==='skip'){
+    const so=SIM.skipOrbit;
+    if(so&&so.esc){cls='s-no'; txt='EJECTED — ESCAPE';
+      wy='Left the atmosphere above escape energy. This trajectory does not come back.';}
+    else if(so){cls='s-marg'; txt='SKIP-OUT — RECAPTURED ORBIT';
+      wy='Ejected into a '+((so.ra-C.Re)/1000).toFixed(0)+' × '+((so.rp-C.Re)/1000).toFixed(0)+
+         ' km orbit, period '+(so.T/60).toFixed(0)+' min. Periapsis is still in the air — '+
+         'this is atmospheric flight-body capture: every pass sheds energy and the apoapsis walks down. '+
+         'Steepen γ₀ or shed lift to stay in on the next pass.';}
+    else {cls='s-marg'; txt='SKIP-OUT'; wy='';}
+  }
+  else if(R==='burnup'){cls='s-no'; txt='BURNED UP';
+    wy='Overheat meter saturated at t = '+SIM.tEnd.toFixed(0)+' s, h = '+(SIM.hEnd/1000).toFixed(1)+
+       ' km — too long above the TPS flux limit. Fly shallower, buy standoff with B₀/seed, or fit a tougher TPS.';}
+  else if(R==='tps'){cls='s-no'; txt='TPS EXHAUSTED';
+    wy='Integrated heat load passed '+(P0.Jcap/1e6).toFixed(0)+' MJ/m² at t = '+SIM.tEnd.toFixed(0)+
+       ' s. The soak killed you, not the peak — a steeper, shorter corridor spends less total shield.';}
+  else if(R==='overg'){cls='s-no'; txt='OVER-G';
+    wy='Deceleration passed 12 g at t = '+SIM.tEnd.toFixed(0)+' s — the corridor floor. Fly shallower, '+
+       'or spend the magnetic parachute higher to arrive slower.';}
+  else {cls='s-marg'; txt='FLIGHT TERMINATED'; wy='Integration limit reached.';}
+
+  const led=[];
+  led.push('battery '+(SIM.battLeft/1e9).toFixed(2)+' GJ left'+
+    (SIM.quenchT!==null?' — <span style="color:var(--bad)">quenched at t = '+SIM.quenchT.toFixed(0)+' s, shield lost</span>':''));
+  led.push('lithium '+SIM.liRem.toFixed(1)+' kg left'+
+    (SIM.dryT!==null?' — <span style="color:var(--warn)">ran dry at t = '+SIM.dryT.toFixed(0)+' s</span>':''));
+  led.push('TPS margin '+Math.max(0,100-SIM.J/P0.Jcap*100).toFixed(0)+' %');
+  if(P0.mode==='orbit') led.push('Δv spent '+P0.dv.toFixed(0)+' m/s');
+  el.className='state '+cls; el.textContent=txt;
+  why.innerHTML=wy+'<br>'+led.join(' · ');
+}
+
 /* ---------- draw everything ---------- */
 function drawAll(){
   const st=SIM.pts[Math.min(idx,SIM.pts.length-1)], p=P0;
   strip(st); drawTape(st,p); verdict(); tables();
+  $('ohbar').style.width=(Math.min(st.oh||0,1)*100)+'%';
+  $('ohval').textContent=((st.oh||0)*100).toFixed(0)+' %';
+  drawGauges(st);
+  outcomePanel();
+  drawOrbit(st);
+  drawAuthority(st);
   $('clock').textContent=`t = ${st.t.toFixed(1)} s`;
   $('scrub').value=idx;
 
@@ -1387,7 +1935,7 @@ function autoSizeB(){
   setTimeout(()=>{
     const target=1.5;
     let lo=0, hi=3.0, best=null;
-    const test=B=>{const p=Object.assign(readP(),{B:B,on:true}); return simulate(p,0.6).peak.q;};
+    const test=B=>{const p=Object.assign(readP(),{B:B,on:true,limits:false}); return simulate(p,0.6).peak.q;};
     const lim=readP().qLim;
     if(test(hi)>lim/target){ best=null; }
     else { for(let i=0;i<16;i++){const mid=(lo+hi)/2; if(test(mid)<=lim/target){hi=mid;} else {lo=mid;} } best=hi; }
@@ -1416,10 +1964,23 @@ $('scrub').addEventListener('input',e=>{idx=+e.target.value; drawAll();});
 $('peak').onclick=()=>{idx=SIM.pts.indexOf(SIM.peak); drawAll();};
 $('autoB').onclick=autoSizeB;
 $('reset').onclick=()=>{
-  const dflt={V0:7.8,G0:-1.6,M:12,D:5,RN:1.5,LD:0.3,QL:70,B:0.8,ML:12,Z:0.5};
+  const dflt={V0:7.8,G0:-1.6,M:12,D:5,RN:1.5,LD:0.3,QL:70,B:0.8,ML:12,Z:0.5,
+              OAP:400,OPE:250,BTA:180,DV:120,BAT:4,LIT:40,HC:600};
   IDS.forEach(k=>$(k).value=dflt[k]);
   $('SH').checked=true; $('PI').checked=false; $('RG').checked=false; idx=0; recompute();
 };
+function setMode(m){
+  entryMode=m;
+  $('mDirect').classList.toggle('on',m==='direct');
+  $('mOrbit').classList.toggle('on',m==='orbit');
+  $('orbitCtls').style.display=(m==='orbit')?'':'none';
+  $('directCtls').style.opacity=(m==='orbit')?0.45:1;
+  $('V0').disabled=$('G0').disabled=(m==='orbit');
+  $('ic-note').textContent=(m==='orbit')?'derived from the deorbit burn':'interface at 122 km';
+  idx=0; recompute();
+}
+$('mDirect').onclick=()=>setMode('direct');
+$('mOrbit').onclick=()=>setMode('orbit');
 $('play').onclick=()=>{playing=!playing; $('play').textContent=playing?'❚❚ Pause':'▶ Play'; if(playing) tick();};
 function tick(){
   if(!playing) return;

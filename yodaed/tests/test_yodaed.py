@@ -8,7 +8,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 
-from yodaed import bits, campaign, check, graph, yamlite  # noqa: E402
+from yodaed import bits, campaign, check, graph, new, yamlite  # noqa: E402
 
 WORLD = campaign.load_world(REPO)
 
@@ -114,6 +114,22 @@ class TestCheck(unittest.TestCase):
             "b": "mission: B\navailable:\n  at: Earth\n  when:\n    set: y\n"
                  "on:\n  success: set x\n"}))
         self.assertTrue(any("no path from a game start" in q.text for q in qs))
+
+
+class TestNew(unittest.TestCase):
+    def test_scaffold_parses_and_checks(self):
+        root = _tmp_campaign({})
+        msg, code = new.new_mission(root, "pellet-return")
+        self.assertEqual(code, 0, msg)
+        cpg, qs = check.run(root, WORLD)
+        self.assertEqual(len(cpg.missions), 1)
+        # the scaffold must be self-consistent: names resolve, the brief
+        # exists — the only fallout is chain lint on its fresh bit
+        self.assertFalse([q for q in _blocking(qs)
+                          if not q.field.startswith("bit ")],
+                         [q.text for q in _blocking(qs)])
+        msg, code = new.new_mission(root, "pellet-return")
+        self.assertEqual(code, 1, "must refuse to overwrite")
 
 
 class TestStarterCampaign(unittest.TestCase):

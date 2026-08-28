@@ -128,7 +128,9 @@ runs the queue.
       (EV Bible rules), chain-integrity (never-set gates, dead ends,
       reachability, 256-bit ceiling), text (wildcard vocabulary).
       Round-trip validation lands with `build`.
-- [ ] `yodaed new <type>` scaffolding from question context.
+- [x] `yodaed new <type>` scaffolding — `new mission <slug>` writes an
+      annotated mission source plus its brief stub; `new text <relpath>`
+      answers a missing-prose question directly.
 - [ ] `yodaed build` -> resource fork, round-trip verified byte-identical.
 - [x] `yodaed graph` -> mission chain as Mermaid.
 - [ ] Web editor in the site's HUD styling: question queue, map view, sprite

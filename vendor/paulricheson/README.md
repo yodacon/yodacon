@@ -15,9 +15,12 @@ Nothing in this directory is ever edited.
 | --- | --- |
 | `ConEx 1.2.sit` | StuffIt 5, "Arsenic" arithmetic coder |
 | `792_ConEx12.sit.hqx` | BinHex 4.0 wrapping the same `.sit` |
+| `ConEx12u.sit.hqx` | BinHex 4.0 wrapping the 1.1→1.2 updater (two ResCompare patch apps) |
+| `ConEx12.sit.txt`, `ConEx12u.sit.txt` | The 1999 download site's description texts, as published |
 
-Both mirrored 2026-08-27 from the Cythera Guides EV add-on archive. SHA-256 digests
-for both are recorded in `PROVENANCE.md`.
+The first two were mirrored 2026-08-27 from the Cythera Guides EV add-on archive; the
+updater and descriptions from the Internet Archive's *EscapeVelocityPluginCollection*.
+SHA-256 digests for all of them are recorded in `PROVENANCE.md`.
 
 ## `extracted/`
 
@@ -44,6 +47,7 @@ work from anywhere:
 | `convert_all.py` | Batch-decode PICTs to PNG, spïn sheets to RGBA, text to UTF-8 |
 | `pict_decode.py` | Decode a single PICT to an image |
 | `tmpl_dump.py` | Dump a resource against its `TMPL` definition |
+| `zap_catalogue.py` | Catalogue a ResCompare `ZAPS` patch (the 1.1→1.2 updater) and verify it against a fork |
 
 Regenerating `extracted/` from `release/`:
 

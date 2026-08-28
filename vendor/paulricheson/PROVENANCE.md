@@ -13,6 +13,32 @@ Extraction performed 2026-08-27 on macOS (Darwin 25.5.0).
 Mirrored 2026-08-27 from the Cythera Guides EV archive
 (`cytheraguides.com/archives/ambrosia_addons/ev/`).
 
+## The 1.1→1.2 updater (`release/ConEx12u.sit.hqx`)
+
+| File | SHA-256 | Format |
+|---|---|---|
+| `release/ConEx12u.sit.hqx` | `733635f8be2db77e5c6d5c3c0ead8549ea5e3199d01fdfa19fcf7690c5982940` | BinHex 4.0 |
+| `ConEx 1.2 Patches.sit` (inner) | `84d1f09a2ede7583bb7100105e37dce71f7e5e9f1c2273554d28e857ca8667e1` | StuffIt 5, Arsenic |
+
+Recovered 2026-08-27 from the Internet Archive item
+*EscapeVelocityPluginCollection* (`EV.zip` → `EV/Plugins/ConEx12u.sit.hqx`,
+mirrored in full in `vendorignored/`), together with the 1999 download-site
+description texts (`release/ConEx12.sit.txt`, `release/ConEx12u.sit.txt`).
+
+Member timestamps inside the inner `.sit` (per `lsar -l`):
+
+| Member | Archive date/time | Notes |
+|---|---|---|
+| `ConEx 1.2 Patches/` (folder) | 1997-11-28 20:55 | |
+| `ConEx Readme 1.2 patch` (rsrc, 64,360 B) | 1997-11-28 20:18 | ResCompare 5.0 patch app, `APPL`/`ZAPS` |
+| `ConEx1.2 patch` (rsrc, 165,980 B) | 1997-11-28 20:54 | ResCompare 5.0 patch app, `APPL`/`ZAPS` |
+
+These extend the release-evening timeline below: plugin 20:05, readme 20:15,
+readme patch 20:18, plugin patch 20:54, patch folder stuffed 20:55. The
+patch contents are catalogued in
+`docs/lab-reports/2026-08-27-conex-11-to-12-patch-catalogue.md`; every
+post-patch resource size matches the shipped 1.2 plugin.
+
 ## Member timestamps inside the .sit (per `lsar -l`)
 
 | Member | Archive date/time | Notes |

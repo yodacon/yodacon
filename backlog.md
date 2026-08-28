@@ -106,7 +106,11 @@ you still need to create.
 
 ## Phase 3 — Fix up ConEx
 
-- [ ] Catalogue the known 1.1→1.2 fixes from the updater (`ConEx12u`) and diff against 1.2.
+- [x] Catalogue the known 1.1→1.2 fixes from the updater (`ConEx12u`) and diff against 1.2 —
+      [docs/lab-reports/2026-08-27-conex-11-to-12-patch-catalogue.md](docs/lab-reports/2026-08-27-conex-11-to-12-patch-catalogue.md):
+      15 changes recovered from the ResCompare patch directory, all consistent with
+      shipped 1.2. Leads for the play-through: Exeon's self-referencing hyperspace
+      link, and the shipped "Sorry about the bug" landing-bug workaround string.
 - [ ] Play through the 35 linked missions; log every broken bit, dead spöb, and
       bad mission-bit chain.
 - [ ] Repair with `evutils`; keep every change as a reviewable commit.

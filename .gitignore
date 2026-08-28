@@ -1,6 +1,8 @@
 .DS_Store
-vendor/docs/archived/EscapeVelocityPluginCollection.zip
 # Raw unar output of vendor/docs/ConEx 1.2.sit; regenerate with
 # `unar -k visible` — the committed form lives in extracted/
 vendor/expanded/
-vendor/docs/DecoderRing.zip
+
+# Large reference archives kept locally, never committed.
+# See vendorignored/README.md.
+vendorignored/

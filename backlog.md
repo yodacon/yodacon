@@ -142,15 +142,27 @@ you still need to create.
 Prototype lives at `vendor/docs/reentry-console.html`
 (*MHD Reentry Console — Steerable Plasma Shield Envelope Model*).
 
-- [ ] Extract the physics core (heat flux, ballistic coefficient, corridor limits)
-      into a standalone module with tests.
-- [ ] Model the pellet system: lithium-injected pellets cooked by lasers and X-ray
-      emitters, producing the rotating glide pillow. Player controls = injection rate,
-      emitter power, envelope rotation, angle of attack.
-- [ ] Landing loop: reentry corridor → too steep burns you, too shallow skips you out.
-      Fuel and shield state carry in from flight.
-- [ ] Wire the HUD from the splash styling — shield/fuel meters, nav, target, credits.
-- [ ] Failure states that cost the ship, not just the mission.
+**Status 2026-08-27: core DONE, in `~/code/Gonex`.** Design dossier: the
+*Yodacon Flight Manual* artifact (quest graphs, corridor, gauges, controls,
+damage economy). Game data flows from here via `data/export_gonex.py`
+(gazetteer + 36 missions with 1997 briefs → `Gonex/assets/data/conex/`).
+
+- [x] Physics core extracted into `Gonex/internal/reentry` with a headless test
+      suite as the corridor gate: nominal autoland lands clean, dives burn,
+      floats trip the skip meter, same seed → same flight.
+- [x] Pellet system modeled: lithium feed rate `[ ]`, coil boost `B`, envelope
+      rotation `← →`, angle of attack `↑ ↓`, emergency pellet burst `Space` —
+      Saha-seeded conductivity driving magnetopause standoff and steering grip.
+- [x] Landing loop: super-circular interface, corridor needle vs. narrowing band,
+      too steep burns (q̇²- and g²-scaled damage), too shallow skips out (fuel and
+      a day lost); lithium and damage carry between flight and entries.
+- [x] HUD: gauge cluster (needle, crossrange, q̇/g, grip, Li, power, hull, AUTO
+      lamp) + the volumetric plasma pillow in the three emission-line colors with
+      the one-way-mirror shell arc. Splash-token restyle still open for Phase 6.
+- [x] Failure states cost the ship: hull to zero in the plasma ends the voyage;
+      over-g rolls damage the flight computer and cargo clamps (spoiled missions).
+- [ ] Escort/combat mission objectives during the flight phase (academy dudes
+      spawning in-system) — currently auto-resolved on arrival.
 
 ## Phase 5 — Station life
 

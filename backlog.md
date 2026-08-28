@@ -23,19 +23,26 @@ sequence is real reentry physics.
 Source: `vendor/docs/ConEx 1.2.sit` and `vendor/docs/792_ConEx12.sit.hqx`
 (mirrored from the [Cythera Guides EV archive](http://www.cytheraguides.com/archives/ambrosia_addons/ev/)).
 
-- [ ] Get a StuffIt/BinHex extractor working. `unar` and `7z` are **not installed** on
-      this machine — install `unar` (`brew install unar`) or write a pure-Python
-      `.hqx` → MacBinary → resource-fork decoder. The `.hqx` is the safer entry point;
-      it is plain-text and self-describing.
-- [ ] Split the resource fork into individual files under `extracted/` —
-      one file per resource, named `<type>/<id>_<name>.<ext>` (`shïp`, `oütf`, `wëap`,
-      `sÿst`, `spöb`, `mïsn`, `PICT`, `snd `, `STR#`, `rlë8`/`rlëD` sprites).
-- [ ] Decode `rlë8` / `rlëD` sprite banks to PNG sheets. Format is documented in
-      `vendor/docs/Nova Bible.txt`.
-- [ ] Recover the **Yodacon ship** specifically: sprites, `shïp` stats, description
-      `STR#`, and the original Infini-D renders. This is the artifact the whole
-      project exists for.
-- [ ] Commit `extracted/` as the readable, diffable, version-controlled form of ConEx.
+**Status 2026-08-27: DONE.** Full write-up:
+[docs/lab-reports/2026-08-27-conex-resource-extraction.md](docs/lab-reports/2026-08-27-conex-resource-extraction.md);
+dates & hashes in `extracted/PROVENANCE.md`.
+
+- [x] Get a StuffIt/BinHex extractor working — `brew install unar` handled the
+      StuffIt 5 "Arsenic" archive directly; the `.hqx` path was never needed.
+      (`unar -k visible` emits AppleDouble `.rsrc` files.)
+- [x] Split the resource fork into individual files under `extracted/` —
+      `tools/rsrc_extract.py`: 538 resources / 26 types from the plugin, 220 more
+      from the DOCMaker readme.
+- [x] ~~Decode `rlë8`/`rlëD`~~ ConEx is classic EV, so sprites are `spïn`+`PICT`
+      pairs, not Nova `rlë8`. Wrote a QuickDraw PICT v2 decoder instead
+      (`tools/pict_decode.py`): 92/92 plugin PICTs → PNG, 11 sprite sheets
+      composited with mask transparency. (`rlë8` still matters for Nova plugins —
+      keep for evutils.)
+- [x] Recover the **Yodacon ship**: `shïp` 174 stats (via the plugin's own TMPLs),
+      `spïn` 174 → 70×70×36 sprite bank (PICT 20617/20618), target/yard/comm PICTs,
+      dësc 2146 — and it is **playable again** as ship 13 ("Yodacon '97") in
+      `~/code/Gonex`, the new Go port of konex.
+- [x] Commit `extracted/` as the readable, diffable, version-controlled form of ConEx.
 
 ## Phase 2 — evutils (EV, not Nova)
 

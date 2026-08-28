@@ -31,8 +31,8 @@ No CNAME on the apex — the apex carries the A/AAAA records above.
 
 ## TXT — domain verification
 
-    _github-pages-challenge-vonglurt   "ad58c95aeb398cae9c685b0e902d9a"   <- CURRENT
-    _github-pages-challenge-yodacon    <token from the org>               <- NEEDED
+    _github-pages-challenge-vonglurt   "<token, redacted>"    <- CURRENT
+    _github-pages-challenge-yodacon    <token from the org>   <- NEEDED
 
 Domain verification does not transfer between accounts. Because `yodacon.org` is
 verified under `vonglurt`, the organization cannot claim it — the Pages API rejects

@@ -1,0 +1,16 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  roundtrip:
+    name: evutils round-trip gate (ConEx 1.2)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install unar (expands the StuffIt 5 release archive)
+        run: sudo apt-get update && sudo apt-get install -y unar
+      - name: Round-trip unmodified ConEx 1.2 byte-identically
+        run: python3 -m unittest discover -s evutils/tests -v

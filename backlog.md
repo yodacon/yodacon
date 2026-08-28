@@ -49,11 +49,21 @@ dates & hashes in `vendor/paulricheson/PROVENANCE.md`.
 [`vasi/evnova-utils`](https://github.com/vasi/evnova-utils) does this job for EV Nova.
 Classic EV's resources are close cousins — same shapes, smaller structs.
 
-- [ ] Port/adapt the resource struct definitions for classic EV field layouts.
-- [ ] `evutils dump` — resource fork → JSON/YAML.
-- [ ] `evutils build` — JSON/YAML → resource fork (round-trip must be byte-identical
-      before any edit is trusted).
-- [ ] Round-trip test on unmodified ConEx 1.2 as the CI gate.
+**Status 2026-08-27: DONE.** Lives in `evutils/` (see its README). Both forks from
+`ConEx 1.2.sit` verify: `python3 -m evutils verify …` → SHA-256 identical.
+
+- [x] ~~Port~~ classic EV field layouts come from the plugin's **own ResEdit TMPLs**
+      (`evutils/tmpl.py`) — ConEx carries a template named for every EV type it uses,
+      so the 1997 file documents its own structs. No Nova porting needed.
+- [x] `evutils dump` — resource fork → JSON tree (345 of 538 ConEx resources decode
+      to labeled JSON; PICT/snd/icons stay `.bin`).
+- [x] `evutils build` — JSON tree → resource fork; every JSON dump is written only
+      after proving it re-encodes byte-identically, so unedited round-trips are
+      exact by construction (including the Resource Manager's on-disk memory garbage —
+      see `evutils/README.md`).
+- [x] Round-trip test on unmodified ConEx 1.2 as the CI gate —
+      `evutils/tests/test_roundtrip.py`, wired into `.github/workflows/ci.yml` for
+      when the repo is published.
 
 ## Phase 3 — Fix up ConEx
 

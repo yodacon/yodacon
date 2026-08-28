@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Batch-convert extracted ConEx resources to modern formats.
 
-- every PICT           -> extracted/png/PICT/<id>[_<name>].png
-- every spïn sheet     -> extracted/sprites/<id>_<name>.png (RGBA, mask applied)
-- dësc, STR , STR#, TEXT -> extracted/text/... (UTF-8, decoded from MacRoman)
+- every PICT           -> vendor/paulricheson/extracted/png/PICT/<id>[_<name>].png
+- every spïn sheet     -> vendor/paulricheson/extracted/sprites/<id>_<name>.png (RGBA, mask applied)
+- dësc, STR , STR#, TEXT -> vendor/paulricheson/extracted/text/... (UTF-8, decoded from MacRoman)
 
-Usage: convert_all.py <extracted-dir e.g. extracted/ConEx1.2> [readme-dir]
+Usage: convert_all.py <extracted-dir e.g. vendor/paulricheson/extracted/ConEx1.2> [readme-dir]
 """
 import struct
 import sys

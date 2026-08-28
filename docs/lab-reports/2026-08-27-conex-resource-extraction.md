@@ -72,7 +72,7 @@ ID 2 (resource fork) and entry ID 9 (Finder info, yielding the type/creator
 codes in Table III). The fork itself was walked with a 90-line parser:
 header → resource map → type list → reference lists → length-prefixed data
 blocks. Each resource was written to
-`extracted/<container>/<type>/<id>[_<name>].bin`. Resource names and type
+`vendor/paulricheson/extracted/<container>/<type>/<id>[_<name>].bin`. Resource names and type
 codes were decoded as MacRoman (`dësc`, `shïp`, `spïn` …).
 
 ### C. Text recovery (`tools/convert_all.py`, `tools/tmpl_dump.py`)
@@ -133,7 +133,7 @@ HFS timestamps survived StuffIt → APFS extraction intact:
 The plugin was created on a Sunday, worked for ~19 days, and released in one
 evening: final plugin save 20:05, readme finished 20:15, archive stuffed
 immediately after. Full manifest with SHA-256 hashes:
-`extracted/PROVENANCE.md`.
+`vendor/paulricheson/PROVENANCE.md`.
 
 ### B. Resource inventory
 
@@ -185,7 +185,7 @@ deferred).
 ## VI. Conclusion and Future Work
 
 All six objectives were met. The 1997 plugin is now a diffable directory
-tree (`extracted/`), its art is PNG, its prose is UTF-8, its dates are
+tree (`vendor/paulricheson/extracted/`), its art is PNG, its prose is UTF-8, its dates are
 recorded, and one recovered ship is flying again in a modern engine.
 Future work (tracked in `backlog.md` Phase 1–2 and `Gonex/BACKLOG.md`):
 decode `rlë8`-era formats for Nova plugins, convert `snd ` resources,
@@ -208,4 +208,4 @@ composite the remaining ConEx ships against a base-EV resource donor.
 
 `unar` 1.10.8_7 · Python 3.9.6 + Pillow · `tools/rsrc_extract.py` ·
 `tools/pict_decode.py` · `tools/convert_all.py` · `tools/tmpl_dump.py` ·
-outputs under `extracted/{ConEx1.2, ConEx-Readme-1.2, png, sprites, text}`.
+outputs under `vendor/paulricheson/extracted/{ConEx1.2, ConEx-Readme-1.2, png, sprites, text}`.

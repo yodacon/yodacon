@@ -1,6 +1,6 @@
 .DS_Store
-# Raw unar output of vendor/docs/ConEx 1.2.sit; regenerate with
-# `unar -k visible` — the committed form lives in extracted/
+# Raw unar output of vendor/paulricheson/release/ConEx 1.2.sit; regenerate with
+# `unar -k visible` — the committed form lives in vendor/paulricheson/extracted/
 vendor/expanded/
 
 # Large reference archives kept locally, never committed.

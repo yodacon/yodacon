@@ -8,7 +8,7 @@ Extraction performed 2026-08-27 on macOS (Darwin 25.5.0).
 | File | SHA-256 | Format |
 |---|---|---|
 | `ConEx 1.2.sit` | `593d8c50e11cc3d405e06eb3736671afeba76c82527bbd13fd21748ca8032d58` | StuffIt 5, "Arsenic" arithmetic coder |
-| `archived/792_ConEx12.sit.hqx` | `ded5fc0c7d9412ae174bd28a690d683fef65a571b809731ab626a31589aa4627` | BinHex 4.0 wrapping the same .sit |
+| `release/792_ConEx12.sit.hqx` | `ded5fc0c7d9412ae174bd28a690d683fef65a571b809731ab626a31589aa4627` | BinHex 4.0 wrapping the same .sit |
 
 Mirrored 2026-08-27 from the Cythera Guides EV archive
 (`cytheraguides.com/archives/ambrosia_addons/ev/`).

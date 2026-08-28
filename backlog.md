@@ -20,17 +20,17 @@ sequence is real reentry physics.
 
 ## Phase 1 — Crack the archive
 
-Source: `vendor/docs/ConEx 1.2.sit` and `vendor/docs/792_ConEx12.sit.hqx`
+Source: `vendor/paulricheson/release/ConEx 1.2.sit` and `vendor/paulricheson/release/792_ConEx12.sit.hqx`
 (mirrored from the [Cythera Guides EV archive](http://www.cytheraguides.com/archives/ambrosia_addons/ev/)).
 
 **Status 2026-08-27: DONE.** Full write-up:
 [docs/lab-reports/2026-08-27-conex-resource-extraction.md](docs/lab-reports/2026-08-27-conex-resource-extraction.md);
-dates & hashes in `extracted/PROVENANCE.md`.
+dates & hashes in `vendor/paulricheson/PROVENANCE.md`.
 
 - [x] Get a StuffIt/BinHex extractor working — `brew install unar` handled the
       StuffIt 5 "Arsenic" archive directly; the `.hqx` path was never needed.
       (`unar -k visible` emits AppleDouble `.rsrc` files.)
-- [x] Split the resource fork into individual files under `extracted/` —
+- [x] Split the resource fork into individual files under `vendor/paulricheson/extracted/` —
       `tools/rsrc_extract.py`: 538 resources / 26 types from the plugin, 220 more
       from the DOCMaker readme.
 - [x] ~~Decode `rlë8`/`rlëD`~~ ConEx is classic EV, so sprites are `spïn`+`PICT`
@@ -42,7 +42,7 @@ dates & hashes in `extracted/PROVENANCE.md`.
       `spïn` 174 → 70×70×36 sprite bank (PICT 20617/20618), target/yard/comm PICTs,
       dësc 2146 — and it is **playable again** as ship 13 ("Yodacon '97") in
       `~/code/Gonex`, the new Go port of konex.
-- [x] Commit `extracted/` as the readable, diffable, version-controlled form of ConEx.
+- [x] Commit `vendor/paulricheson/extracted/` as the readable, diffable, version-controlled form of ConEx.
 
 ## Phase 2 — evutils (EV, not Nova)
 

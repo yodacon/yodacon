@@ -44,6 +44,27 @@ dates & hashes in `vendor/paulricheson/PROVENANCE.md`.
       `~/code/Gonex`, the new Go port of konex.
 - [x] Commit `vendor/paulricheson/extracted/` as the readable, diffable, version-controlled form of ConEx.
 
+## Phase 1.5 — The gazetteer (BLOCKING: populate the map)
+
+ConEx missions reference stellars and systems by bare ID (`TravelStel: 412`) and we
+hold **no record of what those IDs are**. Until this is populated, mission data is
+unreadable, no map can be drawn, and the editor cannot resolve a single name.
+This blocks Phase 4 of the editor and all mission work.
+
+- [ ] Extract `spob` (stellar objects: name, government, parent system, desc ID)
+      from the base EV scenario data file.
+- [ ] Extract `syst` (star systems: name, x/y coordinates, hyperspace links,
+      government, contained stellars).
+- [ ] Extract ConEx's own `spob`/`syst` additions and overrides — including
+      **Conex, Exeon, and Cenron**, the three the 1999 release told players to land on.
+- [ ] Join base + plugin into one gazetteer: `name <-> ID <-> system <-> coords <-> govt`.
+      Plugin entries override base entries at the same ID.
+- [ ] Reverse-resolve every ID referenced by ConEx's 35 missions. Report any ID
+      that resolves to nothing — those are either our extraction bugs or genuine
+      1999 bugs, and both are findings worth having.
+- [ ] Publish as `data/gazetteer.yaml`, committed and diffable.
+- [ ] Render the universe map (systems + hyperlinks) as SVG in the site HUD styling.
+
 ## Phase 2 — evutils (EV, not Nova)
 
 [`vasi/evnova-utils`](https://github.com/vasi/evnova-utils) does this job for EV Nova.
@@ -64,6 +85,24 @@ Classic EV's resources are close cousins — same shapes, smaller structs.
 - [x] Round-trip test on unmodified ConEx 1.2 as the CI gate —
       `evutils/tests/test_roundtrip.py`, wired into `.github/workflows/ci.yml` for
       when the repo is published.
+
+## Phase 2.5 — `yodaed`, the reproducible mission editor
+
+Full plan: [`docs/mission-editor-plan.md`](docs/mission-editor-plan.md).
+Design premise: plain-text source in git, resource fork as build artifact, and an
+**open-questions queue** that names every unresolved reference and tells you what
+you still need to create.
+
+- [ ] `yodaed check` — the question queue. Highest value; ship first.
+- [ ] YAML mission source format; prose in separate markdown files.
+- [ ] `ids.lock` deterministic name -> ID allocator; bindings never change once made.
+- [ ] `bits.yaml` control-bit registry with generated `set_by` / `tested_by`.
+- [ ] Validation: referential, semantic, chain-integrity, text, round-trip.
+- [ ] `yodaed new <type>` scaffolding from question context.
+- [ ] `yodaed build` -> resource fork, round-trip verified byte-identical.
+- [ ] `yodaed graph` -> mission chain as Mermaid/Graphviz.
+- [ ] Web editor in the site's HUD styling: question queue, map view, sprite
+      previews, live validation — the editor the linked video wished existed.
 
 ## Phase 3 — Fix up ConEx
 
@@ -119,6 +158,13 @@ The whole site and game share one look, taken from the EV splash and in-flight H
 - [ ] Ship the extracted ConEx sprites as page art once Phase 1 lands.
 
 ---
+
+## Project documents
+
+- [`docs/mission-authoring.md`](docs/mission-authoring.md) — how a mission is built:
+  `misn` fields, `desc`/`STR#` text references, control-bit chaining, TMPL/byte layout.
+- [`docs/mission-editor-plan.md`](docs/mission-editor-plan.md) — plan for `yodaed`.
+- [`specs/misn.yaml`](specs/misn.yaml) — mission struct spec (draft, unverified).
 
 ## Resources
 

@@ -1,0 +1,128 @@
+# mïsn — mission resource struct spec
+#
+# STATUS: [VERIFY] — DRAFT, NOT YET CONFIRMED AGAINST BYTES.
+#
+# Field order below follows the presentation order in vendor/docs/Nova Bible.txt,
+# which is NOT guaranteed to be the on-disk order. Offsets are therefore omitted
+# on purpose: adding them before verification would launder a guess into a fact.
+#
+# This file is the single source of truth for BOTH the evutils parser and the
+# generated ResEdit TMPL. Verify per docs/mission-authoring.md §6, then set
+# `verified: true` and freeze the order.
+
+resource: misn
+endian: big            # all classic Mac resources
+verified: false
+target: nova           # Bible is Nova; classic EV subset must be forked once known
+
+# Fields tagged `nova_only: true` are believed absent in classic EV.
+
+fields:
+  # --- availability -------------------------------------------------------
+  - {name: AvailStel,     type: DWRD, doc: "stellar offering the mission; -1 any inhabited; 128-2175 specific; govt bands 9999+"}
+  - {name: AvailLoc,      type: DWRD, doc: "0 computer, 1 bar, 2 ship, 3 spaceport, 4 trade, 5 shipyard, 6 outfit"}
+  - {name: AvailRecord,   type: DWRD, doc: "legal record threshold; -32000 dominated that stellar"}
+  - {name: AvailRating,   type: DWRD, doc: "combat rating floor; -1 ignored"}
+  - {name: AvailRandom,   type: DWRD, doc: "percent availability, recalculated on warp-in; 100 always"}
+
+  # --- objective ----------------------------------------------------------
+  - {name: TravelStel,    type: DWRD, doc: "destination; -1 none, -2 random inhabited, -3 random uninhabited"}
+  - {name: ReturnStel,    type: DWRD, doc: "completion stellar; -4 = initial stellar where accepted"}
+
+  # --- cargo --------------------------------------------------------------
+  - {name: CargoType,     type: DWRD, doc: "-1 none; 0-255 specific; 1000 random standard type"}
+  - {name: CargoQty,      type: DWRD, doc: "tons; negative = abs value +/-50%"}
+  - {name: PickupMode,    type: DWRD, doc: "0 at start, 1 at TravelStel, 2 on boarding special ship"}
+  - {name: DropOffMode,   type: DWRD, doc: "0 at TravelStel, 1 at mission end. NEVER equal to pickup location"}
+  - {name: ScanMask,      type: HWRD, doc: "govts whose ScanMask overlaps treat cargo as illegal"}
+
+  # --- reward -------------------------------------------------------------
+  - {name: PayVal,        type: DLNG, doc: "credits; negative bands clean record / deduct cash"}
+
+  # --- special ships ------------------------------------------------------
+  - {name: ShipCount,     type: DWRD, doc: "-1 none; 0-31 ships"}
+  - {name: ShipSyst,      type: DWRD, doc: "-1 initial, -3 TravelStel's, -4 ReturnStel's, -6 follow player"}
+  - {name: ShipDude,      type: DWRD, doc: "dude resource supplying ship types; 128-639"}
+  - {name: ShipGoal,      type: DWRD, doc: "0 destroy 1 disable 2 board 3 escort 4 observe 5 rescue 6 chase off"}
+  - {name: ShipBehav,     type: DWRD, doc: "0 attack player, 1 protect player, 2 destroy enemy stellars"}
+  - {name: ShipNameID,    type: DWRD, doc: "STR# supplying ship names; -1 normal"}
+  - {name: ShipStart,     type: DWRD, doc: "0 random, 1 jump in, 2 cloaked, -1..-4 on nav defaults"}
+
+  # --- record change ------------------------------------------------------
+  - {name: CompGovt,      type: DWRD, doc: "govt whose record changes on completion"}
+  - {name: CompReward,    type: DWRD, doc: "record delta; failure costs half this"}
+  - {name: ShipSubtitle,  type: DWRD, doc: "STR# for special ship subtitles"}
+
+  # --- text slots (desc IDs; -1 = none; author at 5000+) ------------------
+  - {name: BriefText,     type: DWRD, doc: "shown on accept"}
+  - {name: QuickBrief,    type: DWRD, doc: "shown on Mission Briefing (I) key"}
+  - {name: LoadCargText,  type: DWRD, doc: "shown when mission cargo loaded"}
+  - {name: DumpCargoText, type: DWRD, doc: "shown when mission cargo offloaded"}
+  - {name: CompText,      type: DWRD, doc: "shown on success at ReturnStel"}
+  - {name: FailText,      type: DWRD, doc: "shown on failure at ReturnStel"}
+  - {name: ShipDoneText,  type: DWRD, doc: "shown when special ship goal completed"}
+
+  # --- control ------------------------------------------------------------
+  - {name: CanAbort,      type: DWRD, doc: "0 no, 1 yes"}
+  - {name: TimeLimit,     type: DWRD, doc: "days; -1/0 none"}
+
+  # --- auxiliary ships ----------------------------------------------------
+  - {name: AuxShipCount,  type: DWRD}
+  - {name: AuxShipDude,   type: DWRD}
+  - {name: AuxShipSyst,   type: DWRD}
+
+  - {name: Flags,         type: HWRD, doc: "see flags table"}
+  - {name: Flags2,        type: HWRD, nova_only: true}
+  - {name: AvailShipType, type: DWRD, nova_only: true}
+  - {name: RefuseText,    type: DWRD, doc: "desc shown when offer refused"}
+
+  # --- bit expressions ----------------------------------------------------
+  # NOVA stores these as strings. CLASSIC EV is believed to store plain bit
+  # NUMBERS in fixed-width integer fields instead. This is the single largest
+  # divergence between the two formats and MUST be resolved before parsing ConEx.
+  - {name: AvailBits,     type: C255, doc: "test expr: Bxxx Oxxx Exxx G Pxxx with & | ! (). Blank = true"}
+  - {name: OnAccept,      type: C255, doc: "set expr: b1 !b3 ^b4 R(a b) Axxx"}
+  - {name: OnRefuse,      type: C255}
+  - {name: OnSuccess,     type: C255}
+  - {name: OnFailure,     type: C255}
+  - {name: OnAbort,       type: C255}
+  - {name: OnShipDone,    type: C255}
+
+  - {name: RequireLo,     type: HLNG, nova_only: true, doc: "64-bit Require, low word"}
+  - {name: RequireHi,     type: HLNG, nova_only: true, doc: "64-bit Require, high word"}
+  - {name: DatePostInc,   type: DWRD, nova_only: true}
+  - {name: AcceptButton,  type: C63,  nova_only: true}
+  - {name: RefuseButton,  type: C63,  nova_only: true}
+  - {name: DispWeight,    type: DWRD, nova_only: true}
+
+flags:
+  0x0001: auto-aborting mission (requires special ships to trigger)
+  0x0002: hide red destination arrows on map
+  0x0004: cannot refuse
+  0x0008: costs 100 fuel on auto-abort; not offered below 100 fuel
+  0x0010: infinite aux ships
+  0x0020: fails if scanned
+  0x0040: apply -5x CompReward reversal on abort
+  0x0100: show green arrow on map in initial briefing
+  0x0200: show additional arrow for ShipSyst
+  0x0400: invisible; absent from mission info dialog
+  0x0800: special ship type chosen once at mission start and held
+  0x2000: unavailable to cargo ships (inherentAI 1-2)
+  0x4000: unavailable to warships (inherentAI 3-4)
+  0x8000: fails if player boarded by pirates
+
+text_wildcards:
+  "<DSY>": destination system name
+  "<DST>": destination stellar name
+  "<RSY>": return system name
+  "<RST>": return stellar name
+  "<CT>":  cargo type name
+  "<CQ>":  cargo quantity
+  "<DL>":  deadline date
+  "<PAY>": absolute mission pay
+  "<PN>":  player name
+  "<PNN>": player nickname
+  "<PSN>": player ship name
+  "<PST>": player ship type
+  "<PRK>": rank ConvName, default "captain"
+  "<SRK>": rank ShortName

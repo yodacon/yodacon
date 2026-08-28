@@ -44,10 +44,10 @@ def landing_profile(rid, name, tech):
     Earth is the checkride."""
     tech = max(0, tech or 0)
     width = max(0.25, 0.58 - 0.012 * tech)     # corridor half-width, deg
-    if name == "Earth":
-        width = 0.22
     atmos = 0.8 + ((rid * 7) % 5) / 10.0       # density scale 0.8-1.2
     grav = 0.85 + ((rid * 11) % 4) / 10.0      # gravity scale 0.85-1.15
+    if name == "Earth":                        # the canonical checkride
+        width, atmos, grav = 0.22, 1.0, 1.0
     return {
         "corridorHalfWidthDeg": round(width, 3),
         "atmosScale": round(atmos, 2),

@@ -1,0 +1,31 @@
+# The run itself. Offered once the contract is signed, until the route is
+# proven; failure burns the route and closes the Exeon lane for good.
+mission: Lithium Run to Exeon
+available:
+  at: ConEx
+  from: bar
+  when:
+    set: pellet_contract_signed
+    clear: pellet_route_proven
+  chance: 80
+objective:
+  travel_to: Exeon
+  return_to: :accepted
+cargo: {type: Equipment, qty: 40, pickup: at_start, dropoff: at_travel}
+ships:
+  count: 3
+  dude: ConEx Shipping
+  goal: escort
+  system: :travel
+reward:
+  credits: 25000
+  govt: Consolidated Express
+  record: 5
+time_limit: 12
+text:
+  brief: texts/pellet-run/brief.md
+  complete: texts/pellet-run/complete.md
+  fail: texts/pellet-run/fail.md
+on:
+  success: set pellet_route_proven
+  failure: set pellet_route_burned

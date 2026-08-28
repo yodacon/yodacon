@@ -1,0 +1,21 @@
+# The payoff: a standing lane back to the station, open only while the
+# route is proven and unburned. Sets exeon_lane_open for the next chapter
+# (not written yet — check will flag the dead end until it is).
+mission: "Standing Freight: Exeon"
+available:
+  at: Exeon
+  from: computer
+  when:
+    set: pellet_route_proven
+    clear: pellet_route_burned
+  chance: 100
+objective:
+  travel_to: ConEx
+  return_to: ConEx
+cargo: {type: Parcels, qty: 30, pickup: at_start, dropoff: at_travel}
+reward:
+  credits: 6000
+text:
+  brief: texts/exeon-standing-freight/brief.md
+on:
+  success: set exeon_lane_open

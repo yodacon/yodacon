@@ -1,0 +1,19 @@
+# Chain opener. No gate — this is a game-start root.
+mission: The Pellet Contract
+available:
+  at: ConEx
+  from: bar
+  chance: 100
+objective:
+  travel_to: Exeon
+  return_to: :accepted
+cargo: {type: Metal, qty: 18, pickup: at_start, dropoff: at_travel}
+reward:
+  credits: 8000
+  govt: Consolidated Express
+  record: 2
+text:
+  brief: texts/pellet-contract/brief.md
+  complete: texts/pellet-contract/complete.md
+on:
+  success: set pellet_contract_signed

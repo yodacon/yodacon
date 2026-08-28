@@ -17,7 +17,7 @@ GONEX   ?= $(firstword $(wildcard gonex) $(HOME)/code/Gonex)
 EXPAND   = vendor/expanded
 FORK     = $(EXPAND)/ConEx 1.2/ConEx1.2.rsrc
 
-.PHONY: all test verify expand extract gazetteer export gonex run clean-derived
+.PHONY: all test check verify expand extract gazetteer export gonex run clean-derived
 
 all: verify test gonex
 
@@ -30,10 +30,15 @@ expand:
 verify: expand
 	$(PY) -m evutils verify "$(FORK)"
 
-## test: evutils suite + the full gonex suite (reentry corridor gates included)
+## test: evutils + yodaed suites + the full gonex suite (reentry gates included)
 test:
 	$(PY) -m unittest discover -q -s evutils/tests
+	$(PY) -m unittest discover -q -s yodaed/tests
 	cd "$(GONEX)" && go test ./...
+
+## check: the mission editor's open-questions queue over campaign/
+check:
+	$(PY) -m yodaed check campaign
 
 ## extract: regenerate the committed resource tree from the release
 extract: expand

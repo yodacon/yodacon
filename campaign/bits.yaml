@@ -1,0 +1,20 @@
+# Control-bit registry. Hand-edit only `doc` (and `external: true`
+# for bits owned by the 1997 chain). `set_by`/`tested_by` are
+# generated — refresh with: python3 -m yodaed bits campaign
+
+exeon_lane_open:
+  doc: "The Exeon standing-freight lane is on the boards. Next chapter's gate."
+  set_by: ["exeon-standing-freight"]
+  tested_by: []
+pellet_contract_signed:
+  doc: "ConEx signed the player onto pellet work after the handshake haul."
+  set_by: ["pellet-contract"]
+  tested_by: ["pellet-run"]
+pellet_route_burned:
+  doc: "The lithium run failed; the underwriters closed the Exeon lane for good."
+  set_by: ["pellet-run"]
+  tested_by: ["exeon-standing-freight"]
+pellet_route_proven:
+  doc: "The lithium run landed clean; Exeon is a proven route."
+  set_by: ["pellet-run"]
+  tested_by: ["exeon-standing-freight", "pellet-run"]

@@ -1,0 +1,14 @@
+# ids.lock — name -> resource ID ledger, committed to git.
+#
+# Allocated by `yodaed build` (not yet implemented): new names get the next
+# free ID in the legal range for their type, as a pure function of this file
+# plus the sorted set of new names, so two people building the same commit
+# get identical bytes. Once a binding lands here it NEVER changes — pilot
+# files in the wild store bits and mission IDs by number.
+#
+# The 1997 plugin owns mïsn 250-285 and dësc 133-10110; allocation must
+# steer around those (and around whatever bits its chain uses).
+
+missions:
+bits:
+descs:

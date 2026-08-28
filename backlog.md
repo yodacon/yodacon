@@ -113,14 +113,24 @@ Design premise: plain-text source in git, resource fork as build artifact, and a
 **open-questions queue** that names every unresolved reference and tells you what
 you still need to create.
 
-- [ ] `yodaed check` — the question queue. Highest value; ship first.
-- [ ] YAML mission source format; prose in separate markdown files.
-- [ ] `ids.lock` deterministic name -> ID allocator; bindings never change once made.
-- [ ] `bits.yaml` control-bit registry with generated `set_by` / `tested_by`.
-- [ ] Validation: referential, semantic, chain-integrity, text, round-trip.
+**Status 2026-08-28: check/graph/bits SHIPPED** — `yodaed/` (stdlib-only,
+tests in `make test`) over the new `campaign/` source tree, which carries the
+pellet-run starter chain (3 missions, prose in `campaign/texts/`). `make check`
+runs the queue.
+
+- [x] `yodaed check` — the question queue. Highest value; ship first.
+- [x] YAML mission source format; prose in separate markdown files.
+- [ ] `ids.lock` deterministic name -> ID allocator; bindings never change once
+      made. (File and range notes exist; `yodaed build` will do the allocating.)
+- [x] `bits.yaml` control-bit registry with generated `set_by` / `tested_by`
+      (`yodaed bits --write`; `external: true` marks bits the 1997 chain owns).
+- [x] Validation: referential (gazetteer + extracted düde names), semantic
+      (EV Bible rules), chain-integrity (never-set gates, dead ends,
+      reachability, 256-bit ceiling), text (wildcard vocabulary).
+      Round-trip validation lands with `build`.
 - [ ] `yodaed new <type>` scaffolding from question context.
 - [ ] `yodaed build` -> resource fork, round-trip verified byte-identical.
-- [ ] `yodaed graph` -> mission chain as Mermaid/Graphviz.
+- [x] `yodaed graph` -> mission chain as Mermaid.
 - [ ] Web editor in the site's HUD styling: question queue, map view, sprite
       previews, live validation — the editor the linked video wished existed.
 

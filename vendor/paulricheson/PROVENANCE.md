@@ -39,6 +39,22 @@ patch contents are catalogued in
 `docs/lab-reports/2026-08-27-conex-11-to-12-patch-catalogue.md`; every
 post-patch resource size matches the shipped 1.2 plugin.
 
+## Base game (for cross-reference, not part of the ConEx release)
+
+| File | SHA-256 | Format |
+|---|---|---|
+| `Escape_Velocity_1.0.4.sit` | `e8ce310768b12ebbc937753663fa6ba383593ec04f4f5ee96999c00675c0fb86` | StuffIt, pre-installed game |
+
+Downloaded 2026-08-27 from Macintosh Garden
+(`macintoshgarden.org/games/escape-velocity`, `old.mac.gdn` mirror), kept in
+`vendorignored/` and expanded to `vendor/expanded/` — Ambrosia's scenario is
+**not committed**; only factual cross-reference data derived from it
+(system/stellar names, IDs, coordinates, links) is, in `data/gazetteer.yaml`.
+Its `EV Data` file parses with `evutils`: 108 `sÿst`, 107 `spöb`, 116 `mïsn`,
+644 `dësc`, unencrypted, with the same 17 `TMPL`s ConEx carries. Base
+`sÿst` 128 is **Levo** — the system ConEx 1.2 overrides with the ConEx home
+system, matching the mission-text fix in the 1.1→1.2 catalogue.
+
 ## Member timestamps inside the .sit (per `lsar -l`)
 
 | Member | Archive date/time | Notes |

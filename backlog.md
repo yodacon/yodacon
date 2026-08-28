@@ -63,19 +63,25 @@ hold **no record of what those IDs are**. Until this is populated, mission data 
 unreadable, no map can be drawn, and the editor cannot resolve a single name.
 This blocks Phase 4 of the editor and all mission work.
 
-- [ ] Extract `spob` (stellar objects: name, government, parent system, desc ID)
-      from the base EV scenario data file.
-- [ ] Extract `syst` (star systems: name, x/y coordinates, hyperspace links,
-      government, contained stellars).
-- [ ] Extract ConEx's own `spob`/`syst` additions and overrides — including
-      **Conex, Exeon, and Cenron**, the three the 1999 release told players to land on.
-- [ ] Join base + plugin into one gazetteer: `name <-> ID <-> system <-> coords <-> govt`.
-      Plugin entries override base entries at the same ID.
-- [ ] Reverse-resolve every ID referenced by ConEx's 35 missions. Report any ID
-      that resolves to nothing — those are either our extraction bugs or genuine
-      1999 bugs, and both are findings worth having.
-- [ ] Publish as `data/gazetteer.yaml`, committed and diffable.
-- [ ] Render the universe map (systems + hyperlinks) as SVG in the site HUD styling.
+**Status 2026-08-27: DONE.** Base scenario: Escape Velocity 1.0.4 (Macintosh
+Garden; hash in `vendor/paulricheson/PROVENANCE.md`, scenario data local-only in
+`vendor/expanded/`, never committed). Generator: `data/build_gazetteer.py`.
+
+- [x] Extract `spob` from the base EV scenario data file — `EV Data` parses with
+      evutils, unencrypted, 107 spöb with the same TMPLs ConEx carries.
+- [x] Extract `syst` — 108 base systems with coords, links, govt, nav lists.
+- [x] Extract ConEx's own `spob`/`syst` additions and overrides — 10 spöb + 14 sÿst,
+      including **ConEx station** (which overrides the planet *Levo* — base sÿst 128
+      IS Levo, so the plugin renames home), **Exeon**, and **Cenron**.
+- [x] Join base + plugin into one gazetteer — 109 systems, 109 stellars, with
+      `source: base | conex | conex-override` and `replaces:` on overrides.
+- [x] Reverse-resolve every ID referenced by ConEx's 36 missions — **all resolve**;
+      the -4/-6/10000 values are documented EV special codes (per the Phase 1.4 EV
+      Bible), annotated inline. Three referential bugs found, all on Exeon
+      (self-link, dangling spöb 237, invalid Nav 0) → `findings:` section.
+- [x] Published as `data/gazetteer.yaml`, committed and diffable.
+- [x] Universe map rendered as `data/universe-map.svg` (`data/build_map.py`) —
+      Phase 6 tokens, ConEx territory in accent over the phosphor base galaxy.
 
 ## Phase 2 — evutils (EV, not Nova)
 

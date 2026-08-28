@@ -1,0 +1,100 @@
+oütf resource
+
+	Outf resources store information on the items that you can buy when you choose “Outfit Ship” at a planet or station. The first field tells Override whether or not the item's availability is linked to the completion of a mission:
+
+MissionBit		Tells Override whether to offer this item only if a certain mission bit is set. (see mïsn for more info)
+	-1		Ignored
+	0-511		Offer the item only if this mission bit is set
+	1000-1511	Offer the item only if this mission bit is not set
+
+The next field contains info on the item’s mass:
+
+Mass		The mass in tons of the item (0 = no appreciable mass)
+
+The next field tells Override where the item is available:
+
+TechLevel		What the technology level of the item is. This item will be available at all spaceports with a tech level of this value or higher. (The exception to this rule invloves the SpecialTech fields of the spöb resource; see the section on spöb resources for more information.)
+
+The next two fields tell Override what kind of modification this item performs:
+
+If ModType is	Then it’s			And ModVal refers to:
+1			a weapon			The ID number of the associated wëap resource
+
+2			more cargo space		The number of tons of cargo space to add
+
+3			ammunition			The ID number of the associated wëap resource
+
+4			more shield capacity	The number of shield points to add
+
+5			faster shield recharge	How much to speed up (-30 = one more point per second)
+
+6			armor				The number of armor points to add
+
+7			acceleration booster	Amount of accel to add (see shïp for more info)
+
+8			speed increase		Amount of speed to add (see shïp for more info)
+
+9			turn rate increase		Amount of turn increase (1 = 30°/sec)
+
+10		ECM (missile jammer)    
+	0x0001     Weak Type I jamming
+	0x0002     Weak Type II jamming
+	0x0004     Weak Type III jamming
+	0x0008     Weak Type IV jamming
+	0x0010     Strong Type I jamming
+	0x0020     Strong Type II jamming
+	0x0040     Strong Type III jamming
+	0x0080     Strong Type IV jamming
+
+11			escape pod			ignored
+
+12			fuel capacity increase	Amount of extra fuel (100 = 1 jump)
+
+13			density scanner		ignored
+
+14			IFF (colorized radar)	ignored
+
+15			afterburner			ignored
+
+16			map				How many jumps away from present system to explore
+
+17			cloaking device		The hue to scale the screen to while cloaked
+		1 = red, 2 = green, 3 = blue,
+		4 = cyan, 5 = magenta, 6 = yellow
+
+18			fuel scoop			How many frames per 1 unit of fuel generated. Enter a negative value to perform the same function in “fuel sucking” mode
+
+19			auto-refueller		ignored
+
+20			auto-eject			ignored (requires escape pod to work)
+
+21			clean legal record		ID of govt to clear legal record with, or -1 for all
+
+22			hyperspace speed mod	Number of days to increase or decrease ship’s hyperspace travel time (still can’t go below 1 day/jump)
+
+23			hyperspace dist mod	Amount to increase or decrease the no-jump zone’s radius by (the standard radius is 1000) 
+
+24			interference mod		Subtracts the value in ModVal from the current star system’s Interference value when calculating how “fuzzy” to make the radar scanner
+
+25			marines			Adds the value in ModVal to your ship’s effective crew complement when calculating capture odds
+
+26			alter mission bit		If ModVal is 0-511, sets this mission bit when purchased. If ModVal is 1000-1511, clears this mission bit when purchased.
+
+
+The next two fields tell Override how many of this item you can possibly have at once:
+
+Max		How many you can have (not counting weapon limitations)
+
+Flags			Miscallenous info:
+	0x0001	This item is a fixed gun
+	0x0002	This item is a turret
+	0x0004	This item stays with you when you trade ships
+	0x0008	This item can’t be sold
+	0x0010	Remove any items of this type after purchase (useful for permits and other intangible purchases)
+
+The next field, Cost, tells Override how much to charge you for the item.
+
+The last two fields (ModType2 and ModVal2) are for you to specify “alternate” functions for an outfit item - e.g., a weapon could also reduce the ship’s turning speed.  The only restriction on ModType2 is that you shouldn’t use it for weapons or ammo (modtypes 1 or 3).
+
+
+Note:	The large (100x100 pixel) outfit dialog pictures are stored using PICT resource IDs 6000 and up. Unfortunately, due to lack of planning, the master outfit menu pict is stored at ID 6100, so the large outfit picts with IDs that would normally be 6100 and above are offset forwards by one. So, the large outfit picts are stored from PICT IDs 6000-6099 and 6300-6327.  (note that this has changed in version 1.0.2, and is different from previous versions of Override!)

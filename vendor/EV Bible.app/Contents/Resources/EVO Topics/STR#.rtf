@@ -1,0 +1,63 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\margl1440\margr1440\vieww9660\viewh10620\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx34\shady-36\shadr0\shado85 \shadc0 STR# Resources
+\f1\b0\fs24 \ulnone \shad0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\ql\qnatural\pardirnatural
+\cf0 	
+\fs28 The STR# resource format used to store many of the strings in Override may seem to be incompatible with the flexible nature of plugin files. For example, a plugin for a new ship would have to replace several of the built-in STR# resources to incorporate its new name into the game. The problem arises when you want to use two plugins that try to modify the same STR# resource.\
+\
+	The solution is not to changes the STR# resources at all, but to use Override\'d5s handy string patching functionality by updating only select strings in a STR# resource by providing Override with a properly-numbered 'STR ' resource. For example, to change the first cargo type from food to something else, you\'d5d simply create a 'STR ' resource with the ID 9000 and type in the name of your new commodity. A chart of 'STR ' resource numbers is provided below:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\tx9360\ql\qnatural\pardirnatural
+\cf0 \ul String Type							Replacement 'STR ' ID range\ulnone \
+\cf2 Message buoys							1000-2500\
+\cf0 \
+Short outfit names							3000-3127\
+\
+\cf2 Lowercase outfit names						3200-3327\cf0 \
+\
+Lowercase plural outfit names					3400-3527\
+\
+\cf2 Short shipyard names						3600-3663\cf0 \
+\
+Long shipyard names						3700-3763\
+\
+\cf2 Really short ship names for communications dialog	3800-3863\cf0 \
+\
+Independent ship names for communications dialog	3900-3963\
+\cf2 \
+Government abbreviations for target display			4000-4127\cf0 \
+\
+Government short names for comm dialog			4200-4327\
+\cf2 \
+Hail quotes								5000-5511\cf0 \
+\
+Disaster news							6000-6127\
+\cf2 \
+Stellar types								7000-7063\cf0 \
+\
+j\'9fnk abbreviations							8000-8127\
+\cf2 \
+Lowercase j\'9fnk names						8200-8327\cf0 \
+\
+Generic cargo names						9000-9063\
+\cf2 \
+Lowercase cargo names						9100-9163\cf0 \
+\
+Cargo abbreviations for status display				9200-9263\
+\cf2 \
+Base prices of commodities					9300-9305\cf0 \
+\
+Commodity abbreviations for status display			9400-9405\
+\cf2 \
+Govt-specific greetings for comm dialog			10000-11289\
+  *Please note:  (first 10 for govt -1, second 10 for govt 0, third 10 for govt 1, etc.)\cf0 \
+\
+p\'91rs-resource CommQuotes                          		12000-12511\
+\
+	A similar function exists for updating the graphics for the shipyard and outfit menus - see the note at the top of this document for details.}

@@ -1,0 +1,26 @@
+Game Constants
+
+Resource					Maximum
+Ships In System			36
+Stellar Objects				1500
+Systems					1000
+Ship Classes				64
+Stellar Classes				64
+Jump Distance				1000 pixels
+Weapon Types			64
+Outfit Item Types			128
+Beams On Screen			8
+Dude Types				128
+Governments				128
+Explosions On Screen		16
+Missions					512
+# Mission Bits				512
+Cargo Types				64
+Person Types				512
+Shots On Screen			128
+Asteroids					10
+Nebulae					4
+Simultaneous Missions		8
+Disasters					128
+Fleets					128
+Movies					128

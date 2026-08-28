@@ -1,0 +1,30 @@
+röid resource
+
+	Nova supports up to 16 asteroid types, each of which can have its own special properties. röid resources 128-143 store the attributes for each asteroid type:
+
+
+Strength	The strength of this asteroid type - this is equivalent to armor values for ships.
+
+SpinRate	The frame advance rate of this asteroid type. A value of 100 is 30 frames per second (quite fast) - lower numbers are slower.
+               
+YieldType	Defines what the resource-boxes which are ejected from this asteroid type will contain:
+               0-5         This type of standard cargo
+               1000-1127   This type of jünk resource
+
+YieldQty	The average resource yield of this type of asteroid. Zero will cause asteroids of this type to not spit out any resource-boxes when destroyed; values of one or more will cause the asteroids to spit out approximately that number of resource-boxes (+/- 50%) when destroyed. Each resource-box is worth 1 unit of whatever cargo is defined in the YieldType field to be granted when a scoop-equipped ship runs over it.
+
+PartCount	The number of particles that are thrown off when an asteroid of this type is destroyed.
+               
+PartColor	The color of the particles, encoded the same as HTML colors.
+	(00RRGGBB)
+
+FragType1&2	Asteroids can break up into some number of sub-asteroids when destroyed. If both of these fields are used, Nova will randomly pick between them for each sub-asteroid that is created. If only one is used, all sub-asteroids will be of that type.
+               128-143    Generate this type of sub-asteroid
+               -1         No sub-asteroids
+
+FragCount		The average number of sub-asteroids (+/- 50%) to be generated when an asteroid of this type is destroyed (zero for none).
+
+ExplodeType	Type of explosion to show (0-63) when an asteroid of this type is destroyed. You can also add 1000 to the value of this field in the same manner as the ExplodeType field in the wëap resource.
+	Set to -1 to not show any explosion.
+
+Mass		Mass of this asteroid type (used when weapons hit asteroids)

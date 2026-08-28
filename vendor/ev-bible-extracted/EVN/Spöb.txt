@@ -1,0 +1,185 @@
+spöb resource
+
+	Spob resources describe stellar objects, such as planets and space stations. (spob stands for space object) Each spob resource represents one stellar object, whose name is the name as the name of the resource. The first three fields tell Nova where to put the stellar and what graphics to use for it:
+
+xPos & yPos     The stellar's X and Y positions in the system (0, 0) is centered
+
+Type            Which graphic to use, from 0 to 255.
+
+
+The next field stores the flag bits that tell Nova what many of the
+characteristics of the stellar are. Perform an OR operation on the following
+flags to get the final flag value:
+
+0x00000001     Can land/dock here
+
+0x00000002     Has commodity exchange
+
+0x00000004     Can outfit ship here
+
+0x00000008     Can buy ships here
+
+0x00000010     Stellar is a station instead of a planet
+
+0x00000020     Stellar is uninhabited (no traffic control or refuelling)
+
+0x00000040     Has bar
+
+0x00000080     Can only land here if stellar is destroyed first
+
+0x00000000     Won't trade in food
+
+0x10000000     Low food prices
+
+0x20000000     Medium food prices
+
+0x40000000     High food prices
+
+0x00000000     Won't trade in industrial goods
+
+0x01000000     Low industrial prices
+
+0x02000000     Medium industrial prices
+
+0x04000000     High industrial prices
+
+0x00000000     Won't trade in medical supplies
+
+0x00100000     Low medical prices
+
+0x00200000     Medium medical prices
+
+0x00400000     High medical prices
+
+0x00000000     Won't trade in luxury goods
+
+0x00010000     Low luxury prices
+
+0x00020000     Medium luxury prices
+
+0x00040000     High luxury prices
+
+0x00000000     Won't trade in metal
+
+0x00001000     Low metal prices
+
+0x00002000     Medium metal prices
+
+0x00004000     High metal prices
+
+0x00000000     Won't trade in equipment
+
+0x00000100     Low equipment prices
+
+0x00000200     Medium equipment prices
+
+0x00000400     High equipment prices
+
+
+Tribute		The stellar's tribute payout when dominated
+	-1 or 0	Default amount (1000 credits x Tech Level)
+	1 and up	This number of credits per day
+
+
+The next fields tell Nova what items and ships are available for purchase
+at this stellar:
+
+TechLevel		What the base tech level of the stellar is. Only items and ships with TechLevels at or below this value will be available.
+
+SpecialTech (x8)	Holds the special tech levels of this stellar. Unlike the previous field, only items and ships with exactly this TechLevel will appear here. This is useful for making low-tech worlds that also have a few high-tech items, or for flagging an item with an absurdly high TechLevel (say 15000) and then setting one of the SpecialTech fields of a particular stellar to that same value, thus making that item appear at that stellar and nowhere else.
+
+
+The next two fields contain info on the stellar's governmental affiliation:
+
+Govt			What government controls this stellar
+	-1		ignored (stellar is independent)
+	128-383	ID number of the stellar's government
+
+MinStatus	The point on your record in the current system that you'll be denied landing clearance on this stellar.
+	-32767		Ignored (player can always land)
+
+	-1 to -32766		You can be this evil before they shun you
+
+	0 to 32766		They have to like you this much before they let you land
+
+	32767			Player can never land. (Note that this field is ignored if the stellar is uninhabited)
+
+
+The next pair of fields tells Nova which special landscape to show and which
+ambient sound to play.
+
+CustPicID			Which custom landscape to show
+	128 and up		ID number of PICT to load instead of the  standard landscape display less than 128.  No custom landscape (Note: for animated hypergates, this field can be optionally used to set the index of the transition between the "opening/closing" animation and the "working" animation. Set to 0 to have the engine use the first half of the frames for "opening/closing" and the second half for "working".)
+
+CustSndID		Which ambient sound to play
+	-1		No ambient sound effect Anything else     ID number of snd resource to load (Note: for hypergates and wormholes, this field serves a different purpose - it controls the angle at which ships emerge. Values between 0 and 359 specify an exact angle, while any other value specifies a random direction.)
+
+
+The next two fields tell Nova what kind of ships, if any, to create for the
+planet's defense fleet:
+
+DefenseDude	Which type of dude to use for the defense fleet:
+	-1		Ignored (no defense ships)
+	128-639	ID number of the dude resource to use to determine the defense ships' characteristics
+
+DefCount		The number of ships in the defense fleet. If you set this number to be above 1000, ships will be launched from the planet or station in waves. The last number in this field is the number of ships in each wave, and the first 3-4 numbers (minus 1 from the first digit) are the total number of ships in the planet's fleet. For example, a value of 1082 would be four waves of two ships for a total of eight. A value of 2005 would create waves of five ships each, with 100 ships total in the planet's defense fleet.
+
+
+Flags2	Description
+0x0001	For an animated stellar, the first frame will be shown after each subsequent frame.
+
+0x0002	For an animated stellar, the next frame in the sequence will be picked at random. The same frame will not be picked twice in a row. Note that this can be combined with the previous flag and the Frame0Bias field to create interesting effects such as random planetary lightning or lights twinkling.
+
+0x0010	Play this stellar's sound in a continuous loop
+
+0x0020	Stellar is always dominated (all your base are belong to us)
+
+0x0040	Stellar starts the game destroyed
+
+0x0080	For an animated stellar, the stellar's graphic is animated after it's been destroyed and static when it is not destroyed. The normal behavior is the opposite of this: static when destroyed and animated when not.
+
+0x0100	Stellar is deadly - all ships that touch it are destroyed immediately
+
+0x0200	If the stellar has a weapon, it will only fire when provoked (i.e. only when the player is trying to dominate it)
+
+0x0400	If the stellar has an outfit shop, it can buy any nonpermanent outfits the player owns, regardless of tech level
+
+0x1000	Stellar is a hypergate - if the player lands on it he will be given a choice of which other hypergate to travel to (see HyperLink1-8 below)
+
+0x2000	Stellar is a wormhole - if the player lands on it he will be transported to some other random somewhere in the galaxy. If all of the wormhole's HyperLink1-8 fields set to -1, the player will end up at another random wormhole which also has no defined hyper links.  If the wormhole has any hyper links defined, the player will end up at one of the wormholes on the other end. 
+           
+                          
+AnimDelay		The time to wait between frames, in 30ths of a second.
+
+Frame0Bias		If greater than 1, this is used as a multiplier to extend the display time of the first frame in the sequence. For example, a Frame0Bias of 3 would cause the first frame in the sequence would be held for three times longer than the rest of the frames.
+
+HyperLink1-8	IDs of the spöb resources of up to eight other hypergates or wormholes to which this hypergate (or wormhole) is connected. Set to zero or -1 if unused. For a wormhole, setting every HyperLink field to -1 will cause the wormhole to randomly connect to any other random wormhole when the player goes through it.
+
+OnDominate	Control bit set expression which is evaluated when the stellar is successfully dominated by the player
+
+OnRelease		Control bit set expression which is evaluated when the stellar is released from domination by the player
+                 
+Fee		The fee that is deducted from the player's credits when landing on this stellar. Set to zero if unused.
+
+Gravity	The stellar's gravity - 0 for none, positive for stellars that pull, negative for stellars that push. Beware! This feature is mostly here for laughs. It severely confuses the AI, so it should only be used in empty systems where only the player can go.
+                 
+Weapon	Stellars can have a single projectile or missile type weapon, with unlimited ammunition (don't put the ID of a beam or PD weapon here or bad things will happen). Stellars' weapons can be made to fire either only when provoked or any time an enemy ship is present.
+	0 or -1	No weapon
+	128-383	Stellar has a weapon of this type
+
+Strength	The amount of combined mass and energy damage this stellar can take from planetary-type weapons before it is destroyed. Set this to 0 or -1 for an invincible stellar.
+
+DeadType		Which stellar graphic to use when the stellar is destroyed.
+	-1		Don't display different graphic type when destroyed
+	0-255		Display this stellar graphic when destroyed
+
+DeadTime		The amount of time a stellar remains destroyed before it regenerates itself. Set this to 0 for a stellar that regenerates at the end of every day, or -1 for a stellar that never regenerates on its own.
+
+ExplodType		What kind of explosion to show when the stellar is destroyed
+	-1		No explosion
+	0-63		This type of explosion
+	1000-1063	Explosion type 0-63, plus a random number of type-0 explosions around it
+
+OnDestroy		Control bit set expression which is evaluated when the stellar is destroyed.
+
+OnRegen		Control bit set expression which is evaluated when the stellar automatically regenerates.

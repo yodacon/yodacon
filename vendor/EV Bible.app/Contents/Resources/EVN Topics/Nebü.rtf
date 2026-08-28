@@ -1,0 +1,30 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx25\shady-29\shadr0\shado85 \shadc0 n\'91bu resource
+\f1\b0\fs28 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+	N\'91bu resources contain info on the nebulae (or other space phenomena) which are displayed in the background of the star map. These images don\'d5t actually have any effect on events in the game, they\'d5re just there to look pretty. You can, however, combine n\'91bu background images with custom asteroid or interference data in the s\'d8st resources for cool localized effects, and you can also use the n\'91bu resource's OnExplore field to enable events when the player explores a certain nebula.\
+\
+The PICT resources associated with the 32 available n\'91bu resources are numbered 9500-9724. Each nebula can have up to seven PICT resources associated with it; the first nebula's PICTs are 9500-96, the second's are 9507-13, etc. The engine will pick the best nebula image to display for a given map scale (the map scales used in Nova are 42.1%, 56.2%, 75.0%, 100.0%, 133.3%, 177.7%, and 237.0%). If a nebula image of the proper size for the current map scale isn't available, Nova will pick the closest one and stretch it as necessary. PICTs for a given nebula should be sorted by size in ascending order.\
+\
+The effects of the n\'91bu resource\'d5s fields are as follows:\
+\
+The image\'d5s position on the star map. These coordinates are\
+expressed in the scale of the "normal" map zoom level (not zoomed in or out) and are relative to the upper-left corner of the image.\
+	XPos\
+	YPos\
+\
+The image\'d5s size on the star map. These values are expressed in the scale of the "normal" map zoom level (not zoomed in or out) and tell Nova how big to make the image when the map is at normal zoom.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 	XSize\
+	YSize\
+\
+\
+ActiveOn	Control bit test expression. Leave blank if unused. \
+\
+OnExplore	Control bit set expression that is evaluated whenever the nebula is tested for visibility and found to be visible. Note that this field is handled a little differently from other control bit set expressions in Nova, because the explored state of the nebulae isn't saved from game to game; rather, it is recalculated every time based on the systems the player has explored. As a result, this expression may get evaluated multiple times, so you shouldn't use the random operator or any operators which do anything but set or clear control bits here.}

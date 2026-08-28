@@ -1,0 +1,109 @@
+# misn — mission resource, EV OVERRIDE lineage
+#
+# THIS is the spec that matters for ConEx. ConEx is a classic EV plugin, and
+# EV Override is classic EV's direct descendant — same lineage, same shapes.
+# EV Nova is a later rewrite whose mission format diverges substantially.
+# specs/misn.yaml (Nova) is retained for reference only.
+#
+# Source: vendor/ev-bible-extracted/EVO/Misn.txt
+#   (regenerate with tools/extract-ev-bible.sh)
+#
+# STATUS: field SEMANTICS confirmed from the Override reference.
+#         field ORDER/OFFSETS still [VERIFY] against real ConEx bytes.
+
+resource: misn
+endian: big
+lineage: override           # classic-EV family; use for ConEx
+verified_semantics: true
+verified_offsets: false
+
+# ---------------------------------------------------------------------------
+# THE BIG CORRECTION
+#
+# Override does NOT use Nova's control-bit expression strings. There is no
+# AvailBits/OnSuccess/OnFailure text field, no b1 & (b2 | !b3) grammar, and no
+# 10,000-bit array.
+#
+# Instead: 256 MISSION BITS, and each hook is a SINGLE INTEGER FIELD.
+#   -1          ignored
+#   0-511       set (or test-set) this bit
+#   1000-1511   clear (or test-clear) this bit   [i.e. 1000 + bit number]
+#
+# One bit per hook. No boolean algebra. A mission tests at most two conditions
+# (AvailBitSet AND AvailBitClr) and writes at most one bit per outcome.
+# ---------------------------------------------------------------------------
+
+bit_model:
+  count: 256
+  encode: {ignored: -1, set: "0-511", clear: "1000-1511"}
+  test_fields: [AvailBitSet, AvailBitClr]
+  write_fields: [StartBitSet, CompBitSet, CompBitSet2, FailBitSet, FailBitSet2, RefuseBitSet]
+
+fields:
+  # --- availability -------------------------------------------------------
+  - {name: AvailStel,    type: DWRD, doc: "-1 any inhabited; 128-1627 specific stellar; 5000-5999 adjacent-to-system; 9999-10127 govt; 15000-15127 govt ally; 20000-20127 not-this-govt; 25000-25127 govt enemy"}
+  - {name: AvailBitSet,  type: DWRD, doc: "bit that must be SET to offer; 1000+ inverts"}
+  - {name: AvailLoc,     type: DWRD, doc: "0 mission computer, 1 bar, 2 from ship (needs pers). NOTE: Override has no spaceport/trade/shipyard/outfit locations"}
+  - {name: AvailRecord,  type: DWRD, doc: "legal record threshold; -32000 dominated this stellar; -32001 dominated any"}
+  - {name: AvailRating,  type: DWRD, doc: "combat rating floor; -1 ignored"}
+  - {name: AvailRandom,  type: DWRD, doc: "percent chance offered, recalculated on warp-in"}
+
+  # --- objective ----------------------------------------------------------
+  - {name: TravelStel,   type: DWRD}
+  - {name: ReturnStel,   type: DWRD, doc: "-4 = the stellar where the mission was accepted"}
+
+  # --- cargo --------------------------------------------------------------
+  - {name: CargoType,    type: DWRD}
+  - {name: CargoQty,     type: DWRD, doc: "negative = magnitude +/-50%"}
+  - {name: PickupMode,   type: DWRD}
+  - {name: DropOffMode,  type: DWRD, doc: "never the same place as pickup"}
+  - {name: ScanGovt,     type: DWRD, doc: "128-255 govt that deems cargo illegal. Differs from Nova's ScanMask bitfield: a single govt ID, and any govt that is NOT that govt's enemy also scans you"}
+  - {name: FailIfScanned, type: DWRD, doc: "0 no, nonzero = mission fails when detected"}
+
+  # --- reward -------------------------------------------------------------
+  - {name: PayVal,       type: DLNG}
+
+  # --- special ships ------------------------------------------------------
+  - {name: ShipCount,    type: DWRD}
+  - {name: ShipSyst,     type: DWRD}
+  - {name: ShipDude,     type: DWRD}
+  - {name: ShipGoal,     type: DWRD, doc: "0 destroy 1 disable 2 board 3 escort 4 observe 5 rescue 6 chase off"}
+  - {name: ShipBehav,    type: DWRD}
+  - {name: ShipNameID,   type: DWRD, doc: "STR# for ship names"}
+
+  # --- outcome bits + record ---------------------------------------------
+  - {name: CompBitSet,   type: DWRD, doc: "bit written on completion"}
+  - {name: CompGovt,     type: DWRD, doc: "0-127 govt whose record changes"}
+  - {name: CompReward,   type: DWRD}
+  - {name: FailBitSet,   type: DWRD, doc: "bit written on failure"}
+
+  # --- text (desc IDs; mission descs live at 4000-4255) -------------------
+  - {name: BriefText,    type: DWRD}
+  - {name: QuickBrief,   type: DWRD}
+  - {name: LoadCargText, type: DWRD}
+  - {name: CompText,     type: DWRD}
+  - {name: FailText,     type: DWRD}
+
+  # --- control ------------------------------------------------------------
+  - {name: TimeLimit,    type: DWRD}
+  - {name: CanAbort,     type: DWRD}
+  - {name: AvailBitClr,  type: DWRD, doc: "bit that must be CLEAR to offer"}
+
+  # --- auxiliary ships ----------------------------------------------------
+  - {name: AuxShipCount, type: DWRD}
+  - {name: AuxShipDude,  type: DWRD}
+  - {name: AuxShipSyst,  type: DWRD}
+
+  # --- second-chance bits + misc -----------------------------------------
+  - {name: CompBitSet2,  type: DWRD, doc: "second bit written on completion"}
+  - {name: Flags,        type: HWRD}
+  - {name: FailBitSet2,  type: DWRD, doc: "second bit written on failure"}
+  - {name: RefuseText,   type: DWRD}
+  - {name: AvailShipType, type: DWRD}
+  - {name: RefuseBitSet, type: DWRD, doc: "bit written when the offer is refused"}
+  - {name: StartBitSet,  type: DWRD, doc: "bit written when the mission is accepted"}
+
+# Absent in Override, present in Nova — do NOT expect these in ConEx:
+#   Flags2, DispWeight, DatePostInc, Require/Contribute, AcceptButton,
+#   RefuseButton, ShipStart, ShipSubtitle, ShipDoneText, DumpCargoText,
+#   OnAccept/OnRefuse/OnSuccess/OnFailure/OnAbort/OnShipDone (expression strings)

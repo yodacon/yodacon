@@ -1,0 +1,48 @@
+Düde resource
+
+     A düde resource can be thought of as a container for ships that share certain characteristics.  Any ship of a given düde class will have that düde class's AI type and governmental affiliation, and will yeild the same types of booty when boarded. In a düde resource, up to four different ship classes can be pointed to, with a probability set for each ship class. The result of all this is that, in other parts of Override's data file, you can point to a düde class and know that Override will create a ship of the proper AI type and governmental alignment, and will pick the new ship's type based on the probabilities you set in the düde resource. The düde resource's fields are:
+
+AIType	Which type of AI to use for ships of this düde class (see below).  If you set this to 0, each ship will use its own inherent AI type.
+
+ShipTypes (x4)	These fields contain the ID numbers of up to four different ship classes.
+
+% Prob (x4)		These fields set the probability that a ship of this dude class will be of a certain ship type.
+
+Gövt		The ID number of the düde class's government, or -1 for independent.
+
+Booty		Flags that define what you'll get when you board a ship of this düde class. (see below)
+
+The five different AI types are:
+1 - Wimpy Trader		Visits planets and runs away when attacked.
+
+2 - Brave Trader		Visits planets and fights back when attacked, but runs away when his attacker is out of range.
+
+3 - Warship			Seeks out and attacks his enemies, or jumps out if 
+there aren't any.
+
+4 - Interceptor		Seeks out his enemies, or parks in orbit around a planet if he can't find any. Buzzes incoming ships to scan them for illegal cargo. Also acts as "piracy police" by attacking any ship that fires on or attempts to board another, non-enemy ship while the interceptor is watching.
+
+5 - Naval Fighter		Carried by another ship. Reserved for internal use - do not use!
+
+6 - Escort			Flies with the player. Reserved for internal use - do not use!
+
+	You can set different combinations of booty to be had from ships of a certain düde class by ORing different bits into the düde's Booty field. If a düde class has a booty flag of 0x0000, then you can't get anything from the ship, and you're told that you were "repelled while attempting to board" it. The different booty flags are:
+
+0x0001	Food
+0x0002	Industrial goods
+0x0004	Medical supplies
+0x0008	Luxury goods
+0x0010	Metal
+0x0020	Equipment
+0x0040	Money (depends on the ship's purchase price)
+
+	The next field tells Override what kind of text to display when you hail a ship of this düde type and send a greeting: (note that these values can be added together to have Override display multiple different types of information)
+
+InfoTypes		What kind of info to display
+	1000		Good prices
+	2000		Disaster info
+	4xxx		Specific advice (the last three digits of this value are added to 7500 to get the ID of the STR# resource from which to get the quote)
+
+	The MissionBit fields can be used to link the appearance of each ship type to the state of a given mission bit. If a ship type’s MissionBit field is set to 0-511, that ship will only appear if the corresponding mission bit is set. 1000-1511 will cause the ship to only appear if the mission bit is not set, and -1 will cause it to appear as normal.
+
+	One thing to remember when setting up a düde resource is that Override will choke if any of the ShipType fields are filled incorrectly (i.e. less that 128 or greater than 159) or any of the probabilities are not between 1 and 100. Therefore, if you want a düde type to point to only one ship class, you'd set all four ShipType fields the same and put 25% in each Prob field. (see the "Confed Liner Only" düde class for an example of this)

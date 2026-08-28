@@ -1,0 +1,7 @@
+Other
+
+Note:	Override's resources all start at ID number 128, but the internal storage for all data file info is zero-based. Therefore, when a field in the Override data file is said to refer to a government, stellar object, etc., it refers to it by its index number (starts at 0) unless it is specifically stated that it is referring to the ID number, which starts at 128.
+
+Note:	Some of Override's fields refer to other resource IDs or index numbers, but their values are offset by a certain amount to indicate type. For example, the mïsn resource's AvailStel field refers to the index number of a gövt resource when its value is between 10000 and 10063. In cases like this, it is necessary to add to or subtract from the field in order to force the value into the proper range: in this instance, you'd subtract 10000 to find the index number of the gövt.
+
+Note:	Any resources in an Override plugin file automatically replace same-numbered resources in Override’s main files. Additional graphics for the shipyard and outfit dialog menus (just individual menu items, not the whole menu!) are loaded from PICT ID’s 5101 and up for shipyard and 6101 and up for outfit. (e.g. 5101 is the first ship type, 5105 is the fifth, etc., and the same goes for the outfit menu items) These menu items will replace the respective ones in the main menu resources, PICTs 5100 and 6100.

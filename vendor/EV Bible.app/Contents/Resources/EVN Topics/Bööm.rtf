@@ -1,0 +1,17 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx26\shady-28\shadr0\shado85 \shadc0 B\'9a\'9am resource
+\f1\b0\fs28 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+	The boom resource is used to customize the various explosion types. Nova supports up to 64 different explosion types. The graphics for the explosions are loaded from sp\'95n resources 400-463, the sounds are loaded from snd resources 300-363, and the behavior of each explosion type is contained within b\'9a\'9am resources 128-191. Each b\'9a\'9am resource contains three fields:\
+\
+FrameAdvance	The rate at which the explosion will animate - a value of 100 will cause each frame of the explosion to appear for exactly one frame of the game animation, and lower values will stretch out the explosion animation and make it stay onscreen longer.\
+\
+SoundIndex		The index (0-63) of the explosion sound to associate with this explosion type, or -1 for a silent explosion. Usually you'd set this to either -1 or to the same value as the explosion index itself (e.g. 1 for b\'9a\'9am resource 129, etc.) but if you want to use the same sound for two different explosion types, you can do that with this field.\
+                \
+GraphicIndex	The index (0-63) of the explosion graphic to associate with this explosion type. Usually you'd set this to the same value as the explosion index itself (e.g. 1 for b\'9a\'9am resource 129, etc.) but if you want to use the same graphic for two different explosion types (like the small weapon explosion and the ship-breaking-up explosion) you can do that with this field.}

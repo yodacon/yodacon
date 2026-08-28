@@ -1,0 +1,114 @@
+sÿst resource
+
+	Sÿst resources store information on star systems, in which all combat,
+trading, and spaceflight take place. Each system can be linked to up to 16 other
+systems, and the player can make hyperspace jumps back and forth between them.
+
+	System ID #128 also has a special significance: that system is where the player starts out when first beginning the game and if he subsequently ejects and is rescued. This system should always be made neutral, so the player isn't pursued by big beefy ships when he's just starting out.
+
+The first two fields in the syst resource tell Nova where on the map to place
+it:
+
+xPos & yPos     The system's X and Y positions on the map
+
+
+The next fields store the hyperspace links to up to 16 other systems
+
+Con1-Con16	Link to another system
+	-1		No link
+	128-1127	ID of a system to link to
+
+
+The next fields store the stellar navigation defaults (F1-F4 for the first four)
+for the system. It is important to always set navigation defaults for stellar
+objects in your systems, because that's how Nova's AI routines and status
+display keep track of stellar objects; if you don't set a planet as a nav
+default, the AIs won't "see" it, it won't show up on the radar, and you can't
+select it.
+
+NavDef (x16)	Navigation defaults (F1-F4)
+	-1		No nav default for this key
+	128-548	ID number of the stellar object to set as a default
+
+
+The next fields tell Nova how many ships, and of what kind, to put in the
+system:
+
+DudeTypes (x8)	Which type of dude to place (best not to set this to an out-of-range value)
+	128 to 639		ID number of the dude type to place
+	-128 to -639		ID number of a fleet type to place
+	-1			unused
+
+% Prob (x8)		Probability that a given ship/fleet placed is of each of the above types
+	1-99		This percent probability
+
+AvgShips		The average number of AI ships in the system
+	0		No ships, empty system
+	1 and up	This number of ships, +/- 50%
+
+
+The next field tells Nova who controls the system:
+
+Gövt			Which government owns the system
+	-1		Ignored (system is independent)
+	128-383	ID number of the controlling govt
+
+
+The next tells Nova which string, if any, to display as the message buoy's
+message when you enter a system:
+
+Message		Which message buoy string to display
+	-1		Ignored (no special message)
+	1 and up	Use this entry in STR# resource 1000 as the text of the message buoy
+
+
+The next two fields tell Nova what kinds of navigation hazards to put in the
+system:
+
+Asteroids		How many asteroids to put in the system, from 0 to 16
+
+Interference		How thick the static in the system should be. 0 is no static, 100 is complete sensor blackout.
+
+
+Want to make a ‘pers’ type ship always appear? Put its ID into one of the Person
+fields that appear at the end of the syst resource. 
+
+	The Visibility field controls how and when to make the system visible or
+invisible. You can pull off some cool tricks with this field, including
+presenting the illusion that system has changed in some way by hiding the
+original system and replacing it with a copy that is identical except for the
+desired changes. The Visibility field is a control bit test expression - leave
+it blank if unused.
+
+Note:	Using the Visibility field to replace one system with another will work
+fine as long as they have the exact same coordinates (that's how Nova knows
+to update the hyper links, etc.)  But, if you're going to have systems
+replacing each other in response to ncb changes, be sure that the Visibility
+fields of all the systems are mutually exclusive, or the resulting behavior
+will be undefined and probably incorrect.
+
+BkgndColor		The system's background color, encoded the same as HTML colors.
+	(RRGGBB)  ...set to zero for pure black.
+
+Murk		The murkiness of the system (0-100). Zero will cause everything to appear normally - 100 will cause the player to question their current glasses prescription. A value less than zero is equivalent to zero murk but also hides the starfield.
+
+AstTypes		Flag bits that determine what types of asteroids will appear in this system:
+	0x0001	Small metal   (röid ID 128)
+
+	0x0002	Medium metal  (röid ID 129)
+
+	0x0004	Large metal   (röid ID 130)
+
+	0x0008	Huge metal    (röid ID 131)
+
+	0x0010	Small ice     (röid ID 132)
+
+	0x0020	Medium ice    (röid ID 133)
+	etc.
+                
+
+ReinfFleet	The ID of a fleet to use as this system's reinforcement fleet.  If ships allied with the reinforcement fleet's government are under attack and the combat odds against them exceed the MaxOdds field of the reinforcement fleet's government, the reinforcement fleet will be called in. Set to 0 or -1 if unused.
+
+ReinfTime		The delay between the time the reinforcement call goes out and the time the fleet appears. A value of 30 = one second.
+                 
+ReinfIntrval		The interval, in days, that it takes for the reinforcement fleet to be regenerated. If you set this to 0, a reinforcement fleet will be available every day. If you set this higher than zero, it will take that number of days for the reinforcement fleet to be available again.

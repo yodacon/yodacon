@@ -1,0 +1,12 @@
+jünk resource
+
+	Jünk resources store info on specialized commodities that can be bought and sold at only one location (each). The fields are:
+
+SoldAt		ID number of the stellar object where the commodity is sold
+
+BoughtAt		ID number of the stellar object where the commodity is purchased (or -1 for none)
+
+BasePrice		The average price of the commodity (works much like the base prices for "regular" commodities)
+
+Flags			Misc control bits (all but one unused)
+           0x0001		Tribbles flag - When in your cargo bay, the commodity multiplies like tribbles.

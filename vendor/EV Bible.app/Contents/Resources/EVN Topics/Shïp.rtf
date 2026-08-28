@@ -1,0 +1,281 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;\f2\froman\fcharset77 TimesNewRomanPS-ItalicMT;
+}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx34\shady-36\shadr0\shado85 \shadc0 Sh\'95p resource
+\f1\b0\fs28 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+	Spaceships are the heart of Nova, so the ship resource contains a lot of\
+info. The name of a ship class, which is seen in the targeting display,\
+corresponds to the name of the ship resource. The first nine fields give Nova\
+some general performance info on each ship type:\
+\cf2 \
+Holds		Cargo capacity, in tons. Put a negative sign in front of this value if you want to prevent the player from purchasing mass expansions. (e.g. a value of -100 would mean 100 tons of hold space but no mass expansions allowed)\cf0 \
+\
+Shield	Shield strength.\
+\
+\cf2 Accel		Acceleration magnitude. 300 is considered an average value.\
+\
+\cf0 Speed		Top speed. 300 is also an average value here.\
+\cf2 \
+Maneuver	Turn rate. 10 \'c5 30\'a1/sec.\
+\cf0 \
+Fuel		Fuel capacity. 100 = 1 jump.\
+\
+\cf2 FreeMass	Space available to add additional items and upgrades. Note that this is in addition to the space taken up by the ship\'d5s stock weapons. (e.g. a ship with 20 tons listed in FreeMass and 10 tons of stock weapons will actually have 30 tons of expansion space, with 20 available.)\cf0 \
+\
+Armor	Armor strength.\
+\
+\cf2 ShieldRech		Shield recharge speed, in number of shield points x1000 per frame. Bigger numbers here mean faster recharge - a value of 1000 is equal to 1 point per frame or 30 points per second.\cf0 \
+\
+\
+The next twelve fields tell Nova which stock weapons to put on your ship when you first buy it:\
+\
+WeapType (x8)	ID numbers of weapon types\
+	-1 or 0	No weapon\
+	128-191	Add this weapon type\
+\
+\cf2 WeapCount (x8)	How many of each of the above weapons to add\
+	-1 or 0	None\
+	1 and up	Add this many\cf0 \
+\
+AmmoLoad (x8)	The standard ammo load for weapons that need it, or ignored for those that don\'d5t\
+	-1 or 0	No ammo\
+	1 and up	Include this many rounds of ammo\
+\
+\
+The next two fields tell Nova what this ship\'d5s maximum loadout of fixed guns and turreted weapons is. Each ship has an inherent upper limit on fixed guns and turrets, in order to keep them from becoming absurdly powerful. (e.g. a bulk freighter has lots of room to add weapons, but is limited to a single turret for defense) The fields are:\
+\
+MaxGun	The ship\'d5s maximum number of fixed guns, which are flagged in the WeapFlag field of the outf resource.\
+\
+MaxTur	The ship\'d5s maximum number of turrets, which are flagged in the WeapFlag field of the outf resource.\
+\
+\
+The next field tells Nova where this ship is available for purchase:\
+\
+TechLevel		What the technology level of the ship is. This ship will be available at all shipyards with a tech level of this value or higher. (The exception to this rule involves the SpecialTech fields of the sp\'9ab resource; see the section on sp\'9ab resources for more information.)\
+\
+\
+The next field, Cost, tells Nova how much to charge you when you buy this ship.  The cost of buying a ship is always the cost of the new ship minus 25% of the original cost of your current ship and upgrades. (i.e. you always "trade up" to a new ship) \
+\
+The next field stores info on how the ship explodes:\
+\
+DeathDelay		The number of frames the ship "disintegrates" before finally exploding.\
+	0-59		The ship disintegrates for this number of frames and then disappears in a single fireball.\
+\
+	60+		The ship disintegrates for this number of frames and then disappears in a huge explosion. The exact size of the resulting fireball is proportional to the ship's mass. (see below)\
+\
+\
+\cf2 ArmorRech		Armor recharge speed, in number of armor points x1000 per frame. Bigger numbers here mean faster recharge - a value of 1000 is equal to 1 point per frame or 30 points per second.\
+\cf0 \
+Explode1	Type of explosion to show (0-63) while the ship is breaking up, or -1 to not show any explosions until the ship is finished being destroyed.\
+                 \
+\cf2 Explode2	Type of explosion to show (0-63) when the ship is completely destroyed. You can also add 1000 to the value of this field in the same manner as the ExplodeType field in the w\'91ap resource.  Set to -1 to not show any explosion when the ship is destroyed.\
+\cf0 \
+DispWeight		The display weight of this ship type. Ships with a higher display weight are shown closer to the top of the shipyard dialog. This can be used to effectively rearrange the order in which ships are displayed without rearranging the resources themselves.\
+\
+\cf2 Mass		The mass of the ship, in tons. This doesn't affect acceleration or speed at all, but it does affect travel time in hyperspace and the display on the density scanner. Also, the blast radius and impact strength when the ship explodes is proportional to its mass.\
+  1-99			1 day per jump, small blip on density scanner\
+  100-199		2 days per jump, large blip on density scanner\
+  200 and up		3 days per jump, large blip on density scanner\cf0 \
+\
+\
+Length	The ship's length in meters. Currently unused in any calculations, but it\'d5s kinda cool, so it\'d5s displayed in the "detailed ship info" dialog.\
+\
+\
+The next field tells Nova what kind of AI the ship will have if it's not created\
+in connection with a dude resource. The only place this field is useful is when\
+a ship is created as an escort ship; otherwise, it's ignored:\
+\
+InherentAI		What AI the ship uses when it's escorting the player.\
+	1-4		Use this kind of AI. (see the AI descriptions above)\
+\
+Crew		Number of crew members. Ships with 0 crew can't be boarded, nor can they capture any other ships.\
+\
+Strength	An arbitrary value that represents the relative strength of the ship type with respect to the rest of the universe.  Used when calculating combat odds (see the govt resource for details).\
+\
+	The next field tells Nova what government is associated with a ship type.\
+Note that unlike previous EV games, Nova actually handles two inherent\
+government associations for each ship type: an inherent combat govt\
+(used when an AI ship or stellar is deciding if it likes or hates another\
+ship) and an inherent attributes govt (used for non-combat things like\
+voice type, distress message flags, etc). Sometimes you might want to\
+create a ship type that inherits attributes from a particular govt but\
+isn't considered to be inherently of that govt in combat, so Nova lets\
+you use the InherentGovt field in several different ways:\
+\
+InherentGovt	Description\
+	\cf2 -1	No inherent combat govt or inherent attributes g\'9avt for this ship\
+\cf0 \
+	128-383     Ship is treated as being inherently of the g\'9avt with this ID, both for AI combat and attributes inheritance)\
+\
+	\cf2 1128-1383	Ship has an inherent attributes g\'9avt with this ID (minus 1000) but no inherent combat g\'9avt.\
+\cf0 \
+	2128-2383	Ship has an inherent combat g\'9avt with this ID (minus 2000) but no inherent attributes g\'9avt.\
+\
+The next field is for some miscellaneous flags:\
+\
+
+\f2\i \ul Flags:	Description:
+\f1\i0 \ulnone \
+\cf2 0x0001	Slow jumping (75% normal speed)\
+\cf0 \
+0x0002	Semi-fast jumping (125%)\
+\cf2 \
+0x0004	Fast jumping (150%)\cf0 \
+\
+0x0008	Player ship takes advantage of FuelRegen property\
+\cf2 \
+0x0010	Ship is disabled at 10% armor instead of 33%\cf0 \
+\
+0x0020	Ship has afterburner when player has an advanced combat rating\
+\cf2 \
+0x0040	Ship always has afterburner (for AIs only)\cf0 \
+\
+0x0100	Show % armor on target display instead of "Shields Down"\
+\cf2 \
+0x0200	Don't show armor or shield state on status display\cf0 \
+\
+0x0400	Ship is a planet-type ship, and can only be hit by planet-type \
+weapons\
+\cf2 \
+0x1000	Ship\'d5s turrets have a blind spot to the front\cf0 \
+\
+0x2000	Ship\'d5s turrets have a blind spot to the sides\
+\cf2 \
+0x4000	Ship\'d5s turrets have a blind spot to the rear\cf0 \
+\
+0x8000	Ship is an escape ship type - if the player is carrying any ships of this type and decides to eject, he will fly off in a ship of this type (with random damage) instead of an escape pod.\
+\
+\
+PodCount	For decorative purposes, AI ships can be made to launch escape pods when they're destroyed. This field contains the standard number of escape pods for an AI ship of this type to launch when destroyed, at a rate of one per second. Note that this has nothing to do with the p\'91rs field's escape pod flag, it's just for eye candy. Don't overuse this field, as it can be annoying if used too often. (perhaps restrict it only to luxury liner type ships).\
+\
+\
+\cf2 DefaultItems	Up to eight default items with which to equip this ship when the player buys or captures one. Note that AI-controlled ships will ignore these fields; also, don\'d5t put anything in here that isn\'d5t a physical item - i.e. afterburners, shield boosters, and the like are okay, but no fake IDs, maps, etc.\
+	128-255	Ship comes stock with this item\
+	-1		Ignored\cf0 \
+\
+\
+ItemCount	The number of each DefaultItem with which to equip the player.\
+\
+\cf2 FuelRegen	This ship type\'d5s inherent fuel regeneration property. Works exactly the same as the fuel scoop ModVal property - useful for making ships with built-in fuel replenishment. Note that for the player to be able to use this field, the 0x0008 flag must also be set. (this allows you to give enemy ships built-in fuel scoops but still make the player have to buy his own)\
+\
+\cf0 SkillVar	The amount (in percent) to which this ship\'d5s pilots\'d5 skill varies. This affects acceleration and turn rate for each ship: i.e. a skill variance of 10% would make each ship of a given type up to 10% slower or faster than "stock". Values from\
+	1 to 50% are valid.\
+          \
+                 \
+
+\f2\i \ul Flags2:	Description:
+\f1\i0 \ulnone \
+\cf2 0x0001	Ship exhibits swarming behavior\
+\cf0 \
+0x0002	Ship prefers standoff attacks\
+\cf2 \
+0x0004	Ship can't be targeted\cf0 \
+\
+0x0008	Ship can be fired on by point defense systems\
+\cf2 \
+0x0010	Don't use fighter voices\cf0 \
+\
+0x0020	Ship can jump without slowing down\
+\cf2 \
+0x0040	Ship is inertialess\cf0 \
+\
+0x0080	AI ships of this type will run away/dock if out of ammo for all ammo-using weapons\
+\cf2 \
+0x0100	AI ships of this type will cloak when their weapon goes into burst reload\cf0 \
+\
+0x0200	AI ships will cloak when running away\
+\cf2 \
+0x0400	AI ships will cloak when hyperspacing\cf0 \
+\
+0x0800	AI ships will cloak when just flying around\
+\cf2 \
+0x1000	AI ships will not uncloak until close to their target\cf0 \
+\
+0x2000	AI ships will cloak when docking\
+\cf2 \
+0x4000	AI ships will cloak when preemptively attacked\cf0  \
+\
+\
+Availability		Control bit test expression. The player will be able to purchase this type of ship when the expression evaluates to true. Leave blank if unused. Depending on the configuration of other flags, the ship might appear in the shipyard but not be able to be purchased if its Availability evaluates to false.\
+ \
+\cf2 AppearOn		Control bit test expression. Ships of this type will not show up in d\'9fde resources if this expression evaluates to false. Leave blank if unused.\cf0 \
+               \
+OnPurchase		Control bit set expression. Leave blank if unused. \
+\
+\cf2 Deionize	The rate at which this ship type dissipates ionization charge.  A value of 100 equals 1 point of ion energy per 1/30th of a second. Higher values for Deionize yield faster ion charge dissipation.\cf0 \
+               \
+IonizeMax		The amount of ion charge at which a ship of this type will be considered "fully ionized".\
+               \
+\cf2 KeyCarried		The key carried ship type, used for interesting effects in the w\'91ap and sh\'8an resources.\cf0 \
+\
+DefaultItms2	More default items, used as above\
+ItemCount\
+\
+\cf2 Contribute	These two Contribute fields together form a 64-bit flag that is\
+Contribute	subsequently combined with the Contribute fields from the outfit items in the player's possession, to be used with the Require fields in the outf and misn resources.\cf0 \
+\
+Require	These two Require fields together form a 64-bit flag that is\
+Require	logically and'ed with the Contribute fields from the player's current ship and outfit items. If for each 1 bit in the Require fields there is a matching 1 bit in one or more of the Contribute fields, the ship can be purchased. Leave these set to zero if unused. Depending on the configuration of other flags, the ship might appear in the shipyard but not be able to be purchased if the player doesn't meet the Requirements.\
+\
+\cf2 BuyRandom		The percent chance that a ship of this type will be available for purchase on a given day. A BuyRandom of 0 means this ship will never be made available for purchase.\cf0 \
+\
+HireRandom	The percent chance that a ship of this type will be available for hire in the bar on a given day. A HireRandom of 0 means this ship will never be made available for hire.\
+\
+\cf2 OnCapture		Control bit set expression, evaluated when you capture a ship of this type. Leave blank if unused. \cf0 \
+\
+OnRetire	Control bit set expression, evaluated when you sell a ship of this type and/or replace it with a captured ship.\
+\cf2 \
+Subtitle	The subtitle to show on the target display for this ship type\
+\cf0 \
+
+\f2\i \ul Flags3	Description:
+\f1\i0 \ulnone \
+\cf2 0x0001	Ship destroys asteroids\
+\cf0 \
+0x0002	Ship scoops asteroid debris\
+\cf2 \
+0x0010	Ship ignores gravity\cf0 \
+\
+0x0020	Ship ignores deadly stellars\
+\cf2 \
+0x0040	Ship's turreted shots appear above the ship instead of below\cf0 \
+\
+0x0100	Don't show ship in shipyard if Availability is false\
+\cf2 \
+0x0200	Don't show ship in shipyard if Require bits not met\cf0 \
+\
+0x4000	When this ship is available for sale, it prevents all higher-numbered ship types with equal DispWeight from being made available for sale at the same time.\
+\
+\cf2 UpgradeTo		If an escort ship of this type can be upgraded, this field holds the ID of the ship type that it can be upgraded to. Set to 0 or -1 if this ship class can't be upgraded.\cf0 \
+                \
+EscUpgrdCost	The cost to upgrade an escort ship of this type to the next more advanced version, as defined in the UpgradeTo field.\
+\
+\cf2 EscSellValue	The amount of cash the player gets for selling off a captured escort of this type. If you input a number that's less than or equal to zero here, Nova will default to 10% of the ship's original cost.\cf0 \
+\
+EscortType		Tells Nova which of the four categories of escorts to put this ship type into when organizing the escort control menu.\
+\cf2 	-1  Have the game try to figure it out at runtime\cf0 \
+	0  Fighter\
+\cf2 	1  Medium Ship\cf0 \
+	2  Warship\
+\cf2 	3  Freighter\
+\cf0 \
+ShortName		The short string that is displayed in the shipyard dialog menu for this ship type. If you want to split this name into two separate  lines, put the characters "\\n" into the name, e.g.: "Big Ship\\n(used)". When using this, lines that start with an alphanumeric character are drawn in white, while lines that start with other symbols are drawn in grey.\
+\
+\cf2 \
+CommName		The short string to display for this ship when it is hailed by the player.\cf0 \
+\
+Long Name		The long string to display when the player purchases a ship of this type or starts a new pilot.\
+\cf2                 \
+MovieFile	The filename of a QuickTime movie to display in place of the ship picture  in the shipyard dialog. The QuickTime movie must reside within the Nova Files or Nova Plug-Ins folders and will be looped continuously while the player has this ship type selected.\cf0 \
+\
+\
+	Ships' target info picts are stored in PICT resources 3000 and on. The engine is smart enough to reuse targeting picts for two ship classes that have the same base sprites: all you have to do is give the first of any series of\
+identical-looking ship types a target pict in the usual way (PICT resource ID\
+3000 + shipID - 128) and the engine will use it for all higher-numbered ship\
+types with the same base sprites.}

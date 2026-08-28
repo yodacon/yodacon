@@ -1,0 +1,57 @@
+düde resource
+
+	A dude resource can be thought of as a container for ships that share certain characteristics. Any ship of a given dude class will have that dude class's AI type and governmental affiliation, and will yield the same types of booty when boarded. In a dude resource, up to 16 different ship classes can be pointed to, with a probability set for each ship class. The result of all this is that, in other parts of Nova's data file, you can point to a dude class and know that Nova will create a ship of the proper AI type and governmental alignment, and will pick the new ship's type based on the probabilities you set in the dude resource. The dude resource's fields are:
+
+AIType	Which type of AI to use for ships of this dude class (see below).  If you set this to 0, each ship will use its own inherent AI type.
+
+Govt		The ID number of the dude class's government, or -1 for independent.
+
+Booty		Flags that define what you'll get when you board a ship of this dude class. (see below)
+
+InfoTypes:	What kind of info to display when hailed:
+0x1000	Good prices
+
+0x2000	Disaster info
+
+0x4xxx	Specific advice (the lower 12 bits of this value are added to 7500 to get the ID of the STR# resource from which to get the quote)
+
+0x8000	Generic govt hail messages
+                                             
+
+Flags:	Description:
+0x0001	Carries food when plundered
+
+0x0002	Carries industrial goods
+
+0x0004	Carries medical supplies
+
+0x0008	Carries luxury goods
+
+0x0010	Carries metal
+
+0x0020	Carries equipment
+
+0x0040	Carries money (amount depends on the ship's purchase price)
+
+0x0100	Ships of this dude type can't be hit by the player and their shots can't hit the player (useful for things like AuxShip mission escorts, etc.)
+
+
+
+ShipType (x16)	These fields contain the ID numbers of up to 16 different ship classes. Set to 0 or -1 if unused.
+                     
+Probability (x16)	These fields set the probability that a ship of this dude class will be of a certain ship type
+
+
+The four different AI types are:
+1 - Wimpy Trader		Visits planets and runs away when attacked
+
+2 - Brave Trader		Visits planets and fights back when attacked, but runs away when his attacker is out of range
+
+3 - Warship			Seeks out and attacks his enemies, or jumps out if there aren't any.
+
+4 - Interceptor		Seeks out his enemies, or parks in orbit around a planet if he can't find any. Buzzes incoming ships to scan them for illegal cargo. Also acts as "piracy police" by attacking any ship that fires on or attempts to board another, non-enemy ship while the interceptor is watching.
+
+
+	You can set different combinations of booty to be had from ships of a certain dude class by ORing different bits into the dude's Booty field. If a dude class has a booty flag of 0x0000, then you can't get anything from the ship, and you're told that you were "repelled while attempting to board" it. The different booty flags are documented above
+
+	Unlike previous versions of the EV engine, Nova can handle dude resources that are not completely filled - so, while the dude resource can handle references to as many as 16 different ship types, not all fields have to be used. If you do this, remember to set the corresponding ShipType fields to 0 or -1 to indicate that they're unused.

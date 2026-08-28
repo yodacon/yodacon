@@ -1,0 +1,8 @@
+Log Files
+
+	Nova supports two different kinds of debug log output that are useful to
+plugin developers:
+
+1.	If you create a file called "debuglog.txt" in your Nova folder, a large amount of debug info will be dumped into this file as the game runs.  Further, enabling this output also turns on some additional error checking, which can be very handy for finding errors in plugins.
+   
+2.	If you create a file called "pilotlog.txt" in your Nova folder, every time a pilot file is opened its contents will be written in human-readable form to the pilotlog.txt file. (works only after registering)

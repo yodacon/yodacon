@@ -1,0 +1,39 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx31\shady-32\shadr0\shado85 \shadc0 sp\'95n resource \
+
+\fs32 (Stored in Override Graphics)
+\f1\b0\fs28 \ulnone \shad0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 	Sp\'95n resources contain sprite info. Whenever Override needs to load a set of sprites for a particular object, it looks at that objects's sp\'95n resource, which in turn tells the game how to load the object's sprites. Override sprites are stored as paired sprite and mask PICT resources. The sprites in each PICT are arranged in a grid, which can be of any size. The sp\'95n resource tells Override what shape and size the sprites' grid is. Sp\'95n resources have the following fields:\
+\
+\cf2 SpritesID	ID number of the sprites' PICT resource\
+\cf0 \
+MasksID	ID number of the masks' PICT resource\
+\
+\cf2 xSize		Horizontal size of each sprite (should be a multiple of 8!)\
+\cf0 \
+ySize		Vertical size of each sprite\
+\
+\cf2 xTiles	Horizontal grid dimension \
+\cf0 \
+yTiles	Vertical grid dimension \
+\
+	Sp\'95n resources have certain reserved ID numbers, which correspond to different types of objects:\
+\
+128-191	Ships\
+\cf2 200-263	Weapons\cf0 \
+300-363	Stellar objects\
+\cf2 400-402	Explosions\cf0 \
+500		Boxes\
+\
+	It is important to note that the ID numbers of the PICT resources are non-critical, as Override looks at the spin resources to find the sprites, and not at the actual PICT ID numbers themselves.\
+\
+Note:		The total number of sprites in the graphics file (used by Override to update the progress bar during startup time) is stored in 'sp\'95t' resource 128 in the Override Graphics file.\
+\
+Note:		Don\'d5t create a sprite grid that has more than 10 rows or columns (yTiles and xTiles both \'b2 50) because Override will puke. Similarly, don\'d5t create sprites that are wider or taller than the smallest screen size Override can use (640x480) because there\'d5s not enough offscreen buffer room to load }

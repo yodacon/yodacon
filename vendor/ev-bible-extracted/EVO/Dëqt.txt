@@ -1,0 +1,9 @@
+Dëqt resource
+
+Resource Limit:  128
+
+     Dëqt resources are used to supplement and/or replace mission text briefings with external QuickTime movies.  When Override goes to load some text for a mission that would normally be displayed in the standard text-briefing dialog box, it also checks for a dëqt resource with the same ID as the dësc resource to be loaded.  If it determines that a movie needs to be played, it looks in the Override Plug-Ins folder for a QuickTime ‘MooV’ file with the same name as the name of the associated dëqt resource, and plays it on the screen.  By using the Flags field of the dëqt resource, you can set a movie to play either before or after the briefing is shown, or in place of it. The flag settings are:
+
+0x0000	Show movie before text briefing (default)
+0x0001	Show movie after text briefing
+0x0002	Show movie instead of text briefing

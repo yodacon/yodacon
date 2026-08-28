@@ -1,0 +1,70 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx31\shady-32\shadr0\shado85 \shadc0 g\'9avt resource
+\f1\b0\fs24 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0  \
+
+\fs28     A g\'9avt resource defines the parameters for a government, which is in turn defined as "any collection of ships and planets that react collectively to the actions of the player and other ships." Governments keep track of how they feel toward you, and they can also have set enemies and allies. The g\'9avt resource's fields are:\
+\
+InherentJam		Flags for the goverment\'d5s inherent jamming technology. Works similarly to \'d4o\'9ftf\'d5 resource ModType 10 flags, with the addition that flag bit 0x0100 causes freighters (i.e. AiTypes 1 and 2) for a particular government to have 50% of the standard InherentJam value for warships (AiType 3) of the same government.\
+\
+\cf2 Flags			Sets a variety of characteristics (see below)\cf0 \
+\
+Ally			The ID number of the govt's ally.\
+\
+\cf2 Enemy		The ID number of govt's enemy.\cf0 \
+\
+CrimeTol		The maximum amount of evilness the player can accumulate before warships of this govt start to beat on him.\
+\
+\cf2 SmugPenalty	The amount of evilness a player gains for being detected smuggling illegal cargo (defined in a misn resource) past this government's ships.\cf0 \
+\
+DisabPenalty	The amount of evilness for disabling one of this g\'9avt's ships.\
+\
+\cf2 BoardPenalty	Evilness from pirating one of this govt's ships\cf0 \
+\
+KillPenalty		Evilness from killing this govt's ships\
+\
+\cf2 ShootPenalty	Evilness from shooting one of this govt's ships (currently ignored)\cf0 \
+\
+InitialRec		The player\'d5s initial legal record in systems controlled by this govt (0 is neutral, positive is good, negative is bad)\
+\
+\
+\'a5 The different bits that can be set in a govt's Flags field are:\
+\cf2 0x0001	Xenophobic (Warships of this govt attack everyone except their allies. Useful for making pirates and other nasties.)\cf0 \
+\
+0x0002	Ships of this govt will attack the player in non-allied systems if he's a criminal there (useful for making one govt care only about the player's actions on its home turf, while another is nosy and enforces its own laws everywhere it goes)\
+\
+\cf2 0x0004	Always attacks player\cf0 \
+\
+0x0010	Warships of this govt will retreat when their shields drop below 25% - otherwise they fight to the death\
+\
+\cf2 0x0020	Ignore ships of this govt in the DoGoodSamaritan function\cf0 \
+\
+0x0040	Never attacks player (also, player\'d5s weapons can\'d5t hit them)\
+\
+\cf2 0x0100	\'d4pers\'d5 ships of this govt won\'d5t use escape pod, but will act as if they did.\cf0 \
+\
+0x0200	Warships will take bribes.\
+\
+\cf2 0x0400	Can't hail ships of this g\'9avt\cf0 \
+\
+0x0800	Ships of this govt start out disabled (derelicts)\
+\
+\cf2 0x1000	Warships will plunder non-mission, non-player enemies before destroying them\cf0 \
+\
+0x2000     Freighters will take bribes.\
+\
+\cf2 0x4000     Planets of this govt will take bribes\cf0 \
+\
+0x8000     Ships of this govt taking bribes will demand a larger percentage of\
+             your cash supply, and their planets will always take bribes (useful\
+             for pirates)\
+\
+\
+     Doing evil deeds to one government will improve your rating with its enemies, and vice versa. Allied governments also communicate your actions, so attacking one government will make its allies hate you too.\
+     One important thing to note is that two governments don't both have to have the other defined as their ally to have them be friendly toward one another. As an example: John says "I like Cajun," and Cajun says "John? Who's that?" Cajun and John are automatically allies, because Cajun's love for John is implied in John's statement of undying devotion to Cajun. :) This way, governments can have multiple allies. Enemies work in a similar fashion, except that any government not allied with a xenophobic government is automatically considered its enemy.}

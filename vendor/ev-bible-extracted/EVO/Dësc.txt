@@ -1,0 +1,10 @@
+Dësc resource
+
+     Dësc resources store null-terminated text strings (descriptions) that are used by Override in a variety of places.  For some dësc resources, Override looks for a certain reserved ID number.  Other dësc resources are pointed to by fields in other resources, so their ID numbers are not necessarily fixed, and can be set to virtually anything by the scenario designer.  The reserved dësc ID numbers, along with the maximum length for each type, are below:
+
+• Stellar object descriptions, shown when landed on a planet = 128 to 1628
+• Message shown after the player uses an escape pod = 1900
+• Ship class descriptions, shown in the shipyard and requisition-escort dialog = 2000 to 2063
+• Ship pilot descriptions, shown in the hire-escort dialog = 2100 to 2163
+• Outfit item descriptions, shown in ship outfitting dialog = 3000 to 3127
+• Mission descriptions, shown in mission dialog = 4000 to 4511

@@ -1,0 +1,24 @@
+öops resource
+
+	Öops resources contain info on planetary disasters. Actually, the term “disasters” is a misnomer, as these occurances simply affect the price of a single commodity at a planet or station, for good or bad. Override uses the name of the resource in the commodity exchange dialog box to indicate that a disaster is currently going on at a planet. The fields of an öops resource are:
+
+Stellar		The stellar object this disaster is linked to
+	128-1628	ID of a stellar object
+	-1		Any planet or station (use sparingly)
+	-2		Nothing (used for mission-related news)
+
+Commodity 
+Which commodity to affect the price of (0 = food, 1 = industrial, etc...)
+
+PriceDelta	How much to raise or lower the price. (negative numbers lower it)
+
+Duration	How many days the disaster lasts.
+
+Freq		Percent chance per day that the disaster will occur.
+
+MissionBit	Tells Override how to relate mission bits and disasters. (see mïsn for more info)
+	-1		Ignored
+	0-511		Activate the disaster when this mission bit is set
+	1000-1511	Don’t allow this disaster to occur unless this mission bit is set
+	2000-2511	Allow this disaster to occur only if this mission bit is cleared
+	3000-3511	Activate the disaster when this mission bit is cleared

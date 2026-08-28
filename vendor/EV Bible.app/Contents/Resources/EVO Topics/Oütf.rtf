@@ -1,0 +1,109 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;\red0\green0\blue255;\red255\green0\blue255;
+\red255\green255\blue0;\red128\green0\blue128;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\fs36 \cf0 \ul \ulc0 \shad\shadx31\shady-32\shadr0\shado85 \shadc0 o\'9ftf resource
+\fs28 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+	Outf resources store information on the items that you can buy when you choose \'d2Outfit Ship\'d3 at a planet or station. The first field tells Override whether or not the item's availability is linked to the completion of a mission:\
+\
+MissionBit		Tells Override whether to offer this item only if a certain mission bit is set. (see m\'95sn for more info)\
+	\cf2 -1		Ignored\cf0 \
+	0-511		Offer the item only if this mission bit is set\
+	\cf2 1000-1511	Offer the item only if this mission bit is not set\cf0 \
+\
+The next field contains info on the item\'d5s mass:\
+\
+Mass		The mass in tons of the item (0 = no appreciable mass)\
+\
+The next field tells Override where the item is available:\
+\
+TechLevel		What the technology level of the item is. This item will be available at all spaceports with a tech level of this value or higher. (The exception to this rule invloves the SpecialTech fields of the sp\'9ab resource; see the section on sp\'9ab resources for more information.)\
+\
+The next two fields tell Override what kind of modification this item performs:\
+\
+\cf3 If ModType is\cf0 	\cf2 Then it\'d5s\cf0 			\cf4 And ModVal refers to\cf5 :\cf0 \
+\cf3 1\cf0 			\cf2 a weapon\cf0 			\cf4 The ID number of the associated w\'91ap resource\
+\cf3 \
+2			\cf2 more cargo space\cf0 		\cf4 The number of tons of cargo space to add\
+\cf3 \
+3			\cf2 ammunition\cf0 			\cf4 The ID number of the associated w\'91ap resource\
+\cf3 \
+4			\cf2 more shield capacity\cf0 	\cf4 The number of shield points to add\cf6 \
+\cf3 \
+5			\cf2 faster shield recharge\cf0 	\cf4 How much to speed up (-30 = one more point per second)\cf0 \
+\cf3 \
+6			\cf2 armor\cf0 				\cf4 The number of armor points to add\cf0 \
+\cf3 \
+7			\cf2 acceleration booster\cf0 	\cf4 Amount of accel to add (see sh\'95p for more info)\cf0 \
+\cf3 \
+8			\cf2 speed increase\cf0 		\cf4 Amount of speed to add (see sh\'95p for more info)\cf0 \
+\cf3 \
+9			\cf2 turn rate increase\cf0 		\cf4 Amount of turn increase (1 = 30\'a1/sec)\cf0 \
+\cf3 \
+10\cf0 		\cf2 ECM (missile jammer)\cf0     \
+\cf4 	0x0001     Weak Type I jamming\
+	0x0002     Weak Type II jamming\
+	0x0004     Weak Type III jamming\
+	0x0008     Weak Type IV jamming\
+	0x0010     Strong Type I jamming\
+	0x0020     Strong Type II jamming\
+	0x0040     Strong Type III jamming\
+	0x0080     Strong Type IV jamming\cf0 \
+\cf3 \
+11\cf0 			\cf2 escape pod\cf0 			\cf4 ignored\cf0 \
+\cf3 \
+12\cf0 			\cf2 fuel capacity increase\cf0 	\cf4 Amount of extra fuel (100 = 1 jump)\
+\cf3 \
+13\cf0 			\cf2 density scanner\cf0 		\cf4 ignored\cf0 \
+\cf3 \
+14\cf0 			\cf2 IFF (colorized radar)\cf0 	\cf4 ignored\cf0 \
+\cf3 \
+15\cf0 			\cf2 afterburner\cf0 			\cf4 ignored\cf0 \
+\cf3 \
+16\cf0 			\cf2 map\cf0 				\cf4 How many jumps away from present system to explore\cf0 \
+\cf3 \
+17\cf0 			\cf2 cloaking device\cf0 		\cf4 The hue to scale the screen to while cloaked\cf0 \
+\cf3 		\cf4 1 = red, 2 = green, 3 = blue,\
+		4 = cyan, 5 = magenta, 6 = yellow\cf0 \
+\cf3 \
+18\cf0 			\cf2 fuel scoop\cf0 			\cf4 How many frames per 1 unit of fuel generated. Enter a negative value to perform the same function in \'d2fuel sucking\'d3 mode\cf0 \
+\cf3 \
+19\cf0 			\cf2 auto-refueller\cf0 		\cf4 ignored\cf0 \
+\cf3 \
+20\cf0 			\cf2 auto-eject\cf0 			\cf4 ignored (requires escape pod to work)\
+\cf3 \
+21\cf0 			\cf2 clean legal record\cf0 		\cf4 ID of govt to clear legal record with, or -1 for all\cf0 \
+\cf3 \
+22\cf0 			\cf2 hyperspace speed mod\cf0 	\cf4 Number of days to increase or decrease ship\'d5s hyperspace travel time (still can\'d5t go below 1 day/jump)\cf0 \
+\cf3 \
+23\cf0 			\cf2 hyperspace dist mod\cf0 	\cf4 Amount to increase or decrease the no-jump zone\'d5s radius by (the standard radius is 1000) \cf0 \
+\cf3 \
+24\cf0 			\cf2 interference mod\cf0 		\cf4 Subtracts the value in ModVal from the current star system\'d5s Interference value when calculating how \'d2fuzzy\'d3 to make the radar scanner\cf0 \
+\cf3 \
+25\cf0 			\cf2 marines\cf0 			\cf4 Adds the value in ModVal to your ship\'d5s effective crew complement when calculating capture odds\cf0 \
+\cf3 \
+26\cf0 			\cf2 alter mission bit\cf0 		\cf4 If ModVal is 0-511, sets this mission bit when purchased. If ModVal is 1000-1511, clears this mission bit when purchased.\cf0 \
+\
+\
+The next two fields tell Override how many of this item you can possibly have at once:\
+\
+Max		How many you can have (not counting weapon limitations)\
+\
+Flags			Miscallenous info:\
+	\cf2 0x0001	This item is a fixed gun\
+\cf0 	0x0002	This item is a turret\
+	\cf2 0x0004	This item stays with you when you trade ships\cf0 \
+	0x0008	This item can\'d5t be sold\
+	\cf2 0x0010	Remove any items of this type after purchase (useful for permits and other intangible purchases)\
+\cf0 \
+The next field, Cost, tells Override how much to charge you for the item.\
+\
+The last two fields (ModType2 and ModVal2) are for you to specify \'d2alternate\'d3 functions for an outfit item - e.g., a weapon could also reduce the ship\'d5s turning speed.  The only restriction on ModType2 is that you shouldn\'d5t use it for weapons or ammo (modtypes 1 or 3).\
+\
+\
+Note:	The large (100x100 pixel) outfit dialog pictures are stored using PICT resource IDs 6000 and up. Unfortunately, due to lack of planning, the master outfit menu pict is stored at ID 6100, so the large outfit picts with IDs that would normally be 6100 and above are offset forwards by one. So, the large outfit picts are stored from PICT IDs 6000-6099 and 6300-6327.  (note that this has changed in version 1.0.2, and is different from previous versions of Override!)}

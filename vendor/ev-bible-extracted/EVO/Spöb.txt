@@ -1,0 +1,109 @@
+spöb resource
+
+	Spöb resources describe stellar objects, such as planets and space stations. (spöb stands for space object) Each spob resource represents one stellar object, whose name is the name as the name of the resource. The first three fields tell Override where to put the stellar and what graphics to use for it:
+
+xPos & yPos     The stellar's X and Y positions in the system (0, 0) is centered
+Type            Which graphic to use, from 0 to 63.
+
+
+The next field stores the flag bits that tell Override what many of the characteristics of the stellar are. Perform an OR operation on the following flags to get the final flag value:
+
+0x00000001		Can land/dock here
+
+0x00000002		Has commodity exchange
+
+0x00000004		Can outfit ship here
+
+0x00000008		Can buy ships here
+
+0x00000010		Stellar is a station instead of a planet
+
+0x00000020		Stellar is uninhabited (no traffic control)
+
+0x00000040		Has bar
+
+0x00000000		Won't trade in food
+
+0x10000000		Low food prices
+
+0x20000000		Medium food prices
+
+0x40000000		High food prices
+
+0x00000000		Won't trade in industrial goods
+
+0x01000000		Low industrial prices
+
+0x02000000		Medium industrial prices
+
+0x04000000		High industrial prices
+
+0x00000000		Won't trade in medical supplies
+
+0x00100000		Low medical prices
+
+0x00200000		Medium medical prices
+
+0x00400000		High medical prices
+
+0x00000000		Won't trade in luxury goods
+
+0x00010000		Low luxury prices
+
+0x00020000		Medium luxury prices
+
+0x00040000		High luxury prices
+
+0x00000000		Won't trade in metal
+
+0x00001000		Low metal prices
+
+0x00002000		Medium metal prices
+
+0x00004000		High metal prices
+
+0x00000000		Won't trade in equipment
+
+0x00000100		Low equipment prices
+
+0x00000200		Medium equipment prices
+
+0x00000400		High equipment prices
+
+
+The next field, System, contains the ID number of the star system that the stellar object is in. The four flags after that tell Override what items and ships are available for purchase at this stellar:
+
+TechLevel		What the base tech level of the stellar is. Only items and ships with TechLevels at or below this value will be available.
+
+SpecialTech (x3)	Holds the special tech levels of this stellar. Unlike the previous field, only items and ships with exactly this TechLevel will appear here. This is useful for making low-tech worlds that also have a few high-tech items, or for flagging an item with an absurdly high TechLevel (say 15000) and then setting one of the SpecialTech fields of a particular stellar to that same value, thus making that item appear at that stellar and nowhere else.
+
+
+The next two fields contain info on the stellar's governmental affiliation:
+
+Gövt			What government controls this stellar
+	-1		ignored (stellar is independent)
+	128-255	ID number of the stellar's government
+
+MinCoolness	The point on your record in the current system that you'll be denied landing clearance on this stellar.
+	-1 and below	You can be this evil before they shun you
+	0 and up		They have to like you this much before they let you land
+
+
+The next pair of fields tells Override which special landscape to show and which ambient sound to play.
+
+CustPicID	Which custom landscape (333x271 PICT resource) to show
+	-1			No custom landscape
+	Anything else	ID number of PICT to load instead of the standard landscape display
+
+CustSndID			Which ambient sound to play
+	-1			No ambient sound effect
+	Anything else	ID number of snd resource to load (must be 11kHz)
+
+
+The last two fields tell Override what kind of ships, if any, to create for the planet's defense fleet:
+
+DefenseDude	Which type of dude to use for the defense fleet:
+	-1		Ignored (no defense ships)
+	128-255	ID number of the dude resource to use to determine the defense ships' characteristics
+
+DefCount	The number of ships in the defense fleet. If you set this number to be above 1000, ships will be launched from the planet or station in waves. The last number in this field is the number of ships in each wave, and the first 3-4 numbers (minus 1 from the first digit) are the total number of ships in the planet's fleet. For example, a value of 1082 would be four waves of two ships for a total of eight. A value of 2005 would create waves of five ships each, with 100 ships total in the planet's defense fleet.

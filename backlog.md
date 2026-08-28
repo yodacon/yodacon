@@ -44,6 +44,18 @@ dates & hashes in `vendor/paulricheson/PROVENANCE.md`.
       `~/code/Gonex`, the new Go port of konex.
 - [x] Commit `vendor/paulricheson/extracted/` as the readable, diffable, version-controlled form of ConEx.
 
+## Phase 1.4 — The EV Bible (done)
+
+- [x] Found `vendor/EV Bible.app` — a PPC-era Mac app that is really a text
+      document. It does not need to run: topics are plain RTF inside the bundle.
+- [x] `tools/extract-ev-bible.sh` converts it to UTF-8 text, no PowerPC needed.
+- [x] Vendored the result at `vendor/ev-bible-extracted/` — per-topic files plus
+      one combined file per edition (**EVO** 22 topics, **EVN** 30 topics).
+- [x] EVO (Override) is classic EV's direct descendant and therefore the correct
+      reference for ConEx; `specs/misn-evo.yaml` written from it.
+- [ ] Mine the remaining EVO topics (`Spob`, `Syst`, `Govt`, `Desc`, `STR#`) for
+      the Phase 1.5 gazetteer field layouts.
+
 ## Phase 1.5 — The gazetteer (BLOCKING: populate the map)
 
 ConEx missions reference stellars and systems by bare ID (`TravelStel: 412`) and we

@@ -1,0 +1,29 @@
+flët resource
+
+     A flët resource definies the paramaters for a fleet, which is a collection of ships that can be made to appear randomly throughout the galaxy. Fleets can also be made to appear by including them in dude resources. 
+
+LeadShipType	ID of the fleet's flagship's ship class
+
+EscortType (x4)	IDs of the flagships escorts' ship classes. If you don't want to use four different escort types, you should still set the unused fields to a valid ship class ID. (you can set the min & max fields to 0 and just have the extra ships not appear)
+
+Min (x4)		The minimum number of each type of escort to put in the fleet.
+
+Max (x4)		The maximum number of each type of escort to put in the fleet.
+
+Gövt			ID of the fleet's government, of -1 for none.
+
+LinkSyst			Which systems the fleet can be created in
+	-1			Any system
+	128-1127		ID of a specific system
+	10000-10063	Any system belonging to this specific government
+	15000-15063	Any system belonging to an ally of this gövt
+	20000-20063	Any system belonging to any but this gövt
+	25000-25063	Any system belonging to an enemy of this gövt
+
+MissionBit	-1		Ignored
+		0-511		The fleet will only appear when this mission bit is set
+		1000-1511	The fleet will only appear when this mission bit is not set
+
+Note: The MissionBit field is ignored when the fleet is pointed to by a düde resource.
+
+Note: When setting up mission resources, you shouldn't make reference to a düde resource which contains pointers to fleets, as this will cause Override to behave strangely. Use only normal, single-ship düde resources in missions.

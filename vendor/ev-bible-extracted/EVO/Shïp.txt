@@ -1,0 +1,134 @@
+shïp resource
+
+	Spaceships are the heart of Override, so the ship resource contains a lot of info. The name of a ship class, which is seen in the targeting display, corresponds to the name of the ship resource. The first nine fields give Override some general performance info on each ship type:
+
+Holds		Cargo capacity, in tons. Put a negative sign in front of this value if you want to prevent the player from purchasing mass expansions. (e.g. a value of -100 would mean 100 tons of hold space but no mass expansions allowed)
+
+Shield	Shield strength. (Player’s shield is a bit stronger than this)
+
+Accel		Acceleration magnitude. 300 is considered an average value.
+
+Speed		Top speed. 300 is also an average value here.
+
+Maneuver	Turn rate. 1 ≈ 30°/sec.
+
+Fuel		Fuel capacity. 100 = 1 jump.
+
+FreeMass	Space available to add additional items and upgrades. Note that this is in addition to the space taken up by the ship’s stock weapons. (e.g. a ship with 20 tons listed in FreeMass and 10 tons of stock weapons will actually have 30 tons of expansion space, with 20 available.)
+
+Armor	Armor strength. Armor takes damage when shields go down, and when a ship’s is 2/3 gone it becomes disabled.
+
+ShieldRe	Shield recharge speed, in number of frames per shield percentage point regenerated; bigger numbers here make for slower recharging. 30 ≈ 1% per second.
+
+
+The next twelve fields tell Override which stock weapons to put on your ship when you first buy it:
+
+WeapType (x4)	ID numbers of weapon types
+	-1 or 0	No weapon
+	128-191	Add this weapon type
+
+WeapCount (x4)	How many of each of the above weapons to add
+	-1 or 0	None
+	1 and up	Add this many
+
+AmmoLoad (x4)	The standard ammo load for weapons that need it, or ignored for those that don’t
+	-1 or 0	No ammo
+	1 and up	Include this many rounds of ammo
+
+
+The next two fields tell Override what this ship’s maximum loadout of fixed guns and turreted weapons is. Each ship has an inherent upper limit on fixed guns and turrets, in order to keep them from becoming absurdly powerful. (e.g. a bulk freighter has lots of room to add weapons, but is limited to a single turret for defense) The fields are:
+
+MaxGun	The ship’s maximum number of fixed guns, which are flagged in the WeapFlag field of the outf resource.
+
+MaxTur	The ship’s maximum number of turrets, which are flagged in the WeapFlag field of the outf resource.
+
+
+The next field tells Override where this ship is available for purchase:
+
+TechLevel	What the technology level of the ship is. This ship will be available at all shipyards with a tech level of this value or higher. (The exception to this rule invloves the SpecialTech fields of the spöb resource; see the section on spöb resources for more information.)
+
+
+The next field, Cost, tells Override how much to charge you when you buy this ship. The cost of buying a ship is always the cost of the new ship minus 25% of the original cost of your current ship and upgrades. (i.e. you always "trade up" to a new ship) 
+
+The next field stores info on how the ship explodes:
+
+DeathDelay		The number of frames the ship "disintegrates" before finally exploding.
+	0-59		The ship disintegrates for this number of frames and then disappears in a single fireball.
+	60+		The ship disintegrates for this number of frames and then disappears in a huge explosion. The exact size of the resulting fireball is proportional to the ship's mass. (see below)
+
+
+The next four fields tell Override where the ship's turrets should fire from:
+
+TurretYDisp (x4)	Exactly where on the Y-axis of the ship the turrets should fire from. Override cycles through each of these four values in turn as the turrets are fired.
+	0			Fire from exact center of the ship graphic
+	1 and up		Fire from this many pixels forward of center
+	-1 and below	Fire from this many pixels aft of center
+
+
+The next two fields store info on the physical dimensions of the ship:
+
+Mass		The mass of the ship, in tons. This doesn't affect acceleration or speed at all, but it does affect travel time in hyperspace and the display on the density scanner. Also, the blast radius and impact strength when the ship explodes is proportional to its mass.
+	1-99		1 day per jump, small blip on density scanner
+	100-199	2 days per jump, large blip on density scanner
+	200 and up	3 days per jump, large blip on density scanner
+
+Length	The ship's length in meters. Currently unused in any calculations, but it’s kinda cool, so it’s displayed in the "detailed ship info" dialog.
+
+
+The next field tells Override what kind of AI the ship will have if it's not created in connection with a dude resource. The only place this field is useful is when a ship is created as an escort ship; otherwise, it's ignored:
+
+InherentAI		What AI the ship uses when it's escorting the player.
+	1-3		Use this kind of AI. (see the AI descriptions above)
+
+
+The next field contains the number of crew members that are on each type of ship, and the field after that tells Override whether or not the item's availability is linked to the completion of a mission:
+
+MissionBit		Tells Override whether to offer this ship only if a certain mission bit is set. (see mïsn for more info)
+	-1		Ignored
+	0-511		Offer the ship only if this mission bit is set
+	1000-1511	Offer the ship only if this mission bit is not set
+
+The next field tells Override what government is associated with a ship type:
+
+InherentGovt
+	-1		No inherent govt for this ship
+	128-255	ID of a government to link to this ship
+
+The next field is for some miscellaneous flags:
+
+Flags			Resource Description
+	0x0001	Slow jumping (75% normal speed)
+
+	0x0002	Semi-fast jumping (125%)
+
+	0x0004	Fast jumping (150%)
+
+	0x0008	Player ship takes advantage of FuelRegen property
+
+	0x0010	Ship is disabled at 10% armor instead of 33%
+
+	0x0020	Ship has afterburner when player has an advanced combat rating
+
+	0x0040	Ship always has afterburner
+
+	0x0080	Unguided-weapon x-offset should be used
+
+	0x0100	Show % armor on target display instead of “Shields Down”
+
+	0x1000	Ship’s turrets have a blind spot to the front
+
+	0x2000	Ship’s turrets have a blind spot to the sides
+
+	0x4000	Ship’s turrets have a blind spot to the rear
+
+ShotXOffset		The side-to-side x-offset of unguided projectiles and unguided beam weapons, in pixels. Note that the Flags field must also be configured to make this work.
+
+DefaultItems	Up to four default items with which to equip this ship when the player buys or captures one. Note that AI-controlled ships will ignore these fields; also, don’t put anything in here that isn’t a physical item - i.e. afterburners, shield boosters, and the like are okay, but no fake IDs, maps, etc.
+	128-255	Ship comes stock with this item
+	-1		Ignored
+
+ItemCount		The number of each DefaultItem with which to equip the player.
+
+FuelRegen		This ship type’s inherent fuel regeneration property. Works exactly the same as the fuel scoop ModVal property - useful for making ships with built-in fuel replenishment. Note that for the player to be able to use this field, the 0x0008 flag must also be set. (this allows you to give enemy ships built-in fuel scoops but still make the player have to buy his own)
+
+SkillVar	The amount (in percent) to which this ship’s pilots’ skill varies. This affects acceleration and turn rate for each ship - i.e. a skill variance of 10% would make each ship of a given type up to 10% slower or faster than “stock”. Values from 1 to 50% are valid.

@@ -1,0 +1,3 @@
+yëä® resource
+
+	This resource simply contains the offset that is added to the current calendar year when creating a new pilot, thus allowing you to change the starting year of the game. Override will load and use year resource 128 only.

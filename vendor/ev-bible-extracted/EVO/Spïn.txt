@@ -1,0 +1,30 @@
+spïn resource 
+(Stored in Override Graphics)
+
+	Spïn resources contain sprite info. Whenever Override needs to load a set of sprites for a particular object, it looks at that objects's spïn resource, which in turn tells the game how to load the object's sprites. Override sprites are stored as paired sprite and mask PICT resources. The sprites in each PICT are arranged in a grid, which can be of any size. The spïn resource tells Override what shape and size the sprites' grid is. Spïn resources have the following fields:
+
+SpritesID	ID number of the sprites' PICT resource
+
+MasksID	ID number of the masks' PICT resource
+
+xSize		Horizontal size of each sprite (should be a multiple of 8!)
+
+ySize		Vertical size of each sprite
+
+xTiles	Horizontal grid dimension 
+
+yTiles	Vertical grid dimension 
+
+	Spïn resources have certain reserved ID numbers, which correspond to different types of objects:
+
+128-191	Ships
+200-263	Weapons
+300-363	Stellar objects
+400-402	Explosions
+500		Boxes
+
+	It is important to note that the ID numbers of the PICT resources are non-critical, as Override looks at the spin resources to find the sprites, and not at the actual PICT ID numbers themselves.
+
+Note:		The total number of sprites in the graphics file (used by Override to update the progress bar during startup time) is stored in 'spït' resource 128 in the Override Graphics file.
+
+Note:		Don’t create a sprite grid that has more than 10 rows or columns (yTiles and xTiles both ≤ 50) because Override will puke. Similarly, don’t create sprites that are wider or taller than the smallest screen size Override can use (640x480) because there’s not enough offscreen buffer room to load 

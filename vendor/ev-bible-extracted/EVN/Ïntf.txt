@@ -1,0 +1,39 @@
+ïntf resource
+
+	The ïntf resource controls the appearance of the status bar by modifying the position and color of the various status bar elements, as well as changing the status bar background image.  Additionally, the use of multiple ïntf resources, along with proper values in the various gövt resources' Interface fields, allows the appearance of status bar to change based on what type of ship the player is piloting - this is a useless but fairly neat effect.
+		
+		
+BrightText		Bright text color
+DimText		Dim text color
+
+RadarArea		Rectangular bounds of the radar display
+BrightRadar		Bright radar pixel color
+DimRadar		Dim radar pixel color  (note that having an IFF outfit will override these colors)
+
+ShieldArea		Rectangular bounds of the shield indicator
+ShieldColor		Shield bar color
+
+ArmorArea		Rectangular bounds of the armor indicator
+ArmorColor		Armor bar color
+
+FuelArea		Rectangular bounds of the fuel indicator
+FuelFull		Color of the "full jumps" portion of the fuel indicator
+FuelPartial		Color of the "partial fuel" portion of the fuel indicator
+
+NavArea		Rectangular bounds of the navigation display
+WeapArea		Rectangular bounds of the weapon display
+TargArea		Rectangular bounds of the target display
+CargoArea		Rectangular bounds of the cargo display
+
+StatusFont		Font to use for the status bar
+StatFontSize	Normal font size to use
+SubtitleSize		Font size for ship subtitles
+
+StatusBkgnd		ID of PICT resource to use as backdrop for status display.  Values less than 128 are interpreted as 128.
+
+Note that all colors in the ïntf resource are encoded the same as HTML colors,
+and that vertical shield/armor/fuel bars are properly handled by the game
+engine - to make an indicator bar vertical, set its height to be greater than
+its width. Also note that setting any of the above rectangles to have zero
+area (right=left, top=bottom) will cause the corresponding status indicator
+to not be drawn.

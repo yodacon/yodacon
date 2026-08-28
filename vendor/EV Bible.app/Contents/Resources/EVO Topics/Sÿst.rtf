@@ -1,0 +1,81 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx34\shady-36\shadr0\shado85 \shadc0 s\'d8st resource
+\f1\b0\fs28 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+	S\'d8st resources store information on star systems, in which all combat, trading, and spaceflight take place. Each system can be linked to up to 16 other systems, and the player can make hyperspace jumps back and forth between them. System ID #128 also has a special signifigance: that system is where the player starts out when first beginning the game and if he subsequently ejects and is rescued. This system should always be made neutral, so the player isn't pursued by big beefy ships when he's just starting out.\
+\
+The first two fields in the syst resource tell Override where on the map to place it:\
+\
+xPos & yPos	The system's X and Y positions on the map\
+\
+\
+The next five fields store the hyperspace links to 5 other systems (the other 11 are at the bottom of the resource)\
+\
+Con1-Con5		Link to another system\
+	-1		No link\
+	128-1127	ID of a system to link to\
+\
+\
+The next fields store the stellar navigation defaults (F1-F4) for the system. It is important to always set navigation defaults for stellar objects in your systems, because that's how Override's AI routines and status display keep track of stellar objects; if you don't set a planet as a nav default, the AIs won't "see" it, it won't show up on the radar, and you can't select it.\
+\
+NavDef (x4)	Navigation defaults (F1-F4)\
+	-1		No nav default for this key\
+	128-1627	ID number of the stellar object to set as a default\
+\
+\
+The next nine fields tell Override how many ships, and of what kind, to put in the system:\
+\cf2 \
+DudeTypes (x4)	Which type of dude to place (best not to set this to an out-of-range value)\
+	128-255       ID number of the dude type to place\cf0 \
+\
+% Prob (x4)		Probability that a given ship placed is of each of the above dude types\
+	1-99		This percent probability\
+\
+\cf2 AvgShips		The average number of AI ships in the system\
+	0		No ships, empty system\
+	1 and up	This number of ships, \'b1 50%\cf0 \
+\
+\
+One special note: If you want a syst resource's DudeType field to point to a fleet type (see above) instead of a dude type, set its value to the negative of the fleet's resource ID. This will force Override to include that specific fleet type in the system a definite percentage of the time, instead of haphazardly as it normally does.\
+\
+\
+The next field tells Override who controls the system:\
+\
+G\'9avt			Which government owns the system\
+	-1		Ignored (system is independent)\
+	128-255	ID number of the controlling govt\
+\
+\
+The next tells Override which string, if any, to display as the message buoy's message when you enter a system:\
+\
+Message		Which message buoy string to display\
+	-1		Ignored (no special message)\
+	1 and up	Use this entry in STR# resource 1000 as the text of the message buoy\
+\
+\
+The next two fields tell Override what kinds of navigation hazards to put in the system:\
+\
+Asteroids		How many asteroids to put in the system, from 0 to 10\
+\
+Interference		How thick the static in the system should be. 0 is no static, 100 is complete sensor blackout.\
+\
+The next field controls how and when to make the system visible or invisble. You can pull off some cool tricks with this field, including presenting the illusion that system has changed in some way by hiding the original system and replacing it with a copy that is identical except for the desired changes.\
+\
+VisBit		Which mission bit controls the system\'d5s visibility\
+\cf2 	-1		Ignored (system is always visible)\cf0 \
+	0-511		Make the system visible only when this mission bit is set\
+	\cf2 1000-1511	Make the system visible only when this mission bit is cleared\cf0 \
+\
+The next eleven fields store the hyperspace links to the other 11 systems that we didn\'d5t decide to add until EV 1.0.2 came out:\
+\
+Con6-Con16	Link to another system\
+	-1		No link\
+	128-1127	ID of a system to link to\
+\
+Want to make a \'d4pers\'d5 type ship always appear? Put its ID into one of the AlwaysPers fields that appear at the end of the syst resource. }

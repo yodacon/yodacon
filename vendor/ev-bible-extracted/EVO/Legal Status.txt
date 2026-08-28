@@ -1,0 +1,23 @@
+Legal Status
+
+	Your legal status in a system is based on the crime tolerance of that system's government. (if the system is independent, it is based on the first government's [ID 128] crime tolerance) On this scale, enough "good" or "evil" points to equal the government's crime tolerance is given a value of 1.
+
+Good Scale		Legal Status
+0				Clean
+4				Decent Individual
+16				Good Egg
+64				Upstanding Citizen
+256				Role Model
+1024			Pillar of Society
+4096			Honored Leader
+
+
+Evil Scale		Legal Status
+0				Clean
+1				Offender
+4				Criminal
+16				Felon
+64				Fugitive
+256				Public Enemy
+1024			Prime Evil
+4096			Galactic Scourge

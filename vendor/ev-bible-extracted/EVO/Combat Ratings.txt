@@ -1,0 +1,16 @@
+Combat Ratings
+
+	Your combat rating is based on the number of kills you have made, which is the sum of the crew complements of all the ships you have destroyed. The scale is as follows:
+
+Kills			Rating
+0			Harmless
+1			Mostly Harmless
+100			Fair
+200			Average
+400			Above Average
+800			Competent
+1,600		Noteworthy
+3,200		Excellent
+6,400		Dangerous
+12,800		Deadly
+25,600		Ultimate

@@ -1,0 +1,29 @@
+Combat Ratings
+
+	Your combat rating is based on the number of kills you have made, which is the sum of the strengths of all the ships you have destroyed, adjusted to a baseline where ship ID 128 represents 1 unit. The scale is as follows:
+
+Kills:		Rating:
+0			No Ability
+
+1			Little Ability
+
+200			Fair Ability
+
+400			Average Ability
+
+800			Good Ability
+
+1600		Competent
+
+3200		Very Competent
+
+6400		Worthy of Note
+
+12,800		Dangerous
+
+25,600		Deadly
+
+51,200		Frightening
+
+
+	The text strings listed above are given only by way of illustration, since they can be changed by editing STR# 138.

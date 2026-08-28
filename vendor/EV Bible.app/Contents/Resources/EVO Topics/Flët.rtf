@@ -1,0 +1,37 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx31\shady-32\shadr0\shado85 \shadc0 fl\'91t resource
+\f1\b0\fs28 \ulnone \shad0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0      A fl\'91t resource definies the paramaters for a fleet, which is a collection of ships that can be made to appear randomly throughout the galaxy. Fleets can also be made to appear by including them in dude resources. \
+\
+LeadShipType	ID of the fleet's flagship's ship class\
+\
+\cf2 EscortType (x4)	IDs of the flagships escorts' ship classes. If you don't want to use four different escort types, you should still set the unused fields to a valid ship class ID. (you can set the min & max fields to 0 and just have the extra ships not appear)\cf0 \
+\
+Min (x4)		The minimum number of each type of escort to put in the fleet.\
+\
+\cf2 Max (x4)		The maximum number of each type of escort to put in the fleet.\cf0 \
+\
+G\'9avt			ID of the fleet's government, of -1 for none.\
+\
+LinkSyst			Which systems the fleet can be created in\
+	\cf2 -1			Any system\cf0 \
+	128-1127		ID of a specific system\
+	\cf2 10000-10063	Any system belonging to this specific government\cf0 \
+	15000-15063	Any system belonging to an ally of this g\'9avt\
+	\cf2 20000-20063	Any system belonging to any but this g\'9avt\cf0 \
+	25000-25063	Any system belonging to an enemy of this g\'9avt\
+\
+\cf2 MissionBit	-1		Ignored\cf0 \
+		0-511		The fleet will only appear when this mission bit is set\
+		\cf2 1000-1511	The fleet will only appear when this mission bit is not set\cf0 \
+\
+Note: The MissionBit field is ignored when the fleet is pointed to by a d\'9fde resource.\
+\
+Note: When setting up mission resources, you shouldn't make reference to a d\'9fde resource which contains pointers to fleets, as this will cause Override to behave strangely. Use only normal, single-ship d\'9fde resources in missions.}

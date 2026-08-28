@@ -4,14 +4,13 @@ Our interpretation of how a mission gets made — combining the lesson from the
 plugin-editing video linked on the homepage with the field semantics documented
 in `vendor/docs/Nova Bible.txt`.
 
-> **Scope caveat, stated once and loudly.** The Bible is the **EV Nova** resource
-> reference. ConEx is a **classic EV** plugin. The two are cousins, not twins:
-> classic EV's `mïsn` is smaller, its bit logic is plain bit *numbers* rather than
-> Nova's expression strings, and several Nova fields (`Flags2`, `AvailShipType`,
-> `DispWeight`, the `Require`/`Contribute` pair) have no classic equivalent.
-> Everything below marked **[NOVA]** is documented fact from the Bible.
-> Everything marked **[VERIFY]** is our inference about classic EV and must be
-> confirmed against bytes we extract from ConEx before we trust it.
+> **Which reference applies — RESOLVED.** We now hold the **EV Bible** as well
+> (`vendor/EV Bible.app`, extracted to `vendor/ev-bible-extracted/` by
+> `tools/extract-ev-bible.sh`). It carries an **EVO (EV Override)** edition, and
+> Override is classic EV's direct descendant — the right reference for ConEx.
+> **EV Nova is a later rewrite and its mission format genuinely differs.**
+> Sections below marked **[NOVA]** describe Nova and are kept for contrast;
+> **[EVO]** marks what applies to ConEx. Where they conflict, EVO wins.
 
 ---
 
@@ -122,49 +121,70 @@ briefing acknowledges what the player did three missions ago.
 
 ## 4. Chaining — the actual mechanism
 
-This is the part worth internalizing, because it is the whole architecture of a
-campaign. **[NOVA]**
+Missions never point at each other. There is a global array of **mission bits**
+saved in the pilot file; missions *test* bits to decide whether to appear and
+*write* bits when something happens. The chain is emergent. That much is true of
+both engines. **How the bits are expressed is where they diverge, and it matters
+enormously for our tooling.**
 
-Missions do not link to each other. There are no "next mission" pointers. Instead
-there is one global array of **control bits** — `b0` through `b9999` — saved in
-the pilot file. Missions *read* bits to decide whether to appear, and *write* bits
-when something happens to them. The chain is emergent.
+### [EVO] — what ConEx actually uses
 
-**Test expressions** (`AvailBits`) support `Bxxx` bit lookup, `Oxxx` player owns
-outfit, `Exxx` player has explored system, `G` gender, `Pxxx` registration, with
-`&` `|` `!` and parentheses. The Bible warns the evaluator is primitive —
-**always parenthesize**, never rely on operator precedence. A blank test is *true*.
-
-**Set expressions** (`OnAccept`, `OnRefuse`, `OnSuccess`, `OnFailure`, `OnAbort`,
-`OnShipDone`) are a bare list: `b1` sets, `!b3` clears, `^b4` toggles. No
-parentheses. And `R(<op1> <op2>)` picks one of two operations *at random*, which
-is how you build a string that branches unpredictably. `Axxx` aborts active
-mission `xxx`.
-
-So a three-mission chain is:
+Override stores **256 mission bits**. Every hook is a **single integer field**,
+with one uniform encoding:
 
 ```
-Mission A   AvailBits: (blank — always offered)
-            OnSuccess: b100
-
-Mission B   AvailBits: b100 & !b101
-            OnSuccess: b101
-            OnFailure: b199          ← the failure branch is just another bit
-
-Mission C   AvailBits: b101
-            OnSuccess: b102 R(b150 b151)   ← randomly forks the ending
+ -1          ignored
+ 0-511       set (or test that it is set) this bit
+ 1000-1511   clear (or test that it is clear) this bit    (1000 + bit number)
 ```
 
-**Consequences for our tooling.** The bit array is a global namespace with no
-built-in documentation. A campaign is only comprehensible if the bits are named.
-Therefore `evutils` must carry a **bit registry** — a project-level file mapping
-each bit to a name, a description, the missions that set it, and the missions that
-test it — and must be able to render the chain as a graph. Unreferenced bits, bits
-tested but never set (a dead mission), and bits set but never tested (a no-op) are
-all lint errors we can catch statically. That is the single highest-value thing we
-can build, and no 1990s editor had it.
+Test fields: `AvailBitSet` (must be set) and `AvailBitClr` (must be clear).
+Write fields: `StartBitSet` on accept, `CompBitSet` and `CompBitSet2` on
+completion, `FailBitSet` and `FailBitSet2` on failure, `RefuseBitSet` on refusal.
 
----
+**There is no boolean algebra.** No `&`, no `|`, no parentheses, no expression
+strings. A mission can test exactly two conditions and write at most two bits per
+outcome. The Bible names the three things this buys you: making a mission
+one-shot, branching a plot on past success and failure, and making a set of
+missions mutually exclusive by having each one set the bit that locks the others out.
+
+A three-mission chain in Override terms:
+
+```
+Mission A   AvailBitSet: -1        (always offered)
+            CompBitSet:  100
+
+Mission B   AvailBitSet: 100       AvailBitClr: 101
+            CompBitSet:  101       FailBitSet: 199
+
+Mission C   AvailBitSet: 101
+            CompBitSet:  102
+```
+
+Note what the constraint costs: expressing "available if A and B but not C"
+requires spending an extra bit and a helper mission, because you cannot write the
+condition directly. Real Override campaigns burn bits on bookkeeping, and with
+only 256 of them, **bit budget is a genuine design resource.**
+
+### [NOVA] — for contrast
+
+Nova replaced all of this with 10,000 control bits and expression strings:
+`AvailBits` takes a boolean test (`Bxxx` bits, `Oxxx` outfit owned, `Exxx` system
+explored, with `& | !` and parentheses), and `OnAccept`/`OnSuccess`/`OnFailure`/
+`OnAbort`/`OnRefuse`/`OnShipDone` take set expressions (`b1 !b3 ^b4`), including
+`R(a b)` to pick one of two operations at random. The Bible warns Nova's evaluator
+is primitive — always parenthesize.
+
+### Consequences for our tooling
+
+Unchanged and, if anything, stronger: the bit array is a global namespace with no
+built-in documentation, so `yodaed` must carry a **named bit registry** and render
+the chain as a graph. Under Override's model two more lints become essential —
+**bit-budget tracking** against the 256 ceiling, and detecting bits used for two
+unrelated purposes, which is the classic way a 1990s campaign broke. Our source
+format should let authors write a readable condition and, where it cannot compile
+to Override's single-field form, **say so at author time** rather than silently
+producing a mission that never appears.
 
 ## 5. The authoring flow
 

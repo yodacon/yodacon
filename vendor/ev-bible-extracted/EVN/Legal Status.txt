@@ -1,0 +1,26 @@
+Legal Status
+
+	Your legal status in a system is based on the crime tolerance of that system's government. (if the system is independent, it is based on the first government's [ID 128] crime tolerance) On this scale, enough "good" or "evil" points to equal the government's crime tolerance is given a value of 1:
+
+Good Scale:		Legal Status:
+0				Clean
+4				Citizen
+16				Good Citizen
+64				Upstanding Citizen
+256				Leading Citizen
+1024			Model Citizen
+4096			Virtuous Citizen
+
+
+Evil Scale:		Legal Status:
+0				No record
+1				Minor Offender
+4				Offender
+16				Criminal
+64				Wanted Criminal
+256				Fugitive
+1024			Hunted Fugitive
+4096			Public Enemy
+	
+
+	The text strings listed above are given only by way of illustration, since they can be changed by editing STR# 134.

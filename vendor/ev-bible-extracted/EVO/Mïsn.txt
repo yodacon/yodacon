@@ -1,0 +1,297 @@
+mïsn resource
+
+	Missions are the crown jewel of the Override datafile, as well as the largest and most complex resources in the game. Each misn resource corresponds to a single mission that the player can undertake, with the name of the mission (which the player sees in the mission list) being the name of the associated misn resource. The first six fields in a misn resource help Override determine where and when the mission is available:
+
+AvailStel		Which stellar objects (i.e. planets) the mission is available at
+	-1			Any inhabited stellar
+	128-1627		ID number of a specific stellar
+	5000-5999		Stellar in a system adjacent to specific system
+	9999-10127		Specific govt's stellar
+	15000-15127	Specific gövt's ally's stellar
+	20000-20127	Stellar of anybody but this specific gövt
+	25000-25127	Specific gövt's enemy's stellar
+
+AvailBitSet		Which one of the mission flag bits, (see below) if any, must be set for this mission to become available
+	-1		ignored
+	0-511		this mission bit must be set
+	1000-1511	this mission bit must be clear (functions similarly to AvailBitClear, described below)
+
+AvailLoc		Where on a planet this mission is available
+	0		From the mission computer
+	1		In the bar
+	2		Offered from ship (must set up associated përs resource as well)
+
+AvailRecord		What your legal record in this system must be for this mission to become available
+	0		ignored
+	pos. value   record must be at least this high
+	neg. value   record must be at least this low
+	-32000	when the player has dominated the stellar in question
+	-32001	when the player has dominated at least one stellar
+
+AvailRating		What your combat rating must be for this mission to be available.
+	-1		ignored
+	0+		rating must be at least this high
+
+AvailRandom	A randomization factor, to ensure that some missions aren't available all the time. Mission randomizing values are recalculated each time you warp into a system.
+	100		always available
+	1-99		available this % of the time
+
+
+	A quick word on mission bits: Override stores 256 flags that can be set by your missions when they fail or succeed. The mission bits can then be checked to see whether a mission is allowed to be available. There are three uses for this:
+
+1. Ensuring that a mission is only available once.
+2. Creating branching plotlines, in which the types of missions offered depend
+     on your past successes and failuires.
+3. Creating a number of missions that are available at the same time, but which
+     are mutually exclusive. (e.g. you wouldn't want the player to go on more
+     that one of a set of three missions) These missions could be made
+     unavailable if bit 37 was set, for example, and then would set bit 37 on
+     completion.
+
+
+The next two fields in the misn resource define where the player needs to go to complete the mission:
+
+TravelStel		Which stellar object the player must go to during the mission
+	-1			No specific stellar destination
+	-2			A random inhabited stellar
+	-3			A random uninhabited planet
+	128-1627		ID number of a specific stellar
+	9999-10127		Random stellar of a specific gövt
+	15000-15127	Random stellar of a specific gövt's ally
+	20000-20127	Random stellar of anybody but this specific gövt
+	25000-25127	Random stellar of specific gövt's enemy
+
+ReturnStel		Where the player must return to in order to complete the mission and receive payment
+	-1			No specific stellar destination
+	-2			A random inhabited stellar
+	-3			A random uninhabited stellar
+	-4			The initial stellar, where the mission was accepted
+	128-1627		ID number of a specific stellar
+	10000-10127	Random stellar of a specific gövt
+	15000-15127	Random stellar of a specific gövt's ally
+	20000-20127	Random stellar of anybody but this specific gövt
+	25000-25127	Random stellar of specific gövt's enemy
+
+
+The next five fields tell Override about any special cargo associated with a mission:
+
+CargoType		What type of cargo must be carried
+	-1		No special cargo for this mission
+	0-63		Specific cargo type
+	1000		Random cargo of types 0-5 (the standard types)
+
+CargoQty		What amount of cargo must be carried
+	-1		Ignored (no cargo)
+	0 and up	This many tons of cargo
+	-2 and below abs(CargoQty) tons, ± 50%
+
+PickupMode		Where the cargo is to be picked up
+	-1		Ignored
+	0		Pick up at mission start
+	1		Pick up at TravelStel
+	2		Pick up when boarding special ship
+
+DropOffMode	Where the cargo is to be dropped off [Note: don't set your cargo to be picked up and dropped off at the same place, as it may cause Override to behave strangely]
+	-1	Ignored
+	0	Drop off at TravelStel
+	1	Drop off at mission end (ReturnStel)
+
+ScanGovt		Which government considers your cargo illegal
+	-1		Ignored
+	128-255	ID number of a government that considers this cargo illegal. If you're scanned by a ship of this government, or any government that's not its enemy (important!) you'll get that government's SmugglePenalty added to your record.
+
+FailIfScanned	Sets whether the mission fails if you're detected carrying the cargo
+	0		Mission doesn't fail if scanned
+	Nonzero	Mission fails if you're scanned
+
+
+The next field tells Override what to give you if you're successful in your mission:
+
+PayVal		What you get if you're successful and you return to ReturnStel
+	0			No pay
+	1 and up		This number of credits
+	-10128 to -10255	Clean legal record with the govt with this ID
+	-20128 to -20255	Give the player an item with this ID
+	-30128 to -30255	Give the player an item with this ID at the start of the mission
+	-40001 to -40099	Take away this % of the player’s cash (-40001 = 1%, -40002 = 2%, etc.)
+
+
+The next six fields contain information on the special ships associated with this mission, if any:
+
+ShipCount	The number of special ships for this mission
+	-1	Ignored (no special ships)
+	0-31	This number of special ships
+
+ShipSyst			Which system the special ships will appear in
+	-1			The initial system where the mission is begun
+	-2			Any random system
+	-3			TravelStel's system
+	-4			ReturnStel's system
+	-5			System adjacent to initial system
+	-6			Whatever system the player is in (i.e. follow him around)
+	128-1127		ID number of a specific system
+	9999-10127		Specific govt's system
+	15000-15127	Specific govt's ally's system
+	20000-20127	System of any govt but this specific one
+	25000-25127	Specific govt's enemy's system
+
+ShipDude		What dude resource to use to determine the special ship's types and characteristics
+	-1		Ignored (no special ships)
+	128-255	ID number of a specific dude class
+
+ShipGoal	The mission goal associated with the special ships
+	-1	Ignored (no specific goal for the special ships)
+	0	Destroy all the ships
+	1	Disable but don't destroy them
+	2	Board them
+	3	Escort them (keep them from getting killed)
+	4	Observe them (you just have to be in the same system with them)
+	5	Rescue them (they start out disabled, and you must board them)
+	6	Chase them off (either kill them or scare the into jumping out of the system)
+
+ShipBehav	Defines any special actions you want the ships to take
+	-1	Ignored (they use their standard AI routines)
+	0	Special ships will always attack the player
+	1	Special ships will protect the player
+	9	Special ships will hyper in all together after a short delay
+	10	Special ships will hyper in and attack the player
+	11	Special ships will hyper in and protect the player
+
+ShipNameID	Tells Override how to name the special ships
+	-1		Ignored (special ships have normal names)
+	128 and up	Pick a name from this STR# resource
+
+
+The next three fields determine what will happen when you successfully complete the mission:
+
+CompBitSet		Which mission bit will be set on completion
+	-1		Ignored
+	0-511		Set this mission bit
+	1000-1511	Clear this mission bit
+
+CompGovt		Which government to use in determining how your record changes on completing this mission
+	-1		Ignored (no reward other than pay)
+	0-127		Increase record with this govt
+
+CompReward	How much to increase your record with CompGovt (any value)    Increase record by this much (note: if you have a CompGovt and reward defined and you fail the mission, that govt will take it personally and decrease your record by 1/2 the amount specified in CompReward. This is useful for making missions whose success is considered vital by a certain party.)
+
+
+The next field determines what happens when you fail the mission:
+
+FailBitSet		Which mission bit to set upon failure
+	-1		Ignored
+	0-511		Set this mission bit on failure
+	1000-1511	Clear this mission bit on failure
+
+
+The next seven fields tell Override which desc resources to display at various times during the mission: (see below for more info on mission descriptions)
+
+BriefText		The desc to show in the dialog that comes up when you accept a mission. (formats are the same for all seven fields)
+	-1		No special mission briefing
+	128 and up	ID number of the desc resource to use (ID numbers of 5000 and up are usually the safest)
+
+QuickBrief		The desc to show when the user hits the "Mission Briefing" (I) key.
+
+LoadCargText	The desc to show when special mission cargo is loaded from a planet
+
+DumpCargoText   The desc to show when special mission cargo is offloaded (not jettisoned into space as the name would suggest!)
+
+CompText		The desc to show when you go to ReturnStel and the mission has been successful.
+
+FailText	The desc to show when you go to ReturnStel and the mission has been a failure.
+
+The next field tells Override how long you have to complete the mission:
+
+TimeLimit		Like it says
+	-1		Ignored (no time limit)
+	1 and up	This number of days
+
+
+The next field tells Override whether or not the mission can be aborted. (currently ignored!)
+
+CanAbort	0		Mission can’t aborted, you must go to ReturnStel in order for it to "go away" and become inactive
+		Nonzero	Mission can be aborted at any time, by simply selecting another mission. Also, the mission "goes away" and becomes inactive at the moment it fails (e.g. you're scanned when you aren't supposed to be, etc.).
+
+
+The next field is unused, and the next field after that is another piece of info on how and when Override should offer the mission. (sorry, I had to add this field to the template after many of the missions were already done)
+
+AvailBitClr		-1		Ignored
+			0-511		Mission is available only if this mission bit is not set.
+
+The next few fields tell Override about any auxiliary ships you want to be placed in the universe for this mission. Auxiliary ships cannot be given specific instructions, and no goals can be set for them; they simply are "normal" ships that are placed into the universe for the purpose of adding atmosphere to a mission.
+
+AuxShipCount	How many aux ships, if any, to activate for this mission:
+	-1		No aux ships
+	1-31		Place this many aux ships in the universe
+
+AuxShipDude	ID number of the specific dude resource to use to set up the aux ships
+
+AuxShipSyst		What systems to place the aux ships in:
+	-1			Any system the player is in
+	-2			TravelStel's system
+	-3			ReturnStel's system
+	128-1127		ID number of a specific system
+	5000-5999		In this system, or any systems adjacent to it
+	9999-10127		Any system belonging to this gövt
+	15000-15127	Any system belonging to this gövt or its allies
+	20000-20127	Any system not belonging to this gövt
+	25000-25127	Any system belonging to enemies of this gövt
+
+
+
+Then there are some more fields we had to append to the end because we didn’t think of them until later:
+
+CompBitSet2	Another completion bit field, which performs identically to the other one.
+
+Flags		Some misc. flag bits
+	0x0001	Marks the mission as an auto-aborting mission, which will automatically abort itself after it is accepted. (sometimes useful to create special ships) Any mission bits pointed to by the mission’s CompBitSet fields will be automatically set when the mission aborts.  Note: there must be special ships associated with the mission to trigger the auto-abort.
+	0x0002	Don’t show the red destination arrows on the map
+	0x0004	Can’t refuse the mission
+	0x0010	Infinite auxShips
+	0x0020	Remove pre-paid outfit item on mission failure or abort
+	0x0040	Apply -5x CompReward reversal on abort
+	0x0080	Global penalty when jettisoning mission cargo in space (currently ignored)
+	0x0100	Show green arrow on map in initial briefing
+	0x0200	Show an additional arrow on the map for the ShipSyst
+	0x1000	Critical mission (will be offered before all others in the bar)
+	0x2000	Mission unavailable if player’s ship is of inherentAI type 1 or 2  (cargo ships)
+	0x4000	Mission unavailable if player’s ship is of inherentAI type 3 or 4  (warships)
+
+CompBitSet2	Two more completion bits for your scenario-writing pleasure.
+CompBitSet4     
+
+FailBitSet2		A second fail bit, used in the same way as above.
+
+RefuseText		The desc, if any, to show when mission offered in a bar or from a passing ship is refused.
+
+AvailShipType	Defines what class of ship you must have for this mission to be made available:
+	0 or -1	Ignored
+	128-255	Must be flying a ship of this type
+	1128-1255	Must not be flying a ship of this type
+	2128-2255	Must be flying a ship of this inherent gövt
+	3128-3255	Must not be flying a ship of this inherent gövt
+
+RefuseBitSet	Which mission bit will be set on refusal of this mission
+	-1		Ignored 
+	0-511		Set this mission bit
+	1000-1511	Clear this mission bit
+
+StartBitSet		Which mission bit will be set when this mission is accepted
+	-1		Ignored 
+	0-511		Set this mission bit
+	1000-1511	Clear this mission bit
+
+
+	Whenever Override displays a desc resource related to a mission, such as the initial mission description (desc ID 4000-4255) or one of the special mission briefings (e.g. CompText and QuickBrief) it performs one other special operation on the text. It searches through the text and replaces a few special "wildcard" symbols with pertinent mission information. This is extremely useful in setting up mission briefings that include random information that wouldn't be known when the description is written. These special symbols and their expansions are:
+
+<DSY>	The name of the destination system
+<DST>	The name of the destination stellar
+<RSY>	The name of the return system
+<RST>	The name of the return stellar
+<CT>		The name of the type of cargo to be carried
+<CQ>		The quantity of cargo to be carried
+<DL>		The date of the mission deadline, if any
+<PN>		The player's name
+<PSN>	The player's ship's name
+<OSN>	The offering ship name (only works when offering a mission from a ship)
+<SN>		Special ship name (Note: Override will screw up if you use this in the initial mission description, as it doesn't pick the special ship names until you actually accept the mission.)

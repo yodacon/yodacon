@@ -1,0 +1,56 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx31\shady-32\shadr0\shado85 \shadc0 D\'9fde resource
+\f1\b0\fs28 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+     A d\'9fde resource can be thought of as a container for ships that share certain characteristics.  Any ship of a given d\'9fde class will have that d\'9fde class's AI type and governmental affiliation, and will yeild the same types of booty when boarded. In a d\'9fde resource, up to four different ship classes can be pointed to, with a probability set for each ship class. The result of all this is that, in other parts of Override's data file, you can point to a d\'9fde class and know that Override will create a ship of the proper AI type and governmental alignment, and will pick the new ship's type based on the probabilities you set in the d\'9fde resource. The d\'9fde resource's fields are:\
+\
+AIType	Which type of AI to use for ships of this d\'9fde class (see below).  If you set this to 0, each ship will use its own inherent AI type.\
+\
+ShipTypes (x4)	These fields contain the ID numbers of up to four different ship classes.\
+\
+% Prob (x4)		These fields set the probability that a ship of this dude class will be of a certain ship type.\
+\
+G\'9avt		The ID number of the d\'9fde class's government, or -1 for independent.\
+\
+Booty		Flags that define what you'll get when you board a ship of this d\'9fde class. (see below)\
+\
+The five different AI types are:\
+1 - Wimpy Trader		Visits planets and runs away when attacked.\
+\
+\cf2 2 - Brave Trader		Visits planets and fights back when attacked, but runs away when his attacker is out of range.\cf0 \
+\
+3 - Warship			Seeks out and attacks his enemies, or jumps out if \
+there aren't any.\
+\
+\cf2 4 - Interceptor		Seeks out his enemies, or parks in orbit around a planet if he can't find any. Buzzes incoming ships to scan them for illegal cargo. Also acts as "piracy police" by attacking any ship that fires on or attempts to board another, non-enemy ship while the interceptor is watching.\cf0 \
+\
+5 - Naval Fighter		Carried by another ship. Reserved for internal use - do not use!\
+\
+\cf2 6 - Escort			Flies with the player. Reserved for internal use - do not use!\cf0 \
+\
+	You can set different combinations of booty to be had from ships of a certain d\'9fde class by ORing different bits into the d\'9fde's Booty field. If a d\'9fde class has a booty flag of 0x0000, then you can't get anything from the ship, and you're told that you were "repelled while attempting to board" it. The different booty flags are:\
+\
+0x0001	Food\
+\cf2 0x0002	Industrial goods\cf0 \
+0x0004	Medical supplies\
+\cf2 0x0008	Luxury goods\cf0 \
+0x0010	Metal\
+\cf2 0x0020	Equipment\cf0 \
+0x0040	Money (depends on the ship's purchase price)\
+\
+	The next field tells Override what kind of text to display when you hail a ship of this d\'9fde type and send a greeting: (note that these values can be added together to have Override display multiple different types of information)\
+\
+InfoTypes		What kind of info to display\
+	1000		Good prices\
+	\cf2 2000		Disaster info\cf0 \
+	4xxx		Specific advice (the last three digits of this value are added to 7500 to get the ID of the STR# resource from which to get the quote)\
+\
+	The MissionBit fields can be used to link the appearance of each ship type to the state of a given mission bit. If a ship type\'d5s MissionBit field is set to 0-511, that ship will only appear if the corresponding mission bit is set. 1000-1511 will cause the ship to only appear if the mission bit is not set, and -1 will cause it to appear as normal.\
+\
+	One thing to remember when setting up a d\'9fde resource is that Override will choke if any of the ShipType fields are filled incorrectly (i.e. less that 128 or greater than 159) or any of the probabilities are not between 1 and 100. Therefore, if you want a d\'9fde type to point to only one ship class, you'd set all four ShipType fields the same and put 25% in each Prob field. (see the "Confed Liner Only" d\'9fde class for an example of this)}

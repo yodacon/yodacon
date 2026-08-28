@@ -1,0 +1,93 @@
+Control Bits
+
+A quick word about control bits and scripting in EV Nova:
+
+Mission bits exist as they did in previous incarnations of EV. This time around, there are 10,000 bits available for your use, and they are accessed much differently from previous versions. For this reason, they are referred to as Nova control bits (ncb's). Control bits are accessed through logical expressions that allow much more powerful and logical mission scripting. These expressions are divided into two types - test and set:
+
+Test expressions:
+
+These are boolean expressions that are used to determine when something happens; for example, when a mission is to be offered, or when a particular ship should be made available for purchase. In general, if the logical expression defined in a given test expression field evaluates to be true (nonzero), the associated property will be activated (mission becomes available, ship appears, etc.).
+
+The following terms and operators are supported: (capitalization doesn't matter)
+
+Bxxx		Lookup the value of control bit xxx. Bits are numbered from b0 to b9999.
+
+Pxxx			Check if the game is registered ([P]aid for) ... evaluates to 1 if the game is registered or is unregistered but less than xxx days have elapsed. Evaluates to 0 only if unregistered for more than xxx days.
+
+G		Lookup the player's gender - 1 if male, 0 if female
+
+Oxxx		Returns 1 if the player has at least one of outfit item ID xxx, 0 if not
+
+Exxx		Returns 1 if the player has explored system ID xxx, 0 if not
+
+|      Logical or operator
+
+&      Logical and operator
+
+!      Logical negation operator
+
+( )    Parenthetical enclosure
+
+Some examples:
+b13 & (b15 | !b72)
+!(B42 | B53) & b103
+
+Note that since the Nova evaluator is fairly primitive, it may do unpredictable things if you give it an expression like b1 & b2 | b3 ... instead, use proper parentheses to make it b1 & (b2 | b3) or (b1 & b2) | b3, as appropriate.
+
+Also note that if you leave the field for a test expression blank, it will evaluate to true as a default.
+
+Also also note:  The Oxxx operator also considers any carried fighters that are deployed when it examines the player's current list of outfits, although this feature may be confused if presented with a universe that includes multiple fighter bay weapons that launch the same ship type, or different outfits that grant the same fighter bay ammo.
+
+
+
+Set expressions:
+
+These are simpler than the test expressions... basically all you are doing here is listing what bits you want to be modified when the expression in a given field is invoked. This will happen when the player does something (completes a mission, buys an item, etc.) as defined by the other resources. The syntax of set expressions is best illustrated by an example:
+
+b1 b2 !b3 ^b4
+
+In this set expression, bits 1 and 2 will be set, bit 3 will be cleared, and bit 4 will be toggled to the opposite of whatever it was previously. No parentheses are supported for set expressions. Note that if you leave a set expression blank, no control bits will be altered.
+
+One other feature of the set expression is the ability to make random decisions. By specifying   R(<op1> <op2>)   you can make Nova randomly pick one of the two possible choices and execute it, skipping the other one. For example:
+
+b1 R(b2 !b3)
+
+...this expression will set bit 1, and then *either* set bit 2 *or* clear bit 3, but not both at once. Which operation will be picked is completely random, which allows for the design of interesting mission strings that branch unpredictably.
+
+There are also a number of other operators that allow you to do many interesting things:
+
+Axxx - if mission ID xxx is currently active, abort it.
+
+Fxxx - if mission ID xxx is currently active, cause it to fail.
+
+Sxxx - start mission ID xxx automatically. 
+
+Gxxx - grant one of outfit item ID xxx to the player
+
+Dxxx - remove (Delete) one of outfit item ID xxx from the player
+
+Mxxx - move the player to system xxx. The player will be put on top of the first stellar in the system, or in the center of the system if no stellars exist there.
+
+Nxxx - move the player to system xxx. The player will remain at the same x/y coordinates, relative to the center of the system.
+
+Cxxx - change the player's ship to ship type (ID) xxx. The player will keep all of his previous outfit items and won't be given any of the default weapons or items that come with ship type xxx.
+       
+Exxx - change the player's ship to ship type (ID) xxx. The player will keep all of his previous outfit items and will also be given all of the default weapons and items that come with ship type xxx.
+       
+Hxxx - change the player's ship to ship type (ID) xxx. The player will lose any nonpersistent outfit items he previously had, but will be given all of the default weapons and items that come with ship type xxx.
+
+Kxxx - activate rank ID xxx.
+
+Lxxx - deactivate rank ID xxx.
+
+Pxxx - play sound with ID xxx.
+
+Yxxx - destroy stellar ID xxx.
+
+Uxxx - regenerate (Un-destroy) stellar ID xxx.
+
+Qxxx - make the player immediately leave (absquatulate) whatever stellar he's landed on and return to space, and show a message at the bottom of the screen. The message is randomly selected from the STR# resource with ID xxx, and is parsed for mission text tags (e.g. <PSN> and <PRK> ) but not text-selection tags like those above (e.g. {G "he" "she"} )  (see dësc and mïsn resource descriptions for more examples)
+       
+Txxx - change the name (Title) of the player's ship to a string randomly selected from STR# resource ID xxx. The previous ship name will be substituted for any '*' characters which are encountered in the new string.
+
+Xxxx - make system ID xxx be explored.

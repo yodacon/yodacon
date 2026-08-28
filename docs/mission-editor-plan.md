@@ -61,7 +61,9 @@ mission: Lithium Run to Exeon
 available:
   at: Conex                    # resolved against the gazetteer
   from: bar
-  when: pellet_contract_signed & !blockade_broken   # named bits
+  when:                        # named bits, not numbers
+    set:   pellet_contract_signed
+    clear: blockade_broken     # Override allows exactly one of each
   chance: 60
 objective:
   travel_to: Exeon
@@ -78,8 +80,10 @@ text:
   complete: texts/pellet-run/complete.md
   fail: texts/pellet-run/fail.md
 on:
-  success: [blockade_broken]
-  failure: [pellet_contract_burned]
+  accept:  set blockade_run_begun     # StartBitSet
+  success: set blockade_broken        # CompBitSet  (+ CompBitSet2 available)
+  failure: set pellet_contract_burned # FailBitSet  (+ FailBitSet2 available)
+  refuse:  set militia_suspicious     # RefuseBitSet
 ```
 
 Mission prose lives in its own markdown files, so it is diffable, spell-checkable,
@@ -200,9 +204,22 @@ worth building a GUI on top of.
 
 Honest list of what is undecided, and what would settle each:
 
-- **Classic EV bit storage.** Nova uses expression *strings*; classic EV likely
-  uses fixed integer bit numbers. This changes the source format's `when:` field
-  substantially. *Settled by:* parsing one ConEx mission's bytes.
+- ~~**Classic EV bit storage.**~~ **RESOLVED** by the EV Bible's Override edition
+  (`vendor/ev-bible-extracted/EVO/`). Override uses **256 mission bits** and
+  **single integer fields** (`-1` ignored, `0-511` set, `1000-1511` clear) — no
+  expression strings, no boolean algebra. The source format's `when:` is
+  therefore a `set:`/`clear:` pair, and `specs/misn-evo.yaml` is now the spec
+  that governs ConEx.
+
+- **Bit budget.** 256 bits is a hard ceiling and a real design constraint, since
+  conditions that Nova expresses inline cost extra bits under Override. The editor
+  must track allocation against the ceiling. *Open:* do we reserve numbered
+  ranges per campaign, or allocate freely and lint for collisions?
+
+- **Conditions that will not compile.** An author can write a condition Override
+  cannot express in one `AvailBitSet` + one `AvailBitClr`. *Open:* reject it, or
+  auto-synthesize helper bits? *Leaning:* reject with a clear message first —
+  silent synthesis spends a scarce resource behind the author's back.
 - **Does `mïsn` field order match the Bible's presentation order?** *Settled by:*
   the offset-locking procedure in `mission-authoring.md` §6.
 - **Do we target classic EV, EV Nova CE, or both?** Sharing missions across both

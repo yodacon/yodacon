@@ -1,0 +1,47 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx26\shady-28\shadr0\shado85 \shadc0 \'95ntf resource
+\f1\b0\fs28 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+	The \'95ntf resource controls the appearance of the status bar by modifying the position and color of the various status bar elements, as well as changing the status bar background image.  Additionally, the use of multiple \'95ntf resources, along with proper values in the various g\'9avt resources' Interface fields, allows the appearance of status bar to change based on what type of ship the player is piloting - this is a useless but fairly neat effect.\
+		\
+		\
+BrightText		Bright text color\
+DimText		Dim text color\
+\
+RadarArea		Rectangular bounds of the radar display\
+BrightRadar		Bright radar pixel color\
+DimRadar		Dim radar pixel color  (note that having an IFF outfit will override these colors)\
+\
+ShieldArea		Rectangular bounds of the shield indicator\
+ShieldColor		Shield bar color\
+\
+ArmorArea		Rectangular bounds of the armor indicator\
+ArmorColor		Armor bar color\
+\
+FuelArea		Rectangular bounds of the fuel indicator\
+FuelFull		Color of the "full jumps" portion of the fuel indicator\
+FuelPartial		Color of the "partial fuel" portion of the fuel indicator\
+\
+NavArea		Rectangular bounds of the navigation display\
+WeapArea		Rectangular bounds of the weapon display\
+TargArea		Rectangular bounds of the target display\
+CargoArea		Rectangular bounds of the cargo display\
+\
+StatusFont		Font to use for the status bar\
+StatFontSize	Normal font size to use\
+SubtitleSize		Font size for ship subtitles\
+\
+StatusBkgnd		ID of PICT resource to use as backdrop for status display.  Values less than 128 are interpreted as 128.\
+\
+Note that all colors in the \'95ntf resource are encoded the same as HTML colors,\
+and that vertical shield/armor/fuel bars are properly handled by the game\
+engine - to make an indicator bar vertical, set its height to be greater than\
+its width. Also note that setting any of the above rectangles to have zero\
+area (right=left, top=bottom) will cause the corresponding status indicator\
+to not be drawn.}

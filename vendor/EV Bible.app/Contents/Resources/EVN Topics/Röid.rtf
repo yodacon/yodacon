@@ -1,0 +1,38 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx34\shady-36\shadr0\shado85 \shadc0 r\'9aid resource
+\f1\b0\fs28 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+	Nova supports up to 16 asteroid types, each of which can have its own special properties. r\'9aid resources 128-143 store the attributes for each asteroid type:\
+\
+\cf2 \
+Strength	The strength of this asteroid type - this is equivalent to armor values for ships.\cf0 \
+\
+SpinRate	The frame advance rate of this asteroid type. A value of 100 is 30 frames per second (quite fast) - lower numbers are slower.\
+               \
+\cf2 YieldType	Defines what the resource-boxes which are ejected from this asteroid type will contain:\
+               0-5         This type of standard cargo\
+               1000-1127   This type of j\'9fnk resource\cf0 \
+\
+YieldQty	The average resource yield of this type of asteroid. Zero will cause asteroids of this type to not spit out any resource-boxes when destroyed; values of one or more will cause the asteroids to spit out approximately that number of resource-boxes (+/- 50%) when destroyed. Each resource-box is worth 1 unit of whatever cargo is defined in the YieldType field to be granted when a scoop-equipped ship runs over it.\
+\
+\cf2 PartCount	The number of particles that are thrown off when an asteroid of this type is destroyed.\cf0 \
+               \
+PartColor	The color of the particles, encoded the same as HTML colors.\
+	(00RRGGBB)\
+\
+\cf2 FragType1&2	Asteroids can break up into some number of sub-asteroids when destroyed. If both of these fields are used, Nova will randomly pick between them for each sub-asteroid that is created. If only one is used, all sub-asteroids will be of that type.\
+               128-143    Generate this type of sub-asteroid\
+               -1         No sub-asteroids\cf0 \
+\
+FragCount		The average number of sub-asteroids (+/- 50%) to be generated when an asteroid of this type is destroyed (zero for none).\
+\
+\cf2 ExplodeType	Type of explosion to show (0-63) when an asteroid of this type is destroyed. You can also add 1000 to the value of this field in the same manner as the ExplodeType field in the w\'91ap resource.\
+	Set to -1 to not show any explosion.\cf0 \
+\
+Mass		Mass of this asteroid type (used when weapons hit asteroids)}

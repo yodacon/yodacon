@@ -1,0 +1,12 @@
+nëbu resource
+
+	Nëbu resources contain info on the nebulae (or other space phenomena) which are displayed in the background of the star map. These images don’t actually have any effect on events in the game, they’re just there to look pretty. You can, however, combine nëbu background images with custom asteroid or interference data in the sÿst resources for cool localized effects. The PICT resources associated with the four available nëbu resources are numbered 9500-9511, and the effects of the nëbu resource’s fields are as follows:
+
+XPos		The image’s position on the star map. These coordinates are
+
+YPos		expressed in the scale of the “normal” map zoom level (not zoomed in or out) and are relative to the upper-left corner of the image.
+
+
+XSize		The image’s size on the star map. These values are expressed in
+
+YSize		the scale of the “normal” map zoom level (not zoomed in or out) and tell Override how big to make the image when the map is at normal zoom.

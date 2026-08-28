@@ -1,0 +1,24 @@
+jünk resource
+
+	Jünk resources store info on specialized commodities that can be bought and sold at a few locations. The fields are:
+
+SoldAt1-8		ID number of the stellar object where the commodity is sold. Set to 0 or -1 if unused.
+               
+BoughtAt1-8	ID number of the stellar object where the commodity is purchased.  Set to 0 or -1 if unused.
+               
+BasePrice	The average price of the commodity (works much like the base prices for "regular" commodities)
+             
+Flags		Misc flag bits
+0x0001	Tribbles flag - When in your cargo bay, the commodity multiplies like tribbles.
+
+0x0002	Perishable - When in your cargo bay, the commodity gradually decays away.
+                        
+ScanMask		If this is an "illegal" cargo type, this is used in conjunction with the ScanMask field in the gövt resource. If any of the 1 bits in a ship's government's ScanMask field match any of the 1 bits in a jünk type's ScanMask field, that government will consider that junk cargo type illegal. Set to zero if unused.
+
+LCName		The lower-case string to display in the player-info dialog box, among other places, e.g. "machine parts".  Note: all outfits with identical, non-empty LCNames will be displayed together as one type in the player-info dialog.
+            
+Abbrev		The short string that is displayed in the player's status bar when the player is carrying jünk of this type, e.g. "Parts".
+            
+BuyOn		Control bit test expression. This jünk will only be available to be bought when this expression evaluates true. Leave blank if unused.
+            
+SellOn		Control bit test expression. This jünk will only be able to be sold when this expression evaluates true. Leave blank if unused.

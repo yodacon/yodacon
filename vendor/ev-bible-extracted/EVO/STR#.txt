@@ -1,0 +1,53 @@
+STR# Resources
+
+	The STR# resource format used to store many of the strings in Override may seem to be incompatible with the flexible nature of plugin files. For example, a plugin for a new ship would have to replace several of the built-in STR# resources to incorporate its new name into the game. The problem arises when you want to use two plugins that try to modify the same STR# resource.
+
+	The solution is not to changes the STR# resources at all, but to use Override’s handy string patching functionality by updating only select strings in a STR# resource by providing Override with a properly-numbered 'STR ' resource. For example, to change the first cargo type from food to something else, you’d simply create a 'STR ' resource with the ID 9000 and type in the name of your new commodity. A chart of 'STR ' resource numbers is provided below:
+
+String Type							Replacement 'STR ' ID range
+Message buoys							1000-2500
+
+Short outfit names							3000-3127
+
+Lowercase outfit names						3200-3327
+
+Lowercase plural outfit names					3400-3527
+
+Short shipyard names						3600-3663
+
+Long shipyard names						3700-3763
+
+Really short ship names for communications dialog	3800-3863
+
+Independent ship names for communications dialog	3900-3963
+
+Government abbreviations for target display			4000-4127
+
+Government short names for comm dialog			4200-4327
+
+Hail quotes								5000-5511
+
+Disaster news							6000-6127
+
+Stellar types								7000-7063
+
+jünk abbreviations							8000-8127
+
+Lowercase jünk names						8200-8327
+
+Generic cargo names						9000-9063
+
+Lowercase cargo names						9100-9163
+
+Cargo abbreviations for status display				9200-9263
+
+Base prices of commodities					9300-9305
+
+Commodity abbreviations for status display			9400-9405
+
+Govt-specific greetings for comm dialog			10000-11289
+  *Please note:  (first 10 for govt -1, second 10 for govt 0, third 10 for govt 1, etc.)
+
+përs-resource CommQuotes                          		12000-12511
+
+	A similar function exists for updating the graphics for the shipyard and outfit menus - see the note at the top of this document for details.

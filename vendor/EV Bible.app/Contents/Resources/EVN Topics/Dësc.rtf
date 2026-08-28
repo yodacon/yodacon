@@ -1,0 +1,76 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;\f2\froman\fcharset77 TimesNewRomanPS-ItalicMT;
+}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx26\shady-28\shadr0\shado85 \shadc0 d\'91sc resource
+\f1\b0\fs28 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+	D\'91sc resources store null-terminated text strings (descriptions) that are used by Nova in a variety of places. For some desc resources, Nova looks for a certain reserved ID number. Other desc resources are pointed to by fields in other resources, so their ID numbers are not necessarily fixed, and can be set to virtually anything by the scenario designer. The reserved desc ID numbers, along with the maximum length for each type, are below:\
+\
+\cf2 128-2175		Stellar object descriptions, shown when landed on a planet.\cf0  \
+\
+3000-3511		Outfit item descriptions, shown in ship outfitting dialog.\
+\
+\cf2 4000-4999		Mission descriptions, shown in mission dialog. \cf0 \
+\
+13000-13767	Ship class descriptions, shown in the shipyard and requisition-escort dialog. \
+\
+\cf2 13999			Message shown after the player uses an escape pod.\cf0 \
+\
+14000-14767	Ship pilot descriptions, shown in the hire-escort dialog. \
+\
+\cf2 32760-32767	Reserved\cf0 \
+\
+\
+\
+	If you wish, you can make a d\'91sc resource mutable via control bits - embedding a special sequence of characters into the d\'91sc resource will instruct Nova to change the contents of the text on the fly. This sequence is delimited (marked) by the characters "\{" and "\}", and follows this format:\
+\
+\{bXXX "string one" "string two"\}\
+\
+	Where "XXX" is be replaced by the index of the control bit you wish to test. You can add in a "!" character before the "bXXX" test in order to negate the result of the test, but unlike the control bit test strings, you cannot perform compound tests in a d\'91sc resource - i.e., no testing of multiple bits at a time.\
+\
+	If the bit test (after being negated, if the "!" character is present) evaluates to true, the first string will be substituted in place of all the characters between (and including) the "\{" and "\}" characters. If the bit test evaluates to false and there is a second string in the expression, that second string will be substituted. If there is no second string, nothing will be substituted.\
+\
+\
+For example, consider this d\'91sc resource:\
+\
+This is a \{b001 "great and terrific" "lousy, terrible"\} example.\
+\
+...if bit 001 is set, the output will be "This is a great and terrific example."\
+If bit 001 is not set, the output will be "This is a lousy, terrible example.".\
+\
+Also note that if you want to include a quotation mark (") character in either of the two strings, use standard C syntax to do it:\
+\
+My name is \{b002 "Dave \\"pipeline\\" Williams"\}\
+\
+This is also works with the player's gender - for example:\
+\
+This is a test string and the player is \{G "a male character" "a female pilot"\}.\
+\
+...in this case, the G character signifies that the following text is mutable based on the player's gender; if the player is male, the first string is used, otherwise the second string is used. Note that the "!" token works here as\
+usual.\
+\
+You can also change the text based on whether or not the player is registered:\
+\
+This is a test string you \{P "have paid" "haven't paid"\}.\
+\
+...in this case, the P character signifies that the following text is mutable based on whether or not the game is registered; if the player has registered, the first string is used, otherwise the second string is used. Note that the "!" token works here as usual, and you can also append a number to the P character to specify a number of days, just as you can with the ncb Pxxx test operator.\
+\
+\
+Besides the Description field in the d\'91sc resource, there are some additional fields:\
+\
+\
+Graphic	This is used to include graphics in mission briefings. If you put in the ID of a valid PICT resource, Nova will display that image along with the description text when it displays a mission dialog box (with the exception of the Mission Computer and Mission Info dialogs).\
+                \
+MovieFile	The name of a QuickTime movie file to display before the briefing dialog appears. This file must reside either in "Nova Files" or "Nova Plugins".\
+\
+
+\f2\i \ul Flags:	Descriptions:
+\f1\i0 \ulnone \
+\cf2 0x0001	Show the movie after the briefing instead of before\cf0 \
+0x0002	Show movie at double-size\
+\cf2 0x0004	Cinematic movie - blank background and fade screen before and after}

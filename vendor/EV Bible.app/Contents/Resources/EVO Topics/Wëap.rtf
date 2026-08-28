@@ -1,0 +1,216 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx34\shady-36\shadr0\shado85 \shadc0 w\'91ap resource
+\f1\b0\fs24 \ulnone \shad0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\fs28 \cf0 	The weap resource, surprisingly, stores info on Override's weapons. The name of the weap resource is used as the weapon name in the weaponry section of the status display. The first two fields control the duration of different aspects of the weapon:\
+\
+Reload	The number of frames it takes for one of this weapon to reload. 30 = 1 shot/sec. Smaller numbers yield faster reloads.\
+\
+Count		The number of frames the weapon's shots travel for before they peter out. 30 = 1 second of life.\
+\
+\
+The next two fields, MassDmg and EnergyDmg, tell Override how much damage to do when one of this weapon's shots hits something:\
+\
+If the ship's shields are down:   damage =  MassDmg    + (EnergyDmg/4)\
+If the ship's shields are up:     damage = (MassDmg/4) +  EnergyDmg\
+\
+However, the weapon will always do at least one point of damage, regardless of the calculation above.\
+\
+\
+The next two fields tell Override how the weapon should behave in flight:\
+\
+Guidance	The weapon's guidance mode\
+\cf2 	-1	Unguided projectile\cf0 \
+\
+	0	Beam weapon (see below)\
+\cf2 \
+	1	Homing weapon (see Seeker field below)\cf0 \
+\
+	2	(unused)\
+\cf2 \
+	3	Turreted beam\cf0 \
+\
+	4	Turreted, unguided projectile\
+\cf2 \
+	5	Freefall bomb (launched at 80% [in 1.0.2] of the ship's current \
+velocity, "weathervanes" into the "wind."\cf0 \
+\
+	6	Freeflight rocket (launched straight ahead, accelerates to its maximum velocity)\
+\cf2 \
+	7	Front-quadrant turret, (can fire \'b145\'a1 off the ship's nose) fires straight ahead if no target\cf0 \
+\
+	8	Rear-quadrant turret (can fire \'b145\'a1 off the ship's tail)\
+\cf2 \
+	99	Carried ship (AmmoType is the ID of the ship class)\cf0 \
+\
+Speed		The weapon's speed (pixels per frame * 100)\
+\
+\
+The next field tells Override how to handle the ammunition for this weapon, assuming it\'d5s not a fighter bay:\
+\
+AmmoType			What kind of ammo the weapon uses\
+	-1			Ignored (unlimited ammo)\
+\
+\cf2 	0-63			Draws ammo from this type of weapon. (Usually, if your Hector Cannon was of ID 131, you'd set the AmmoType to 3 so it'd use Hector Birdseed Pellets or whatever. However, you could conceivably set it to use ammo from another weapon's supply by setting the AmmoType to something else.)\cf0 \
+\
+	-999			Ship is destroyed when weapon is fired\
+\
+	\cf2 -1000 & below	Weapon uses abs(AmmoType+1000) units of fuel per shot.\cf0 \
+\
+\
+The next three fields tell Override which graphic and sound to use for this weapon, and how to launch it:\
+\
+Graphic		What graphic set to use for this weapon\
+	0-63		Use this graphic set (i.e. spin resources 200-263)\
+\
+Inaccuracy		The weapon's inaccuracy as it leaves the ship\
+	0		Fires straight\
+	1 and up	Fires with up to this amount of inaccuracy (in degrees)\
+\
+Sound	Which sound to play when the weapon fires\
+	-1	Silent but deadly\
+	0-63	Play this sound (snd ID 200-263)\
+\
+\
+The next four fields store info on how the weapon behaves when it hits something:\
+\
+Impact		The magnitude of the impact when the shot hits something\
+	0		No impact\
+	1 and up	This amount of impact, which is inversely proportional to the ship's mass.  (e.g. Missile = 30)\
+\
+ExplodType		What kind of explosion to show when the weapon hits.\
+	-1		No explosion\
+	0		Small, sparkly explosion\
+	1		Bigger explosion\
+	2		Friggin' huge explosion + little sparks\
+\
+ProxRadius		The radius of the weapon's proximity fuse (useful for unguided missiles and bombs)\
+	0		Weapon requires direct hit to do damage\
+	1 and up	This number of pixels of proximity radius\
+\
+BlastRadius		The radius of the weapon's blast effect\
+	0		No blast effect\
+	1 and up	This number of pixels of blast radius\
+\
+The next field contains some miscallenous flag info:\
+\
+Flags			Resource Description\
+	\cf2 0x0001	Spin the weapon's graphic continuously\cf0 \
+\
+	0x0002	Weapon fired by second trigger\
+\
+	\cf2 0x0004	For cycling weapons, always start on the first frame of the \
+animation\cf0 \
+\
+	0x0008	For guided weapons, don't fire at fast ships (ships with turn rate > 3)\
+\
+	\cf2 0x0010	Weapon's sound is looped rather than played repeatedly\cf0 \
+\
+	0x0020	Weapon acts as a decoy for missiles\
+\
+	\cf2 0x0040	Multiple weapons of this type fire simultaneously\
+\cf0 \
+	0x0080	This weapon ignores the carrying ship\'d5s weapon x-offset setting\
+\
+	\cf2 0x0100	Weapon's blast doesn't hurt the player\cf0 \
+\
+	0x0200	Weapon generates small smoke\
+\
+	\cf2 0x0400	Weapon generates big smoke\cf0 \
+\
+	0x0800	Weapon\'d5s smoke trail is more persistent\
+\
+	\cf2 0x1000	Turreted weapon has a blind spot to the front\cf0 \
+\
+	0x2000	Turreted weapon has a blind spot to the sides\
+\
+	\cf2 0x4000	Turreted weapon has a blind spot to the rear\
+\cf0 \
+	0x8000	Shot detonates at the end of its lifespan  (useful for flak-type weapons)\
+\
+\
+The next field contains flags that control how a guided weapon (Guidance = 1) behaves, and is ignored for other weapon types:\
+\
+\cf2 Seeker	0x0001	Passes over asteroids\cf0 \
+\
+		0x0002	Decoyed by asteroids\
+\
+	\cf2 	0x0004	Decoyed by flares\
+\cf0 \
+		0x0008	Confused by sensor interference\
+\
+	\cf2 	0x0010	50% succeptible to Type I jamming\
+\cf0 \
+		0x0020	50% succeptible to Type II jamming\
+\
+	\cf2 	0x0040	50% succeptible to Type III jamming\
+\cf0 \
+		0x0080	50% succeptible to Type IV jamming\
+\
+	\cf2 	0x0100	100% succeptible to Type I jamming\
+\cf0 \
+		0x0200	100% succeptible to Type II jamming\
+\
+		\cf2 0x0400	100% succeptible to Type III jamming\
+\cf0 \
+		0x0800	100% succeptible to Type IV jamming\
+\
+		\cf2 0x1000	Turn speed += 30\'a1/second (cumulative)\
+\
+\cf0 		0x2000	Turn speed += 60\'a1/second (cumulative)\
+\
+	\cf2 	0x4000	Loses lock if target not directly ahead\
+\
+\cf0 		0x8000	May attack parent ship if jammed\
+\
+...the default behavior for a guided weapon is for it to hit asteroids, to not be jammed by anything, and to turn at 30\'a1/second.\
+\
+\
+SmokeSet		Which cicn set to use for this weapon\'d5s smoke trail, if any.  0 = cicn\'d5s 1000-1007, 1 = 1008-1015, etc.  Note that the smoke icons themselves can be any size, but if you use ResEdit\'d5s cicn editor to make each icon only as large as it needs to be, game performance will likely improve.\
+\
+Decay			How fast to decay each shot\'d5s power\
+	-1 or 0	Inored\
+	1 and up	Remove one point of mass & energy damage every time this number of frames goes by (1 frame = 1/30 sec.)\
+\
+\
+\
+\
+Please note that if you've set the weapon to be a beam (Guidance of 0 or 3) the following fields have different functions:\
+\
+Count          The number of frames the beam stays onscreen (1 is probably best)\
+\
+Speed          The length of the beam (32767 is the max)\
+\
+Graphic	What color the beam is\
+\cf2 	-2	red\cf0 \
+	-3	green\
+\cf2 	-4	blue\cf0 \
+	-5	cyan\
+\cf2 	-6	magenta\cf0 \
+	-7	yellow\
+\
+               If the beam is 3 pixels or wider, you can also use the following:\
+    \cf2            -8     magenta & red\cf0 \
+               -9     yellow & green\
+               -10    cyan & blue\
+\
+Impact	Functions normally, with one exception: if the impact is set to a negative value, the beam acts as a tractor beam whose "pull" is proportional to the acceleration strength of your ship's engines.\
+\
+ProxRadius		The beam's width, in pixels. (should be greater than zero unless you want to confuse the user)\
+\
+BlastRadius		Ignored\
+\
+Decay			Ignored\
+\
+\
+\
+Note:     You shouldn't plan on using the last weap resource (ID 163) in your game, as it's used by Override as the easter egg weapon. (i.e. it's the weapon the player gets by hitting the special key combo on the main screen)\
+\
+Another Note:	If you don't create an o\'9ftf resource for each weapon type, your ship's weapon loadout will be corrupted when you land on a planet. (specifically, Override will mistakenly remove any weapons for which you didn't create o\'9ftf resources)}

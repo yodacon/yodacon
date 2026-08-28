@@ -1,0 +1,61 @@
+gövt resource
+ 
+    A gövt resource defines the parameters for a government, which is in turn defined as "any collection of ships and planets that react collectively to the actions of the player and other ships." Governments keep track of how they feel toward you, and they can also have set enemies and allies. The gövt resource's fields are:
+
+InherentJam		Flags for the goverment’s inherent jamming technology. Works similarly to ‘oütf’ resource ModType 10 flags, with the addition that flag bit 0x0100 causes freighters (i.e. AiTypes 1 and 2) for a particular government to have 50% of the standard InherentJam value for warships (AiType 3) of the same government.
+
+Flags			Sets a variety of characteristics (see below)
+
+Ally			The ID number of the govt's ally.
+
+Enemy		The ID number of govt's enemy.
+
+CrimeTol		The maximum amount of evilness the player can accumulate before warships of this govt start to beat on him.
+
+SmugPenalty	The amount of evilness a player gains for being detected smuggling illegal cargo (defined in a misn resource) past this government's ships.
+
+DisabPenalty	The amount of evilness for disabling one of this gövt's ships.
+
+BoardPenalty	Evilness from pirating one of this govt's ships
+
+KillPenalty		Evilness from killing this govt's ships
+
+ShootPenalty	Evilness from shooting one of this govt's ships (currently ignored)
+
+InitialRec		The player’s initial legal record in systems controlled by this govt (0 is neutral, positive is good, negative is bad)
+
+
+• The different bits that can be set in a govt's Flags field are:
+0x0001	Xenophobic (Warships of this govt attack everyone except their allies. Useful for making pirates and other nasties.)
+
+0x0002	Ships of this govt will attack the player in non-allied systems if he's a criminal there (useful for making one govt care only about the player's actions on its home turf, while another is nosy and enforces its own laws everywhere it goes)
+
+0x0004	Always attacks player
+
+0x0010	Warships of this govt will retreat when their shields drop below 25% - otherwise they fight to the death
+
+0x0020	Ignore ships of this govt in the DoGoodSamaritan function
+
+0x0040	Never attacks player (also, player’s weapons can’t hit them)
+
+0x0100	‘pers’ ships of this govt won’t use escape pod, but will act as if they did.
+
+0x0200	Warships will take bribes.
+
+0x0400	Can't hail ships of this gövt
+
+0x0800	Ships of this govt start out disabled (derelicts)
+
+0x1000	Warships will plunder non-mission, non-player enemies before destroying them
+
+0x2000     Freighters will take bribes.
+
+0x4000     Planets of this govt will take bribes
+
+0x8000     Ships of this govt taking bribes will demand a larger percentage of
+             your cash supply, and their planets will always take bribes (useful
+             for pirates)
+
+
+     Doing evil deeds to one government will improve your rating with its enemies, and vice versa. Allied governments also communicate your actions, so attacking one government will make its allies hate you too.
+     One important thing to note is that two governments don't both have to have the other defined as their ally to have them be friendly toward one another. As an example: John says "I like Cajun," and Cajun says "John? Who's that?" Cajun and John are automatically allies, because Cajun's love for John is implied in John's statement of undying devotion to Cajun. :) This way, governments can have multiple allies. Enemies work in a similar fashion, except that any government not allied with a xenophobic government is automatically considered its enemy.

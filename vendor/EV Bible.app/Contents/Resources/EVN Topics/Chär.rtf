@@ -1,0 +1,38 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanPS-BoldMT;\f1\froman\fcharset77 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+
+\f0\b\fs36 \cf0 \ul \ulc0 \shad\shadx20\shady-22\shadr0\shado85 \shadc0 ch\'8ar resource
+\f1\b0\fs28 \ulnone \shad0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+	The ch\'8ar resource is used to allow multiple entry points into the scenario's storyline, by letting the player pick a "character template" from a list when a new pilot is started. The player is presented with a list of all available ch\'8ar resources when a new pilot is created, and must choose one (but only one). This allows different character types to have different ships, legal records, etc. at the start of the game, and also allows for the setting-up of mission stuff by way of a control bit set string that is evaluated when a new pilot is started.\
+\
+Cash		The amount of money a player gets when starting out with this character type \
+               \
+ShipType	ID number of the starting ship type\
+\
+System1-4	ID numbers of up to four possible starting systems for the player. The player will randomly be placed in one of these systems when starting out. Set to -1 if unused (if all four of these fields are set to -1, the player will be placed in system ID 128 as a default).\
+               \
+Govt1-4 &	For each of the governments whose ID is entered in a Govt1-4\
+Status1-4	field, the player's legal status in systems owned by that government or one of its allies is set to the value in the corresponding Status field. For systems owned by an enemy of the govt identified in the Govt field, the player's legal status is set to the negative value of the number in the corresponding Status field. Set unused Govt fields to -1.\
+               \
+Kills		The player's starting combat rating.\
+\
+IntroPict1-4		IDs of up to four PICT resources to show in sequence when the player starts out with a new pilot of this type. Set to -1 if unused.\
+\
+PictDelay1-4	Maximum delay time to display each of the four above pictures, in seconds.\
+\
+IntroTextID		The ID of the d\'91sc resource to show when the player starts out with a new pilot of this type. Along with the IntroPictID field, this allow you to have different opening sequences for each pilot type (useful to show different sides of the same issue, for example). Using the d\'91sc resource's MovieFile field here lets you have an introduction movie. The intro text (and any associated movie) is displayed after the above PICT resouces are shown.\
+               \
+OnStart		A control bit set string that is called when the player starts out with a new pilot of this type.\
+\
+Flags		0x0001	Denotes the "default" ch\'8ar resource, which will be automatically selected in the popup menu. If more than one ch\'8ar resource has this bit set (there shouldn't be) the one with the lowest ID will be considered the default.\
+                         \
+StartYear		The starting year of the game.\
+\
+DatePrefix		String that is appended to the start of the date whenever it's displayed.\
+\
+DateSuffix		String that is appended to the end of the date whenever it's displayed.}

@@ -1,0 +1,36 @@
+{
+    IBClasses = (
+        {CLASS = EVNTable; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = EVNTextView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {evnNotes = NSTextView; evnTable = NSTableView; }; 
+            SUPERCLASS = NSTextView; 
+        }, 
+        {CLASS = EVOTable; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = EVOTextView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {evoNotes = NSTextView; evoTable = NSTableView; }; 
+            SUPERCLASS = NSTextView; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = appDidFinishLaunching; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {loadEVNFile = id; loadEVOFile = id; }; 
+            CLASS = controller; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                evnFile = NSTextView; 
+                evnNotes = NSTextView; 
+                evnTable = NSTableView; 
+                evoFile = NSTextView; 
+                evoNotes = NSTextView; 
+                evoTable = NSTableView; 
+                window = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

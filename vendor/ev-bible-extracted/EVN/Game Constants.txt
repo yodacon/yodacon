@@ -1,0 +1,56 @@
+Game Constants
+
+
+Max Ships In System		64
+
+Max Stellar Objects		2048
+
+Max Systems			2048
+
+Max Ship Classes			768
+
+Max Stellar Classes		256
+
+Jump Distance			1000 pixels
+
+Max Weapon Types		256
+
+Max Outfit Item Types		512
+
+Max Beams On Screen		64
+
+Max Dude Types			512
+
+Max Ships Per Dude		16
+
+Max Govts				256
+
+Max Explosions On Screen	32
+
+Max Explosion Types		64
+
+Max Missions			1000
+
+Num Mission Bits			10000
+
+Max Cargo Types			256
+
+Max Person Types			1024
+
+Max Shots On Screen		128
+
+Max Asteroids			16
+
+Max Asteroid Types		16
+
+Max Nebulae			32
+
+Max Images Per Nebula		7
+
+Max Simultaneous Missions	16
+
+Max Disasters			256
+
+Max Fleets				256
+
+Max Junk Types			128

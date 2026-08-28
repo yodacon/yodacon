@@ -238,6 +238,7 @@ footer a{color:#7fe9ff;text-decoration:none}
   <div class="stack">
     <button class="panel" data-key="reentry"><span class="orb"></span><span class="lbl">Re<br>Entry</span><span class="idx">03</span></button>
     <button class="panel" data-key="archive"><span class="orb"></span><span class="lbl">The<br>Archive</span><span class="idx">04</span></button>
+    <button class="panel" data-key="courier"><span class="orb"></span><span class="lbl">Cou<br>rier</span><span class="idx">05</span></button>
   </div>
 </div>
 
@@ -276,7 +277,7 @@ footer a{color:#7fe9ff;text-decoration:none}
   <p>Yodacon.org is the crew of shipmates on the Yodacon. Our intention is to <strong>expand upon the original game</strong> — to take the ship out of a lost vote and put it back into a universe where it can actually be flown, traded, refueled, and landed. Everything here is MIT licensed, because the whole point is that it belongs to the people who show up for it.</p>
 
   <h2>&gt; CONEX — WHERE THE YODACON IS DOCKED</h2>
-  <p><strong>ConEx</strong> is Paul Richeson's plugin for Ambrosia's <em>Escape Velocity</em>, and it is where the Yodacon was published into the archives. ConEx 1.2 shipped 10 new ships for a government called Consolidated Express, 11 systems, and 35 linked missions that teach you how to fly — with instructions to be sure to land on Conex, Exeon, and Cenron, because their backgrounds will amaze you. It was posted in December 1999. It has been downloaded a few thousand times by people who are no longer fourteen.</p>
+  <p><strong>ConEx</strong> is Paul Richeson's plugin for Ambrosia's <em>Escape Velocity</em>, and it is where the Yodacon was published into the archives. ConEx 1.2 shipped 10 new ships for a government called Consolidated Express, 11 systems, and 35 linked missions that teach you how to fly — with instructions to be sure to land on Conex, Exeon, and Cenron, because their backgrounds will amaze you. It was posted in December 1999. It has been downloaded a few thousand times by people who are no longer fourteen. 🔥</p>
 
   <p>We have the original archive. The work is to open it, pull the resources out into individual files, fix what 1999 left broken, and get the result hosted where people can still play it.</p>
 
@@ -284,6 +285,25 @@ footer a{color:#7fe9ff;text-decoration:none}
   <p>Team Yodacon is a space commodity trading game. Its signature system is the landing. We use lithium-injected pellets, cooked with lasers and X-ray emitters, to create rotating comforting pillows of glide — a steerable plasma envelope that shapes your atmospheric reentry trajectory. The real physics of reentry heating drives the controls, and those controls are integral to the landing process. You do not press "land." You fly it down.</p>
 
   <p>Then: set the bird down safely at the station dock. Refuel. Walk the outfitters and dream about upgrades, or about a different ship entirely. Or get a drink at the bar and be distracted there, waiting on the mini-games — the charisma ladder, the Royal Finkel table — while the winners process runs the way the EV Bible explains it.</p>
+
+  <h2>&gt; THE COURIER UNIVERSE</h2>
+  <p>Ours is a world parallel to the EV universes, and it diverges on one word. The other universes were settled by pirates and warriors — raiders with a hold full of stolen ore, fleets with a flag and a grievance. Ours was settled by <strong>commodity</strong>. The first thing that ever crossed our sky in numbers was not a gunship. It was freight, on a schedule, with a manifest.</p>
+
+  <p>The <strong>ConEx government</strong> is what a civilization becomes when it commercializes and commoditizes its own freight. Consolidated Express is not an empire and not a guild; it is the clearing house, the bonded lane, the ledger everyone agreed to trust because the alternative was every captain inventing their own. Its power is not that it can shoot you. Its power is that it can decline to sign for your cargo.</p>
+
+  <p>So the hero of this universe is a <strong>courier</strong>. Hard-working space captains, running lanes on thin margins, carrying other people's goods through their own atmosphere. There is no chosen one. There is a bill of lading, a burn window, and a landing you have to fly yourself. The heroism is in the delivery — and in the long mission underneath every delivery, which is to earn your way up the hulls until you can take the master ship.</p>
+
+  <h2>&gt; THE MASTER SHIP</h2>
+  <p>The <strong>Yodacon</strong> is the top of that ladder. The full monty: mounted rotating turrets on every arc, vast cargo hulls, and a reentry envelope rated for speeds no courier hull before it survived. It is not a warship that happens to carry cargo. It is a <em>freighter that refuses to be caught</em> — turrets because a full hold attracts attention, not because the captain came looking for a fight.</p>
+
+  <p>Its real distinction is the reentry. Every other hull in the lane has to bleed velocity in the black before it dares touch air. The Yodacon brings the speed <em>down with it</em>, riding the lithium-plasma envelope through the heating regime that breaks lesser frames. That is the whole economic argument for the ship: a courier who can enter fast enough delivers on windows nobody else can bid on. Speed of reentry is the commodity. The cargo is just what pays for it.</p>
+
+  <p>You do not buy the Yodacon. You are sent out after it. The campaign is the hero's mission of an ordinary captain — one contract at a time, one landing at a time — until the master ship is yours and the lane belongs to a courier.</p>
+
+  <h2>&gt; FOUNDING RECORD</h2>
+  <p><strong>27 August 2026.</strong> On this day the domain <strong>yodacon.org</strong> was acquired, the <strong>Yodacon</strong> GitHub organization was created, and DNS was cut over to GitHub Pages — apex <code>A</code> and <code>AAAA</code> records to the four GitHub Pages addresses each, a <code>CNAME</code> on <code>www</code> to the organization's Pages host, and the <code>_github-pages-challenge</code> <code>TXT</code> record for domain verification.</p>
+
+  <p>The same day, the ConEx lore was revived and expanded from a 1999 Escape Velocity plugin into what it is now: <strong>space reentry and space commerce</strong>. Not pirate. Not warrior. Courier.</p>
 
   <div class="plate">
     <h3>ARCHIVE &amp; TOOLING RESOURCES</h3>
@@ -326,6 +346,12 @@ const CONTENT = {
     h: `<p>Lithium-injected pellets, cooked with lasers and X-ray emitters, forming <b>rotating comforting pillows of glide</b>.</p>
         <p>A steerable plasma envelope shapes the trajectory. Real reentry-heating math drives the stick.</p>
         <p>Landing is a flown maneuver, not a menu item. Then: dock, refuel, outfitters, the bar, the mini-games, the charisma ladder.</p>`
+  },
+  courier: {
+    t: "05 — THE COURIER LANE",
+    h: `<p>Parallel to the EV universes, and settled by <b>commodity</b> — not pirates, not warriors. Freight, on a schedule, with a manifest.</p>
+        <p>The <b>ConEx government</b> is commercialized, commoditized freight. Its power is not that it can shoot you; it is that it can decline to sign for your cargo.</p>
+        <p>The hero is a hard-working space captain on the long mission to take the master ship: the <b>Yodacon</b>. Rotating turrets on every arc, vast cargo hulls, and reentry speeds no courier hull before it survived.</p>`
   },
   archive: {
     t: "04 — THE ARCHIVE",

@@ -14,6 +14,19 @@ But the ship got built. This organization gives it a purpose — reviving the
 published, and expanding on the original game as **Team Yodacon**: commodity
 trading with a landing sequence driven by real reentry-heating physics.
 
+## The universe
+
+Ours runs parallel to the EV universes and diverges on one word: **commodity**.
+Not pirate, not warrior — **courier**. The ConEx government is commercialized,
+commoditized freight, and its captains are hard-working couriers on a hero's
+mission to earn the master ship: the **Yodacon**, mounted rotating turrets and
+vast cargo hulls, rated for reentry speeds no courier hull before it survived.
+Speed of reentry is the real commodity. The cargo is what pays for it.
+
+**Founded 27 August 2026** — the day `yodacon.org` was acquired, the organization
+was created, and DNS was pointed at GitHub Pages. Records are documented in
+[`docs/DNS.md`](docs/DNS.md).
+
 MIT licensed. See [`index.html`](index.html) for the full lore and
 [`backlog.md`](backlog.md) for the plan.
 

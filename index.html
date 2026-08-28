@@ -202,6 +202,23 @@ blockquote{
 .plate a:hover{color:#fff;background:#0d3d12}
 footer{margin-top:52px;text-align:center;color:var(--phos-dim);font-size:11px;line-height:2}
 footer a{color:#7fe9ff;text-decoration:none}
+
+/* ---- flight recorder: the landing gif in a chrome bezel ---- */
+.recorder{
+  border:14px solid transparent;border-radius:24px;margin:26px 0;
+  background:
+    linear-gradient(#000,#000) padding-box,
+    linear-gradient(160deg,var(--chrome-hi),var(--chrome-lo) 40%,var(--chrome-hi) 62%,#2a2f31) border-box;
+  box-shadow:0 0 0 2px #000, 0 10px 30px #000c, inset 0 0 40px #000;
+  padding:10px;max-width:560px;
+}
+.recorder img{display:block;width:100%;height:auto;border-radius:8px;image-rendering:auto}
+.recorder .rec-cap{
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  font-size:11px;color:var(--phos-dim);letter-spacing:.14em;padding:10px 4px 2px;
+}
+.recorder .rec-cap b{color:#9dff9d}
+.recorder .rec-cap .live{color:#c26bd8}
 </style>
 </head>
 <body>
@@ -285,6 +302,24 @@ footer a{color:#7fe9ff;text-decoration:none}
   <p>Team Yodacon is a space commodity trading game. Its signature system is the landing. We use lithium-injected pellets, cooked with lasers and X-ray emitters, to create rotating comforting pillows of glide — a steerable plasma envelope that shapes your atmospheric reentry trajectory. The real physics of reentry heating drives the controls, and those controls are integral to the landing process. You do not press "land." You fly it down.</p>
 
   <p>Then: set the bird down safely at the station dock. Refuel. Walk the outfitters and dream about upgrades, or about a different ship entirely. Or get a drink at the bar and be distracted there, waiting on the mini-games — the charisma ladder, the Royal Finkel table — while the winners process runs the way the EV Bible explains it.</p>
+
+  <h2>&gt; FLIGHT RECORDER — RELEASE CANDIDATE 1</h2>
+  <p>This is not concept art. This is the flight recorder from <strong>Gonex&nbsp;v0.1.0-rc1</strong>,
+  playing a full landing at ConEx station: hail the port and request docking, take the
+  clearance, commit the deorbit burn, ride the lithium-plasma pillow down the entry
+  corridor on the flight computer — 0.0&nbsp;km off the pad line, hull at 100% — and roll to
+  a stop under the same island sky that shipped in the 1997 plugin. The airframe is the
+  original Yodacon, byte-exact from ConEx&nbsp;1.2.</p>
+
+  <div class="recorder">
+    <img src="assets/landing-rc1.gif" width="512" height="384" loading="lazy"
+         alt="Flight recorder loop from Gonex RC1: the Yodacon approaches the planet, receives docking clearance, deorbits, rides the plasma pillow down the reentry corridor on instruments, and docks on the 1997 ConEx island landing view.">
+    <div class="rec-cap">
+      <span><b>FLT REC</b> · CONEX STATION · FULL LANDING</span>
+      <span class="live">≈6× TIME</span>
+      <span><a href="https://github.com/yodacon/gonex" style="color:#7fe9ff;text-decoration:none">yodacon/gonex</a></span>
+    </div>
+  </div>
 
   <h2>&gt; THE COURIER UNIVERSE</h2>
   <p>Ours is a world parallel to the EV universes, and it diverges on one word. The other universes were settled by pirates and warriors — raiders with a hold full of stolen ore, fleets with a flag and a grievance. Ours was settled by <strong>commodity</strong>. The first thing that ever crossed our sky in numbers was not a gunship. It was freight, on a schedule, with a manifest.</p>

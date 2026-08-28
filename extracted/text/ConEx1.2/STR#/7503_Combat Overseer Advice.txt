@@ -1,0 +1,20 @@
+0	When using fixed guns, make sure your target is directly in front of you before you fire. Guns don't auto-aim.
+1	Turrets don't need to be aimed manually. Make sure you have the proper target selected before firing, however.
+2	Guns and turrets don't have long range. Make sure you only use them when you can see your opponent visually.
+3	Use Torpedos when you cannot visually see your opponent, but they are on the radar screen. A torpedo can last long enough to reach a target that is on the border of your radar, and farther.
+4	Missiles don't last as long as torpedos. Use them only when your target is half way between you and the border of your radar or closer.
+5	In a system with a dense asteroid field, don't fire missiles or torpedos long range. They will probably be destroyed by hitting an asteroid.
+6	Watch your shields. If you find that they are running low and your opponent's are not, land or jump out.
+7	Missile Jammers are very useful when fighting ships equipped with Missile Racks. As long as you move at a moderate pace, a missile probably will not hit you with a Missile Jammer on your ship.
+8	Shield Boosters and Capacitors are musts for any serious combat ship.
+9	Don't ever use Heavy Rockets at close range! Their explosions can cause damage to your ship as well. Make sure your target is at least one ship-length away before using a Heavy Rocket. 
+10	When fighting a strong enemy, use your fighters whenever possible.
+11	When trying to destroy an enemy, make sure your escorts and fighters don't attack when the ship is nearly disabled. Make sure that you draw the ship's fire by attacking it, while commanding escorts to hold position.
+12	Boarding ships is tricky. Make sure you are close to the target ship and moving at the same speed. Tractor beams are very useful for facilitating this process.
+13	Make sure you ship is heavily armored. A combination of Tritanium, Durasteel, and Armaplast is best, but not always practical. For most ships, Durasteel and Armaplast provides the best protection/space ratio.
+14	Asteroid belts are good places to hide from pirates, and nebulas are good places to ambush victims.
+15	Make sure you watch your radar. Always check to see what red dots are by pushing "Select Nearest Target" (check your Preferences for the key).
+16	When escorting ships, it is often best to jump into a system and jump out quickly to avoid persuing ships. If there are many, the ships you are escorting may be destroyed in a fight.
+17	When using hired escorts, push "p" to check how much money they cost per day. Don't keep expensive escorts too long. 
+18	If you ever run out of fuel and have no place to land, hail friendly ships and Request Assistance. Sometimes they will provide fuel for you at a reasonable price.
+19	Don't bite off more than you can chew! Don't try to take on ships that are much bigger and more powerful that you. If you feel outgunned, land or jump out quickly.

@@ -1,0 +1,1 @@
+Destroy the target ships in the ConEx System then return to ConEx.

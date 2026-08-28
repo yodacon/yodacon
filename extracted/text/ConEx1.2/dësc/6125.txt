@@ -1,0 +1,1 @@
+Travel to <DST>, pickup the cargo by landing, then return to <RST>. Mission Deadline: <DL>. Hail the Training Overseer if you need any help.

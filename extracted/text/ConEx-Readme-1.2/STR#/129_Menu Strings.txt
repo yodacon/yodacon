@@ -1,0 +1,17 @@
+0	About DOCMaker…
+1	File
+2	Page Setup…
+3	Print…/P
+4	Output Text…/O
+5	Find…/F
+6	Find Again/G
+7	Transfer…/T
+8	Quit/Q
+9	Edit
+10	Undo
+11	Cut
+12	Copy
+13	Paste
+14	Clear
+15	Contents
+16	Table Of Contents…

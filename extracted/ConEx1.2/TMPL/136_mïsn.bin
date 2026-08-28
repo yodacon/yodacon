@@ -1,0 +1,10 @@
+	AvailStelDWRDAvailBitSetDWRDAvailLocDWRDAvailRecordDWRDAvailRatingDWRDAvailRandomDWRD
+TravelStelDWRD
+ReturnStelDWRD	CargoTypeDWRDCargoQtyDWRD
+PickupModeDWRDDropoffModeDWRDScanGovtDWRD
+FailIfScanDWRDPayValDLNG	ShipCountDWRDShipSystDWRDShipDudeDWRDShipGoalDWRD	ShipBehavDWRD
+ShipNameIDDWRD
+CompBitSetDWRDCompGovtDWRD
+CompRewardDWRD
+FailBitSetDWRD	BriefTextDWRD
+QuickBriefDWRDLoadCargTextDWRDDropCargTextDWRDCompTextDWRDFailTextDWRD	TimeLimitDWRDCanAbortDWRDUnusedDWRDAvailBitClrDWRDAuxShipCountDWRDAuxShipDudeDWRDAuxShipSystDWRDCompBitSet2DWRDFlagsHWRD

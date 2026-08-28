@@ -1,0 +1,1 @@
+Destroy target Kestrel then return to ConEx.

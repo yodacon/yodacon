@@ -1,0 +1,64 @@
+0	Shuttlecraft
+1	Lt. Freighter
+2	Bulk Freighter
+3	Courier
+4	Argosy
+5	Frigate
+6	Cruiser
+7	Patrol Ship
+8	Rapier
+9	Lightning
+10	Defender
+11	VIP Transport
+12	Liner
+13	Destroyer
+14	Cruiser
+15	Kestrel
+16	Manta
+17	Scoutship
+18	Corvette
+19	Gunboat
+20	Hawk
+21	Alien
+22	Alien
+23	Clipper
+24	Kestrel
+25	Carrier
+26	Rapier
+27	Lightning
+28	Defender
+29	Clipper
+30	Rapier
+31	Lightning
+32	Defender
+33	Clipper
+34	Overseer
+35	Corvette
+36	
+37	
+38	
+39	
+40	
+41	
+42	
+43	
+44	
+45	
+46	
+47	
+48	
+49	
+50	
+51	
+52	
+53	
+54	
+55	
+56	
+57	
+58	
+59	
+60	
+61	
+62	
+63	Escape Pod

@@ -1,0 +1,1 @@
+Combat 102 is similar to Combat 101, but there are more ships to destroy. Destroy all enemy ships, then return to ConEx.

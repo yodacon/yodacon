@@ -1,0 +1,1 @@
+Pick up <CQ> at <DST>, then take it to <RST>

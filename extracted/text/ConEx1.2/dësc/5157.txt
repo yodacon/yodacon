@@ -1,0 +1,1 @@
+“OK,  we will load the wood onto your ship <SN> and then your ready to take off. Go to <DST> in the <DSY> System, before <DL>There you will find you payment. Good luck.”

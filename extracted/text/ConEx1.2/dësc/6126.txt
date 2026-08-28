@@ -1,0 +1,1 @@
+Fly to <DST>, land, and check the commodity exchange. Find adjecent systems trading in the same goods and check their prices. Trade as long as you wish before <DL>. Return to <RST> before <DL> or the mission will fail.

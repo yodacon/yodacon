@@ -1,0 +1,1 @@
+Destroy Frigate in ConEx System then return to ConEx.

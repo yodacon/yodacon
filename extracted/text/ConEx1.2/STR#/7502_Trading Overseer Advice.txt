@@ -1,0 +1,9 @@
+0	To jump between systems, press "m" to open your map. Select an adjecent system. Move out of range of the system's center that you are in, and press "j" to jump.
+1	A useful trick when jumping is to turn your ship around before you are far enough away to jump. This saves time when you activate the jump because your ship doesn't need to turn around to slow down.
+2	When you have found the right system, land on the proper planet in that system to pick up or drop off cargo.
+3	To land on a planet, turn your ship around and slow down. Get close to the planet, then press "l" to land.
+4	Remember, on the Commodity Exchange, buy low and sell high. Try to find systems close to each other that have a high/low arrangement for a commodity.
+5	Speak to merchants and freighters. They often have advice on where to buy and sell, and what disasters occurred on what worlds.
+6	Try to take as many passenger fares from the Mission Computer as you can, even when running other missions. Ferrying passengers earns you 10,000 credits, and they will wait forever to get to their destination.
+7	Auto-refuellers and Ramscoops are very handy items. Every one of your ships should be equipped with them.
+8	If you ever run out of fuel, hail friendly ships and Request Assistance. Sometimes they will provide fuel for you at a reasonable price.

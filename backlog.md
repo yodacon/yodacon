@@ -31,11 +31,11 @@ dates & hashes in `vendor/paulricheson/PROVENANCE.md`.
       StuffIt 5 "Arsenic" archive directly; the `.hqx` path was never needed.
       (`unar -k visible` emits AppleDouble `.rsrc` files.)
 - [x] Split the resource fork into individual files under `vendor/paulricheson/extracted/` —
-      `tools/rsrc_extract.py`: 538 resources / 26 types from the plugin, 220 more
+      `vendor/paulricheson/tools/rsrc_extract.py`: 538 resources / 26 types from the plugin, 220 more
       from the DOCMaker readme.
 - [x] ~~Decode `rlë8`/`rlëD`~~ ConEx is classic EV, so sprites are `spïn`+`PICT`
       pairs, not Nova `rlë8`. Wrote a QuickDraw PICT v2 decoder instead
-      (`tools/pict_decode.py`): 92/92 plugin PICTs → PNG, 11 sprite sheets
+      (`vendor/paulricheson/tools/pict_decode.py`): 92/92 plugin PICTs → PNG, 11 sprite sheets
       composited with mask transparency. (`rlë8` still matters for Nova plugins —
       keep for evutils.)
 - [x] Recover the **Yodacon ship**: `shïp` 174 stats (via the plugin's own TMPLs),
@@ -62,7 +62,7 @@ Classic EV's resources are close cousins — same shapes, smaller structs.
       bad mission-bit chain.
 - [ ] Repair with `evutils`; keep every change as a reviewable commit.
 - [ ] Verify under [EV Nova CE](https://github.com/andrews05/EV-Nova-CE/releases) and
-      the emulator path from [escape-velocity.games/tools](https://download.escape-velocity.games/tools/).
+      the emulator path from [escape-velocity.games/tools](https://download.escape-velocity.games/vendor/paulricheson/tools/).
 - [ ] Package `ConEx 1.3 (Yodacon Restoration)` with a changelog crediting Paul Richeson.
 - [ ] Contact systemless.org and offer the fixed plugin for hosting.
 
@@ -115,8 +115,8 @@ The whole site and game share one look, taken from the EV splash and in-flight H
 - [Cythera Guides — Ambrosia EV add-ons](http://www.cytheraguides.com/archives/ambrosia_addons/ev/)
 - [vasi/evnova-utils](https://github.com/vasi/evnova-utils)
 - [andrews05/EV-Nova-CE releases](https://github.com/andrews05/EV-Nova-CE/releases)
-- [escape-velocity.games tools](https://download.escape-velocity.games/tools/)
-- [Nova Bible](https://download.escape-velocity.games/tools/EV%20Nova/Documentation/Nova%20Bible.txt) — also at `vendor/docs/Nova Bible.txt`
+- [escape-velocity.games tools](https://download.escape-velocity.games/vendor/paulricheson/tools/)
+- [Nova Bible](https://download.escape-velocity.games/vendor/paulricheson/tools/EV%20Nova/Documentation/Nova%20Bible.txt) — also at `vendor/docs/Nova Bible.txt`
 - [systemless.org — Escape Velocity Override](https://systemless.org/escape-velocity-override/)
 - [r/evnova — Ambrosia and registration](https://www.reddit.com/r/evnova/comments/g3ie3x/ambrosia_and_registration/)
 - [Building an EV Nova ship plugin (video)](https://www.youtube.com/watch?v=XTzUsw34FRw) — mirrored article in `vendor/docs/`

@@ -65,7 +65,7 @@ compression. The Unarchiver's `unar 1.10.8_7` (Homebrew) expanded it with
 The fallback `.hqx` (BinHex 4.0) copy in `vendor/docs/archived/` was not
 needed.
 
-### B. Resource-fork parsing (`tools/rsrc_extract.py`)
+### B. Resource-fork parsing (`vendor/paulricheson/tools/rsrc_extract.py`)
 
 The AppleDouble wrapper (magic `0x00051607`) was unwrapped by locating entry
 ID 2 (resource fork) and entry ID 9 (Finder info, yielding the type/creator
@@ -75,7 +75,7 @@ blocks. Each resource was written to
 `vendor/paulricheson/extracted/<container>/<type>/<id>[_<name>].bin`. Resource names and type
 codes were decoded as MacRoman (`dësc`, `shïp`, `spïn` …).
 
-### C. Text recovery (`tools/convert_all.py`, `tools/tmpl_dump.py`)
+### C. Text recovery (`vendor/paulricheson/tools/convert_all.py`, `vendor/paulricheson/tools/tmpl_dump.py`)
 
 - **`dësc` (191 resources)**: null-terminated MacRoman prose — landing
   descriptions, shipyard blurbs, and mission text. Dumped to UTF-8 `.txt`.
@@ -89,7 +89,7 @@ codes were decoded as MacRoman (`dësc`, `shïp`, `spïn` …).
   own ResEdit **`TMPL`** templates — the plugin documents its own binary
   formats — via a TMPL interpreter supporting `DWRD`, `DLNG`, `RECT`, `PSTR`.
 
-### D. PICT v2 decoding (`tools/pict_decode.py`)
+### D. PICT v2 decoding (`vendor/paulricheson/tools/pict_decode.py`)
 
 A ~200-line QuickDraw PICT v2 decoder was written against the observed
 opcode inventory:
@@ -206,6 +206,6 @@ composite the remaining ConEx ships against a base-EV resource donor.
 
 ## Appendix: Toolchain
 
-`unar` 1.10.8_7 · Python 3.9.6 + Pillow · `tools/rsrc_extract.py` ·
-`tools/pict_decode.py` · `tools/convert_all.py` · `tools/tmpl_dump.py` ·
+`unar` 1.10.8_7 · Python 3.9.6 + Pillow · `vendor/paulricheson/tools/rsrc_extract.py` ·
+`vendor/paulricheson/tools/pict_decode.py` · `vendor/paulricheson/tools/convert_all.py` · `vendor/paulricheson/tools/tmpl_dump.py` ·
 outputs under `vendor/paulricheson/extracted/{ConEx1.2, ConEx-Readme-1.2, png, sprites, text}`.

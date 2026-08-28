@@ -41,7 +41,7 @@ immediately after — the whole release ritual fits inside one evening.
 | `ConEx1.2` | `Mpïf` | `Mërc` | Escape Velocity plugin, opened by EV ("Mërc" = Matt Burch's creator code) |
 | `ConEx Readme 1.2` | `APPL` | `Dk@P` | Self-displaying DOCMaker document application |
 
-## Resource inventory (from `tools/rsrc_extract.py`)
+## Resource inventory (from `vendor/paulricheson/tools/rsrc_extract.py`)
 
 - `ConEx1.2.rsrc`: **538 resources / 26 types** — 92 `PICT` (1,271,710 B), 191 `dësc`,
   36 `mïsn`, 31 `spïn`, 24 `shïp`, 14 `sÿst`, 10 `spöb`, 10 `oütf`, 17 `düde`,
@@ -53,7 +53,7 @@ immediately after — the whole release ritual fits inside one evening.
 ## Extraction toolchain
 
 - `unar` 1.10.8_7 (Homebrew bottle), `-k visible` → AppleDouble `.rsrc` files
-- `tools/rsrc_extract.py` — AppleDouble unwrap + resource-fork walk (Python 3.9.6)
-- `tools/pict_decode.py` — QuickDraw PICT v2 subset → PNG (Pillow)
-- `tools/convert_all.py` — batch PICT/spïn/text conversion
-- `tools/tmpl_dump.py` — applies the plugin's own ResEdit `TMPL`s to its resources
+- `vendor/paulricheson/tools/rsrc_extract.py` — AppleDouble unwrap + resource-fork walk (Python 3.9.6)
+- `vendor/paulricheson/tools/pict_decode.py` — QuickDraw PICT v2 subset → PNG (Pillow)
+- `vendor/paulricheson/tools/convert_all.py` — batch PICT/spïn/text conversion
+- `vendor/paulricheson/tools/tmpl_dump.py` — applies the plugin's own ResEdit `TMPL`s to its resources

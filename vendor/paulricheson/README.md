@@ -32,6 +32,27 @@ split into individual files, art decoded to PNG, prose decoded to UTF-8.
 | `sprites/` | Decoded spïn sheets, RGBA with the mask applied |
 | `text/` | Decoded text resources, UTF-8 |
 
+## `tools/`
+
+The extraction and decoding scripts, kept beside the data they operate on. Each takes
+its paths as arguments and derives output locations from the input's parent, so they
+work from anywhere:
+
+| Script | Purpose |
+| --- | --- |
+| `rsrc_extract.py` | Split a resource fork into `<type>/<id>[_<name>].bin` |
+| `convert_all.py` | Batch-decode PICTs to PNG, spïn sheets to RGBA, text to UTF-8 |
+| `pict_decode.py` | Decode a single PICT to an image |
+| `tmpl_dump.py` | Dump a resource against its `TMPL` definition |
+
+Regenerating `extracted/` from `release/`:
+
+```sh
+cd vendor/paulricheson
+python3 tools/rsrc_extract.py <resource-fork> extracted/ConEx1.2
+python3 tools/convert_all.py extracted/ConEx1.2 extracted/ConEx-Readme-1.2
+```
+
 ## `PROVENANCE.md`
 
 Every date and hash the archive still carries, recorded before anything else touched

@@ -11,6 +11,7 @@ Writes into ~/code/Gonex/assets/data/conex/:
 Rerun after any ConEx restoration edit; the game inherits the repair.
 """
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -19,7 +20,17 @@ sys.path.insert(0, str(REPO))
 from evutils import rfork, tmpl  # noqa: E402
 from data.build_gazetteer import BASE, PLUGIN, load, overlay  # noqa: E402
 
-OUT = Path.home() / "code" / "Gonex" / "assets" / "data" / "conex"
+def gonex_dir():
+    """The export target: $GONEX_DIR, else the gonex/ submodule, else the
+    development checkout at ~/code/Gonex."""
+    if env := os.environ.get("GONEX_DIR"):
+        return Path(env)
+    if (REPO / "gonex").is_dir():
+        return REPO / "gonex"
+    return Path.home() / "code" / "Gonex"
+
+
+OUT = gonex_dir() / "assets" / "data" / "conex"
 
 CARGO = ["Food", "Industrial", "Medical", "Luxury Goods", "Metal", "Equipment",
          "Passengers", "Criminal", "Drugs", "Ore Samples", "Munitions", "Ore",
@@ -85,7 +96,7 @@ def main():
             continue
         holders = [sid for sid, entry in gal["systems"].items()
                    if rid in entry["stellars"]]
-        gal["stellars"][str(rid)] = {
+        entry = {
             "name": name or f"#{rid}",
             "system": int(holders[0]) if holders else f.get("System", -1),
             "govt": gname(f.get("Govt")), "tech": f.get("TechLevel", 0),
@@ -93,6 +104,9 @@ def main():
             "landing": landing_profile(rid, name, f.get("TechLevel", 0)),
             "source": src,
         }
+        if f.get("CustPicID", -1) > 0:
+            entry["landPic"] = f["CustPicID"]
+        gal["stellars"][str(rid)] = entry
 
     # missions, with prose
     plug = rfork.parse(rfork.unwrap_appledouble(PLUGIN.read_bytes()))

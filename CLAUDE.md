@@ -4,7 +4,7 @@
 
 The repository root is settled. Its contents are:
 
-    .gitignore  .gitmodules  .nojekyll  CNAME  LICENSE
+    .gitignore  .gitmodules  .nojekyll  CNAME  LICENSE  Makefile
     README.md  backlog.md  index.html  setup-development.md
 
 **New files go in an appropriate subdirectory, never at the root.** If nothing
@@ -16,12 +16,21 @@ Where things belong:
 
 | Directory | Contents |
 | --- | --- |
+| `gonex/` | Submodule — the game (`yodacon/gonex`); dev checkout may live at `~/code/Gonex` |
+| `evutils/` | Byte-identical resource-fork dump/build tooling |
+| `data/` | Gazetteer, universe map, and the exporters that feed `gonex/` |
 | `docs/` | Project documentation |
 | `docs/lab-reports/` | Dated engineering write-ups, `YYYY-MM-DD-<slug>.md` |
 | `vendor/paulricheson/` | The 1997 ConEx plugin: `release/`, `extracted/`, `tools/` |
 | `vendor/docs/` | Third-party reference material, mirrored |
 | `vendor/konex/` | Submodule — the konex engine fork |
 | `vendorignored/` | Large local archives, git-ignored in full |
+
+## Building
+
+The root `Makefile` is the center that compiles it all: `make all` round-trips
+the 1997 fork (`verify`), runs every suite (`test`), and builds the game
+(`gonex`). `make export` regenerates the game data from the extraction.
 
 ## Never `git add -A`
 

@@ -16,7 +16,9 @@ sequence is real reentry physics.
       panels, plasma-shifting spheres, center pilot-file readout driven by panel hover.
 - [x] Organization lore written into the page.
 - [x] MIT `LICENSE`, `README.md`, git repo initialized.
-- [ ] Publish to a remote (GitHub `yodacon/yodacon`) and point yodacon.org at it.
+- [x] Publish to a remote — pushed to `yodacon/yodacon`; the game is its own repo
+      `yodacon/gonex`, vendored back here as the `gonex/` submodule, with the root
+      `Makefile` as the center that compiles it all. (yodacon.org DNS still pending.)
 
 ## Phase 1 — Crack the archive
 

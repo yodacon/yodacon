@@ -2,3 +2,6 @@
 	path = vendor/konex
 	url = https://github.com/vonglurt/konex.git
 	branch = macos-port
+[submodule "gonex"]
+	path = gonex
+	url = https://github.com/yodacon/gonex.git

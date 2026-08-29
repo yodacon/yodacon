@@ -178,6 +178,24 @@ damage economy). Game data flows from here via `data/export_gonex.py`
 - [ ] Escort/combat mission objectives during the flight phase (academy dudes
       spawning in-system) — currently auto-resolved on arrival.
 
+## Phase 4.5 — One pilot, one ship: flight-mode unification
+
+The corridor is one game and the vacuum is still another — konex's 1997
+deathmatch stitched to the reentry-trader. Full plan with file-level
+grounding: [`gonex/docs/ROADMAP.md`](gonex/docs/ROADMAP.md). Milestones:
+
+- [ ] **A — One Pilot:** merge the two player models (Voyage vs world
+      Ship), courier HUD replacing the deathmatch scoreboard, nav-target
+      cycling with the IFF color language on every bracket and map dot.
+- [ ] **B — Someone Out There:** per-system traffic from govt data,
+      mission ships actually spawned (ShipCount/ShipDude/ShipGoal),
+      disposition (hostile/wary/neutral/friendly) from govt relations +
+      the player's legal record, scan events, flight death that costs.
+- [ ] **C — The Instruments:** minimap layers and a real system map,
+      govt/fuel/known-space shading on the jump chart, approach assist.
+- [ ] **D — The Yard:** outfit families feeding both the flight model
+      and entryVehicleFor, turrets, escort orders.
+
 ## Phase 5 — Station life
 
 - [ ] Dock, refuel, repair.

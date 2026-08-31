@@ -12,8 +12,15 @@ Old takes are never overwritten — the filename is the version.
 | `landing-rc2.gif` | 2026-08-28 | RC1 | autoland | one take orbit→parked, 12× time |
 | `landing-rc3-manual.gif` | 2026-08-28 | `235d2a3` | **manual, hands off** | the bad landing: hull burning, TOO STEEP cue, emergency override, guardian dumping seed, 8 km off the line — every error and every new guidance element on display |
 | `landing-rc3-auto.gif` | 2026-08-28 | `235d2a3` | **autoland** | the clean landing: corridor flown, 0.0 km off the pad line, debrief grade A 82/100 "PROVEN COURIER" |
+| `reentry-rc3.gif` | 2026-08-31 | RC3 `95205bd` | **autoland** | the release build's fire: the solar-prominence fan and the ion flow streaming off the horizon, corridor flown, 0.0 km off the pad line, grade A 82/100 "PROVEN COURIER" |
+| `takeoff-rc3.gif` | 2026-08-31 | RC3 `95205bd` | **takeoff (scripted)** | first takeoff on tape: the runway roll down the spaceport road, rotate over the town, the ascent sheath punching through the upper air, sky going to black, orbital insertion |
 
-The rc3 pair demonstrates the current UI: the expected-profile h–V
+The RC3-build pair (`reentry-rc3.gif`, `takeoff-rc3.gif`) is the sales
+gallery on the front page: the full round trip — down through the fire to
+the pad, then back up through it to orbit — on the tagged v0.1.0-rc3 build,
+with the prominence layer and the ion flow both ways.
+
+The earlier rc3 pair demonstrates the current UI: the expected-profile h–V
 monitor, the dotted pipe projected to the pad, the flight-director bug
 with STEER LEFT/RIGHT chevrons, burn warnings with steering cues, the
 damage-control reflex, per-ship dials with the LOAD gauge, the split

@@ -103,13 +103,15 @@ h1{
 .console{
   display:grid;
   grid-template-columns:1fr minmax(240px,320px) 1fr;
-  gap:18px;align-items:start;margin-top:14px;
+  gap:18px;align-items:stretch;margin-top:14px;
 }
 @media(max-width:900px){.console{grid-template-columns:1fr}.readout-wrap{order:-1}}
-.stack{display:flex;flex-direction:column;gap:16px}
+/* three panels a side, spread to match the readout's height */
+.stack{display:flex;flex-direction:column;gap:16px;justify-content:space-between}
 
 .panel{
   display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  min-height:78px;
   padding:14px 16px;cursor:pointer;position:relative;overflow:hidden;
   color:var(--phos);font:inherit;font-size:clamp(15px,2vw,22px);line-height:1.15;
   border:3px solid var(--chrome);
@@ -164,20 +166,6 @@ h1{
 .readout .idle{text-align:center;color:var(--phos-dim);font-weight:700}
 .readout ul{margin:6px 0 0;padding-left:18px;font-weight:400;color:#7ee87e}
 .readout a{color:#9dff9d}
-
-/* right-side status HUD, from the in-flight shot */
-.status{position:fixed;right:34px;top:50%;transform:translateY(-50%);width:150px;z-index:6;
-  display:flex;flex-direction:column;gap:5px;font-size:11px}
-@media(max-width:1320px){.status{display:none}}
-.scell{
-  border:2px solid var(--chrome);border-radius:3px;background:var(--crt);
-  padding:5px 7px;box-shadow:inset 0 0 0 1px #000a;
-  text-shadow:0 0 6px #5cff5c55;
-}
-.meter{height:8px;background:#08210a;border:1px solid #0a2a0a;margin-top:2px}
-.meter i{display:block;height:100%;background:linear-gradient(#7dff62,#2f9b34)}
-.scell.r{text-align:right}
-.big{font-size:14px;color:#9dff9d}
 
 /* ---- lore ---- */
 .lore{margin-top:52px}
@@ -242,8 +230,9 @@ footer a{color:#7fe9ff;text-decoration:none}
 
 <div class="console">
   <div class="stack">
-    <button class="panel" data-key="lore"><span class="orb"></span><span class="lbl">The<br>Lore</span><span class="idx">01</span></button>
-    <button class="panel" data-key="conex"><span class="orb"></span><span class="lbl">Con<br>Ex</span><span class="idx">02</span></button>
+    <button class="panel" data-key="lore"><span class="orb"></span><span class="lbl">The Lore</span><span class="idx">01</span></button>
+    <button class="panel" data-key="conex"><span class="orb"></span><span class="lbl">ConEx</span><span class="idx">02</span></button>
+    <button class="panel" data-key="reentry"><span class="orb"></span><span class="lbl">Reentry</span><span class="idx">03</span></button>
   </div>
 
   <div class="readout-wrap">
@@ -253,20 +242,11 @@ footer a{color:#7fe9ff;text-decoration:none}
   </div>
 
   <div class="stack">
-    <button class="panel" data-key="reentry"><span class="orb"></span><span class="lbl">Re<br>Entry</span><span class="idx">03</span></button>
-    <button class="panel" data-key="archive"><span class="orb"></span><span class="lbl">The<br>Archive</span><span class="idx">04</span></button>
-    <button class="panel" data-key="courier"><span class="orb"></span><span class="lbl">Cou<br>rier</span><span class="idx">05</span></button>
+    <button class="panel" data-key="archive"><span class="orb"></span><span class="lbl">The Archive</span><span class="idx">04</span></button>
+    <button class="panel" data-key="courier"><span class="orb"></span><span class="lbl">Courier</span><span class="idx">05</span></button>
+    <button class="panel" data-key="sixstages"><span class="orb"></span><span class="lbl">Six Stages</span><span class="idx">06</span></button>
   </div>
 </div>
-
-<aside class="status" aria-hidden="true">
-  <div class="scell" style="height:120px">&nbsp;</div>
-  <div class="scell">Shield:<div class="meter"><i style="width:92%"></i></div>Fuel:<div class="meter"><i style="width:78%"></i></div></div>
-  <div class="scell">Nav System Off</div>
-  <div class="scell">Secondary Weapon</div>
-  <div class="scell" style="height:74px;display:flex;align-items:center;justify-content:center">No Target</div>
-  <div class="scell r">Free:<b>20</b><br><br>Credits:<br><span class="big">10,000</span></div>
-</aside>
 
 <!-- ============================ LORE ============================ -->
 <main class="lore">
@@ -362,6 +342,42 @@ footer a{color:#7fe9ff;text-decoration:none}
     </div>
   </div>
 
+  <h2>&gt; SIX STAGES ON INSTRUMENTS — THE PHYSICS, FLOWN</h2>
+  <p>The landing got its flight manual. The MHD reentry console — the envelope-model
+  prototype behind the plasma pillow — proves the descent as six numerical-flow tabs:
+  <strong>CONCEPT, FLOW, HEATING, PLASMA, SHIELD, POWER</strong>. All six now ride the
+  Gonex cockpit: the trajectory is classified live into six stages, each stage rings the
+  gauges that matter, and the console's algebra is typeset onto the black of the sky
+  itself — real subscripts, radicals and Greek, recomputed from the simulation every
+  frame, touring tab by tab on the way down. A seed-economy advisor solves the model
+  backwards for the least lithium that holds the heat line: optimal fuel, minimal hull,
+  one green caret on the feed gauge.</p>
+
+  <div class="recorder">
+    <img src="assets/gpis-instruments/sky-tab3.png" width="1024" height="768" loading="lazy"
+         alt="The Gonex entry cockpit at peak g: the wall-temperature equation typeset on the black sky above the horizon, stage-ringed dials, strip charts and the attitude ball.">
+    <div class="rec-cap">
+      <span><b>PEAK G</b> · THE WALL EQUATION, TYPESET ON THE SKY</span>
+      <span class="live">T<sub>w</sub> = (q/&epsilon;&sigma;)<sup>1/4</sup> = 1387 K · RED LINE 1878 K</span>
+      <span><a href="writeups/six-stages-on-instruments.html" style="color:#7fe9ff;text-decoration:none">full writeup</a></span>
+    </div>
+  </div>
+
+  <div class="recorder">
+    <img src="assets/gpis-instruments/sky-tab5.png" width="1024" height="768" loading="lazy"
+         alt="The seed-economy advisor on the sky: the least feed that holds sixty percent of the TPS limit, with the optimal-consumption caret on the lithium feed gauge.">
+    <div class="rec-cap">
+      <span><b>SHIELD</b> · THE SEED-ECONOMY ADVISOR — FLY THE CARET</span>
+      <span class="live">feed<sub>opt</sub> = min f : q(f) &le; 0.6·q<sub>TPS</sub></span>
+      <span><a href="writeups/six-stages-on-instruments.html" style="color:#7fe9ff;text-decoration:none">full writeup</a></span>
+    </div>
+  </div>
+
+  <p>The full writeup walks every tab — the equation, the substitution with live numbers,
+  and what it means with a stick in your hand — with captures of each one on the sky:
+  <a href="writeups/six-stages-on-instruments.html" style="color:#7fe9ff">Six Stages on
+  Instruments</a>.</p>
+
   <h2>&gt; THE COURIER UNIVERSE</h2>
   <p>Ours is a world parallel to the EV universes, and it diverges on one word. The other universes were settled by pirates and warriors — raiders with a hold full of stolen ore, fleets with a flag and a grievance. Ours was settled by <strong>commodity</strong>. The first thing that ever crossed our sky in numbers was not a gunship. It was freight, on a schedule, with a manifest.</p>
 
@@ -434,6 +450,12 @@ const CONTENT = {
     h: `<p>Everything needed to rebuild a 1999 plugin in the present day — the Cythera Guides archive, the Nova Bible, EV Nova CE, evnova-utils, and the escape-velocity.games tool mirror.</p>
         <p>Target outcome: a repaired ConEx, hosted on systemless.org's emulator page, playable again.</p>
         <p><i>Scroll for the full resource plate.</i></p>`
+  },
+  sixstages: {
+    t: "06 — SIX STAGES ON INSTRUMENTS",
+    h: `<p>The reentry console's physics tabs — <b>CONCEPT, FLOW, HEATING, PLASMA, SHIELD, POWER</b> — flown live in the Gonex cockpit.</p>
+        <p>The algebra is typeset onto the black sky above the horizon, recomputed every frame; a seed-economy advisor draws the optimal-fuel line on the feed gauge.</p>
+        <p><a href="writeups/six-stages-on-instruments.html">Open the full writeup, with captures &raquo;</a></p>`
   }
 };
 const readout = document.getElementById('readout');

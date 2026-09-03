@@ -160,6 +160,13 @@ same geography, for free.
 
 ## 3. Orders: the tape every pilot flies
 
+> **Built, and then some.** Orders shipped as *flights*: pilots muster at their
+> colour's capital, wait for company, and go out under a commander who calls
+> one target for everyone. The complete two-level state machine — flight phases,
+> pilot states, every transition condition, the formation geometry and all the
+> tuning knobs — is [docs/fleet-state-machine.md](fleet-state-machine.md).
+
+
 The point is not smarter AI. The point is **legible** AI — a player watching the
 map should be able to read what a ship is doing and why. So orders are an
 explicit, printable tape, not an emergent behavior.
@@ -297,9 +304,9 @@ Each one is playable and observable on its own — none is a big-bang merge.
 | --- | --- | --- |
 | **M0** ✅ | `Planet.Team` wired through `applyMap`; planet economy struct; `city.Population` | `planets` lists teamed worlds with a population and an IP number; team rings on the map and minimap |
 | **M1** ✅ | Magazines and per-ship grids; `Fire()` checks rounds; brownout slows thrust | Pilots run dry, turn for home, and come back loaded — the `fleet` roster shows who is on what orders |
-| **M2** ◐ | `planet.Service`, the pad queue, the `Land` order — **landed early, with M1** | Ships stream home, sit 2–8 s, come back shooting. Battle sustains itself indefinitely. |
+| **M2** ✅ | `planet.Service`, the pad queue, the `Land` order — **landed early, with M1** | Ships stream home, sit 2–8 s, come back shooting. Battle sustains itself indefinitely. |
+| **M4** ◐ | The order tape, roles, riders — **arrived as flights instead**; see [the state machine](fleet-state-machine.md) | You can read the fleet's intentions off the console: ADVANCE on a named objective, STRIKE on a called target, command passing down the roster |
 | **M3** | Debris, the 96-cluster merge field, auto-collect, scrap sold on landing | Wrecks accumulate; ships detour; `Scrap` climbs at the yard |
-| **M4** | The order tape, roles, riders; the console log | You can read the fleet's intentions off the console |
 | **M5** | Warehouse stock, production/consumption from market bias, interstellar `Load`/`Transit` | Shipments arrive from named systems; cutting a lane starves a planet |
 | **M6** | Control loss and capture; spawn deactivation | A corner of `triforce.xml` can actually fall |
 

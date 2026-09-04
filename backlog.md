@@ -225,7 +225,28 @@ The whole site and game share one look, taken from the EV splash and in-flight H
 
 ---
 
+## Phase 6 — The resource cycle and the Governor's Desk (4 Sep 2026)
+
+- [x] Zero-sum in credits as well as tons: `econ.Ledger`, every payment a
+      `Pay`, the player's stake out of the home treasury.
+- [x] Hull, Rounds, Missiles as tons; yards, arsenals, composters, breakers;
+      civic gardens; growth made of rations.
+- [x] Wreck cargo persists and is scooped nearest-hold-first; hull mass on
+      the books.
+- [x] Konquest's battle, garrison flip, standing orders, yards recommissioning
+      lost hulls; the colour AI expands.
+- [x] OpenFront's buildings on a shared ladder; the seat is the first
+      building; the universe saves.
+- [x] The Governor's Desk — `G` at any dock. Design: LR-2026-07.
+- [ ] Balance pass: deadheading on the full map, exchequer income, the
+      famine curve. Then tag **v0.1a4**.
+
 ## Project documents
+
+- [`docs/resource-cycle-plan.md`](docs/resource-cycle-plan.md) — tons and credits
+  conserved, the water cycle, Konquest and OpenFront folded in; §11 is what shipped.
+- [`docs/lab-reports/2026-09-04-governor-desk-screen.md`](docs/lab-reports/2026-09-04-governor-desk-screen.md) —
+  LR-2026-07, the Governor's Desk.
 
 - [`docs/mission-authoring.md`](docs/mission-authoring.md) — how a mission is built:
   `misn` fields, `desc`/`STR#` text references, control-bit chaining, TMPL/byte layout.

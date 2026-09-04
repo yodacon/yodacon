@@ -284,7 +284,9 @@ so a world that eats every ration it wants grows at its colour's full rate,
 one that eats 85% holds, and one below that *shrinks*. Growth compounds
 because appetite is proportional to population, so a bigger world wants more
 rations, which pulls more couriers, which lets it grow more. The ceiling is
-not a constant: it is the food the lanes can deliver. Delete `popCeiling`.
+not a constant: it is the food the lanes can deliver, and then the housing —
+`popCeiling` is the base a Habitat raises (see §11; the first build kept the
+constant and made it a building's job to move it).
 
 **Appetite grows faster than heads.** The luxury goods scale superlinearly —
 
@@ -306,7 +308,9 @@ at an outer world is behaving rationally and not by script.
 
 `Planet.IP` was the right idea drawn in the wrong ink — an abstract buffer
 standing in for tonnage that did not exist yet. It exists now. Every pad
-service becomes a **material draw**:
+service becomes a **material draw** as well as a labour draw: `IP` stays as
+the pad's capacity (see §11) and the tons come off a mirrored shelf, so a pad
+can be out of either and the receipt says which:
 
 | Service | Today | Becomes |
 | --- | --- | --- |
@@ -439,7 +443,29 @@ decision per industrial week:
 
 The trifecta stays the only source of colour difference: Blue's yard yields
 more Hull per ton, Green grows faster on the same rations, Red's couriers hold
-more and fly faster. No new dial.
+more and fly faster. No new dial — and that includes **how each colour
+builds**. A building serves one trifecta axis (Silo ← Gunnery, Spaceport and
+Lane ← Logistics, Works ← Extraction, Exchange ← Industry, Habitat ← Growth,
+Bastion and Picket ← Shields), and a colour's **doctrine** is the buildings
+sorted by its trait on that axis. Read straight off the table:
+
+```
+Red    the raider    Silo > Spaceport > Habitat > Works > Exchange > Bastion > Picket
+Green  the grower    Habitat > Works > Spaceport > Exchange > Bastion > Picket > Silo
+Blue   the fortress  Exchange > Bastion > Picket > Works > Silo > Spaceport > Habitat
+```
+
+Where the money comes from: every held world remits a tenth of what its
+treasury holds above a few days of imports to the exchequer, weekly, on top
+of tariffs. Where it goes: the first building in the doctrine the exchequer
+can afford, at the **priority world** the governor named if it can take it,
+otherwise at the building's natural home. The governor's **policy** for a
+colour — set from any seat held in it — is `auto` or `manual`, and a
+**focus** that pulls one part of the economy to the front of the doctrine:
+fleet (yards and arsenals first, broke pilots re-staked), lanes (spaceports,
+and charters between held systems), industry, growth (habitats, and rations
+bought into hungry worlds), defence, or the priority world for everything.
+The focus does not add money; it points the same money somewhere.
 
 ---
 
@@ -528,6 +554,15 @@ minted:
 | **Picket** | SAM launcher | point defence against missiles, range by level | none |
 | **Silo** | Missile silo | a planetary missile battery, fed from the Missiles stock | none |
 
+### Minimal infrastructure
+
+Every inhabited world starts as a port: Spaceport 1 at genesis. Each colour's
+capital starts with a Works, a Bastion and a Habitat as well. This is
+**built, not bought** — `World.Endowed` records it and the ladder counts only
+`Built − Endowed`, so the first thing a player buys anywhere is still rung
+one, and "the first building is the charter" means the first building
+somebody *paid* for.
+
 ### The shared ladder
 
 Spaceport and Works share one counter, so a Spaceport first makes the first
@@ -543,8 +578,10 @@ so the recommended ladder is one tenth of that:
 | 3rd | 50,000 |
 | 4th+ | 100,000 |
 
-Habitat and Exchange run their own ladder at the same rungs; Lane costs
-`5,000 · jump distance`; the three military buildings cost a flat 20,000 and
+Habitat and Exchange run their own ladder at the same rungs; a Lane charter
+between two systems costs a flat 5,000 (the plan said per jump; the sim has
+no jump graph, so a charter is a charter); the three military buildings cost
+a flat 20,000 and
 draw Steel from the warehouse when built (a Bastion is tons). Every payment is
 a `Pay` into the world's treasury, and a government buying the same building
 pays the same price from its exchequer — one menu, one ladder, one ledger.
@@ -564,7 +601,7 @@ Each is playable alone and observable on the console.
 | # | Slice | Observable when done |
 | --- | --- | --- |
 | **R1** | `econ.Ledger`, `econ.Pay`, every credit move routed; player's 8,000 debited from home | `ledger` reports BALANCED; a treasury can go broke and the journal says so |
-| **R2** | Hull, Rounds, Missiles, Compost, Scrap as materials; Yard/Arsenal chains; pad draws tons; `IP` deleted | `world 133` shows a Yard at 71% *short of chips*; a courier fills it |
+| **R2** | Hull, Rounds, Missiles, Compost, Scrap as materials; Yard/Arsenal chains; pad draws tons (`IP` kept as labour, see §11) | `world 133` shows a Yard at 71% *short of chips*; a courier fills it |
 | **R3** | Growth from `fed`; luxury exponents; `popCeiling` deleted | a well-supplied world compounds past 32M; a besieged one shrinks |
 | **R4** | `Hull.Purse`; spend-on-landing; tariffs; the alliance relation | `journal` shows purses; credits migrate outward over 200 days |
 | **R5** | Persistent debris on lanes and in-sector; nearest-hold collection; T5 replaced | `TestWreckCargoIsNeverLost`; a debris field appears on the arrivals board |
@@ -677,3 +714,45 @@ full gazetteer, 121 ports, 48 hulls, 120 days
 to a cargo) at any instant, and no colour's exchequer had received a tariff
 by day 120 because early deliveries all went to neutrals. Neither is a
 correctness problem; both are the next balance pass.
+
+---
+
+## 12. Second round — 4 September 2026, evening
+
+Six asks came back after a first look at the desk, and this is what each
+became. The plan text above was corrected where the build had contradicted
+it (§4 housing, §5 industrial points, §7 doctrine and policy, §8 genesis
+infrastructure and the lane price), so the document and the code now say the
+same thing.
+
+| Ask | Built | Where |
+| --- | --- | --- |
+| Every planet starts with minimal infrastructure | Spaceport 1 everywhere inhabited; Works, Bastion, Habitat at each capital; `Endowed` keeps it off the ladder | `universe/world.go`, `universe/universe.go` |
+| Auto upgrades when governments get money | Weekly tax remittance to the exchequer (10% of treasury surplus); one building a week by doctrine when affordable above a reserve | `universe/accounts.go` |
+| A governor selects which planet gets priority | `Priority` per colour, set with `P` on the desk or `priority` on the console; honoured by every government build | `universe/buildings.go` |
+| Red, Green and Blue build differently | Doctrines derived from the trifecta axes — no new dial; `doctrine` prints them | `universe/buildings.go` |
+| An elected auto-governor with a focus | `Policy{Auto, Focus}` per colour; `A`/`F` on the desk, `policy` on the console; six focuses, two of which invest outside buildings (re-staking pilots, chartering lanes, buying rations) | `universe/policy.go` |
+| Ships trade singularly | Already true — each hull is its own business with its own purse — and now a deadheading hull picks the *nearest* affordable cargo, not the richest | `universe/routes.go` |
+| Seed values | `GONEX_SEED` fixes a new game's universe; `seed` prints it; `Tuning` holds the six balance knobs, `tune` moves them; both save | `universe/policy.go`, `app/app.go` |
+| Split the desk into tabs | WORLD · CHART · BOOKS · GOVERNMENT, keys 1–4 or Tab; frames in `assets/governor-desk/tab*-day120.png` | `app/governmode.go` |
+| The wreck field you can see (M3) | `world.Debris`: piles that drift, merge at a 96-pile cap, and are scooped by any passing ship with room; the player lifts with the deck and sells scrap at the next pad; piles fold into census orbit when you leave a sector and lift back when you return | `world/salvage.go`, `app/resident.go` |
+| Exchequers at zero | Fixed by the tax: at day 120 Red held 160k, Blue 477k | — |
+
+### What the second round measured
+
+```
+GONEX_SEED=20260904, full gazetteer, 120 days
+  Red    4 worlds  pop 4.2M  capital rated 0.89  exchequer 160,490 cr
+  Blue   4 worlds  pop 9.1M  capital rated 0.71  exchequer 476,534 cr
+  Green  4 worlds  pop 13.9M capital rated 0.00  exchequer   3,277 cr
+  ConEx: Spaceport 3 (1 genesis, 2 bought by the government), fed 41% holding
+  MASS OK  CREDITS OK
+```
+
+Green's capital at **0.00** is the observation of the round: no colour has a
+Munitions chain in its top two, genesis rounds run out in about a hundred
+days at a big world's drill rate, and Rounds then arrive only when a courier
+finds the price worth it. Konquest's advice applies exactly as written —
+attack low-kill planets — and the desk shows who is low. Whether every
+capital should be able to go dry is the next balance question; the knobs
+are `genesisRounds`, `garrisonRoundsBurn` and the Munitions chain's rank.

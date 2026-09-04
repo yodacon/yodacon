@@ -468,3 +468,62 @@ undefended world falls and a fortress holds, both conserved; rating is zero
 without rounds; a standing order runs and dies with the government; copper
 needs a lane; the ladder is shared and the seat follows the charter; growth
 is made of rations; the organic loop closes; yards replace lost hulls.
+
+---
+
+## 9. Second round: four tabs
+
+The one-screen desk was judged to have too much going on, and it did. The
+same fifteen elements are now four tabs — `1`–`4` or Tab — each with its own
+keycaps, one cursor shared by all of them, and the verdict line at the foot
+of every tab.
+
+![WORLD](../../assets/governor-desk/tab1-day120.png)
+
+**1 WORLD** — the six tanks (POP with fed sign, CASH as days of imports,
+RNDS, MSSL, RATE, GARR), four lines of readings, WORKS with the bottleneck
+named, BUILT with genesis levels marked, STANDING ORDERS. Keycaps: build,
+flight, convoy, cancel, tariff, **priority**.
+
+![CHART](../../assets/governor-desk/tab2-day120.png)
+
+**2 CHART** — the mission computer's map at full width with the five
+overlays, and a NEIGHBOURHOOD list of eight rows around the cursor (rating,
+population, colour). Keycaps: lane, flight, convoy.
+
+![BOOKS](../../assets/governor-desk/tab3-day120.png)
+
+**3 BOOKS** — the full material vector for the world under the cursor:
+tons, tons a day, cover, price, price against base as BUY/SELL, and whether
+the world makes it. A stranger's world shows only what a ship in orbit could
+see.
+
+![GOVERNMENT](../../assets/governor-desk/tab4-day120.png)
+
+**4 GOVERNMENT** — the colour's doctrine read off the trifecta, its policy
+and this week's plan, the priority world, the exchequer and tax, the
+standings with population bars, relations, and the seed and knobs. Keycaps:
+**A** auto-governor on/off, **F** focus, **P** priority, **R** relations —
+all live once you hold a seat anywhere in the colour.
+
+### The auto-governor
+
+Every colour runs one. It taxes its worlds' surplus into an exchequer,
+subsidises the ones that cannot cover imports, and once a week buys the
+first building in its doctrine it can afford — at the priority world if one
+is named — then invests by focus and, every three weeks, sends a flight at
+the softest unaligned world if it out-rates it. The player elects into it by
+buying a building: a seat in a colour is a vote on its policy. Switch it to
+manual and the exchequer waits for you.
+
+### What this round taught
+
+**Genesis must not count.** Giving every world a Spaceport broke "the first
+building is the charter" and moved every player's first purchase to rung
+two. `Endowed` alongside `Built` fixed both: built is what stands, bought is
+what the ladder and the seat see.
+
+**The neighbourhood list ran into the fuel gauges.** The dock's own furniture
+owns the right third of the screen from `y=356` down; a list on the CHART
+tab that did not know that overlapped the tanks in the first frame. Eight
+rows around the cursor fit above them.

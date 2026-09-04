@@ -238,8 +238,12 @@ The whole site and game share one look, taken from the EV splash and in-flight H
 - [x] OpenFront's buildings on a shared ladder; the seat is the first
       building; the universe saves.
 - [x] The Governor's Desk — `G` at any dock. Design: LR-2026-07.
-- [ ] Balance pass: deadheading on the full map, exchequer income, the
-      famine curve. Then tag **v0.1a4**.
+- [x] Second round (evening): genesis infrastructure, tax-funded auto-governor
+      with doctrines per colour, priority world, policy and focus, seed and
+      tuning knobs, the in-sector wreck field (M3), the desk split into four
+      tabs. Plan §12.
+- [ ] Balance pass: capitals running out of rounds by day 120, deadheading on
+      the full map, the famine curve. Then tag **v0.1a4**.
 
 ## Project documents
 

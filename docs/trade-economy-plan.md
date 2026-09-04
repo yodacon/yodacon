@@ -301,17 +301,91 @@ Population growth closes the gap but is capped. The knobs are `chainRate`,
 
 ---
 
-## 10. Not yet wired
+## 10. Wiring it in — T1 to T5, all landed
 
-The simulation is complete and observable; what remains is surfacing it.
+The simulation was complete and invisible. These five slices put the player
+inside it.
 
-| | Slice |
-| --- | --- |
-| **T1** | The dock's trade screen prices from `universe.World.Shop` rather than `market.Price`, so the board the player buys on is the board the AI trades on |
-| **T2** | `Resident` handover — hulls entering the player's system become `world.Ship`s and hand back on exit |
-| **T3** | Warehouse stock feeds `Planet.Stock`, closing the loop with the war economy's supply lines |
-| **T4** | A trade-journal view in the spaceport: routes, arrivals, and what your rivals are moving |
-| **T5** | Combat losses call `universe.Lose`, so the war shows up in the books |
+| | Slice | |
+| --- | --- | --- |
+| **T1** | The counter prices and stocks from `universe.World` | ✅ |
+| **T2** | `Resident` handover — census hulls become ships and back | ✅ |
+| **T3** | The warehouse IS `Planet.Stock`, and hull plates come out of it | ✅ |
+| **T4** | The trade journal on the spaceport wall | ✅ |
+| **T5** | Combat losses enter the books | ✅ |
 
-Console commands available today: `economy`, `trifecta`, `journal [n]`,
-`routes`, `world [id]`. `GONEX_CMD="economy;routes"` runs them headlessly.
+### T1 — one economy, not two
+
+The commodity board was a pure function of `(station, day)` and the player's
+hold was outside the books entirely: you could buy a thousand tons of chips
+off a world that had never made one, out of a warehouse that never noticed.
+Two economies running side by side and disagreeing.
+
+Now the price on the board is the price the freighters pay, the tons come out
+of a real warehouse, and **a port can be sold out**. The board grew an IN PORT
+column because "what does this world actually have" became a question with an
+answer.
+
+### T2 — the handover
+
+A hull in `traffic` is a census row; a ship in `world` is a sprite with a gun.
+The rule that keeps it honest: **a hull is in exactly one place.** While it is
+`Resident` the registry stops integrating it, and its cargo lives in the
+world's manifest and *not* in the census row. Nothing is copied and left
+behind in both, because two copies of a cargo is two copies of its mass and
+the auditor finds it inside a day. `TestHandoverDoesNotDuplicateCargo` is the
+guard.
+
+### T3 — the empty slice the war economy left
+
+`Planet.Stock` has been a six-element array of zeros since the day it was
+written. This is what it was for. Hull plates are pressed from ore, so a
+world whose ore has been hauled away by somebody else's freighters **cannot
+patch the squadron flying out of it** — the supply line the war economy made
+cuttable by guns is now cuttable by trade. `PlateDraw` accumulates on the
+planet and the universe debits its warehouse by it, because `internal/world`
+knows nothing about the economy above it and must not have to.
+
+### T4 — the journal on the wall
+
+A market simulation nobody can look at is indistinguishable from a random
+number generator. The spaceport now carries a departures board (lanes out,
+with margins), an arrivals board (hulls under way here, with ETAs off the
+real momentum integrator), the standings, and the wire. The most actionable
+line on it is a plant running at 68% *short of grain* — that is a standing
+order for whoever turns up with grain in the hold.
+
+### T5 — dying in the books
+
+`World.OnKill` fires on death; the app scatters the wreck's cargo into the
+sink and strikes the census row. `internal/world` deliberately does not know
+what is on the other end of the callback. The player's own deck scatters too,
+because dying with a full hold has to cost the tonnage or the wreck is a mint.
+
+### Where the books can hide a ton, and don't
+
+`universe.Account` registers pools this package does not own. Two are
+registered: **the player's deck** and **the holds of resident hulls**. Those
+are exactly the two places a ton could otherwise sit outside the books, and
+they are exactly the two places a player stands. A test moves 25 t into an
+*unregistered* pool and asserts the audit calls it a leak — the safety net is
+only worth having if forgetting to use it fails loudly.
+
+### Console
+
+`economy`, `trifecta`, `journal [n]`, `routes`, `world [id]`, `day [n]`.
+`GONEX_CMD="day 200;economy"` runs them headlessly;
+`GONEX_BOOT="dock 133 journal"` opens the spaceport straight onto the wall.
+
+### Known, and left alone deliberately
+
+- **Most ports show SOLD OUT on most goods.** This is the simulation being
+  right rather than broken: a world holds stock of what it *makes*, and what
+  it does not make exists there only in transit before its own population
+  eats it. It does mean the player's trade loop is about finding producers,
+  which the journal screen exists to support.
+- **Colour parity is tighter in the symmetric test fixture than in the full
+  121-port gazetteer**, where every world outside the triforce map is
+  neutral. Over one 200-day run Red landed 6.6 kt against Green's 15.7 kt.
+  That asymmetry is in the *shape of the map*, not in the trifecta — but it
+  is worth a look before anyone tunes the table on the strength of it.

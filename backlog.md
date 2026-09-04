@@ -242,8 +242,11 @@ The whole site and game share one look, taken from the EV splash and in-flight H
       with doctrines per colour, priority world, policy and focus, seed and
       tuning knobs, the in-sector wreck field (M3), the desk split into four
       tabs. Plan §12.
-- [ ] Balance pass: capitals running out of rounds by day 120, deadheading on
-      the full map, the famine curve. Then tag **v0.1a4**.
+- [x] Rounds pass: every capital founded with an arsenal (buying its ore if
+      it has none), drill burn quartered, restock convoys, steel by courier,
+      laden hulls carry on from broke ports. Plan §12.
+- [ ] Balance pass: deadheading on the full map, the famine curve, whether
+      neutral treasuries should go broke. Then tag **v0.1a4**.
 
 ## Project documents
 

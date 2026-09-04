@@ -756,3 +756,37 @@ finds the price worth it. Konquest's advice applies exactly as written —
 attack low-kill planets — and the desk shows who is low. Whether every
 capital should be able to go dry is the next balance question; the knobs
 are `genesisRounds`, `garrisonRoundsBurn` and the Munitions chain's rank.
+
+### The rounds pass
+
+The observation above was taken as the next job. Four changes, all in the
+simulation:
+
+- **Every capital is founded with an arsenal.** `World.Mandate` names chains
+  a world stands up whatever its rank says; capitals mandate Munitions. A
+  capital with no ferrite stands up the processing stages alone — smelter
+  and arsenal — and buys the ferrite and polymer in, which is a supply line
+  somebody can cut. Exeon, with no ferrite of its own, now runs an arsenal on
+  delivered ore.
+- **The drill burn is a quarter of what it was** (0.08 t per million a day
+  and per berthed hull), and genesis rounds are 90 t per million. A magazine
+  lasts more than a season; expansion flights, which arm from the capital's
+  shelf, remain the real drain.
+- **Restock.** A government whose capital's rounds cover falls below thirty
+  days files a rounds convoy from the held world with the most to spare, and
+  strikes it when cover recovers.
+- **Steel rides couriers.** It is refined, but a city eats it too, so it
+  ships like a good; the shuttle-only list is copper, silicon, polymer and
+  grain.
+
+And one fix the year report surfaced along the way: a hull that landed with
+cargo a broke port could not pay for sat there for the rest of the run. It
+now **carries on** to the port that pays most for what it holds and can
+afford it. The fixture year went from 415 voyages to 642.
+
+```
+fixture, 365 days, seed 20260903     full gazetteer, GONEX_SEED=20260904, day 120
+  voyages   642 (was 415)              capitals rated  Red 0.89  Blue 0.71  Green 0.63
+  idle 5 · hauling 29                  exchequers      130k · 482k · 173k
+  every capital runs Munitions         MASS OK  CREDITS OK
+```

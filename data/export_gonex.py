@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Export the joined universe and the 36 ConEx missions as Gonex game data.
 
-Writes into ~/code/Gonex/assets/data/conex/:
+Writes into gonex/assets/data/conex/:
 - galaxy.json   — systems (coords, links, govt) and stellars (parent system,
   govt, tech, and a derived landing profile for the reentry simulator)
 - missions.json — the recovered mïsn records with their 1997 brief texts,
@@ -21,13 +21,14 @@ from evutils import rfork, tmpl  # noqa: E402
 from data.build_gazetteer import BASE, PLUGIN, load, overlay  # noqa: E402
 
 def gonex_dir():
-    """The export target: $GONEX_DIR, else the gonex/ submodule, else the
-    development checkout at ~/code/Gonex."""
+    """The export target: $GONEX_DIR, else the gonex/ submodule.
+
+    There is no third place to look. A loose second clone of the game used to
+    be the fallback here, and exporting into a tree nobody builds is a silent
+    way to lose an afternoon."""
     if env := os.environ.get("GONEX_DIR"):
         return Path(env)
-    if (REPO / "gonex").is_dir():
-        return REPO / "gonex"
-    return Path.home() / "code" / "Gonex"
+    return REPO / "gonex"
 
 
 OUT = gonex_dir() / "assets" / "data" / "conex"

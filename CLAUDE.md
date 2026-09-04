@@ -16,7 +16,7 @@ Where things belong:
 
 | Directory | Contents |
 | --- | --- |
-| `gonex/` | Submodule — the game (`yodacon/gonex`); dev checkout may live at `~/code/Gonex` |
+| `gonex/` | Submodule — the game (`yodacon/gonex`). The only checkout; there is no second one |
 | `evutils/` | Byte-identical resource-fork dump/build tooling |
 | `data/` | Gazetteer, universe map, and the exporters that feed `gonex/` |
 | `docs/` | Project documentation |
@@ -31,6 +31,25 @@ Where things belong:
 The root `Makefile` is the center that compiles it all: `make all` round-trips
 the 1997 fork (`verify`), runs every suite (`test`), and builds the game
 (`gonex`). `make export` regenerates the game data from the extraction.
+
+## Submodules: work in `gonex/` takes two commits
+
+`gonex/` and `vendor/konex/` are separate repositories. A submodule records
+**one commit**, not a branch, so changing the game means committing twice and
+pushing twice:
+
+    cd gonex && git commit && git push        # the game's own history
+    cd .. && git add gonex && git commit      # move this repo's pointer
+    git push
+
+Do the second half or the work is pushed but a fresh clone still builds the
+old game. `git submodule status` from the root prints what yodacon believes
+the game is; a leading `+` means the pointer is stale.
+
+Never work on the game anywhere but `gonex/`. A loose second clone of the same
+repo used to sit at `~/code/gonex` and was deleted on 3 Sep 2026 — two
+checkouts of one repository drift apart silently, and commits land in the tree
+nobody builds.
 
 ## Never `git add -A`
 

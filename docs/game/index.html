@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gonex — The Game As It Stands</title>
+<meta name="description" content="Every screen, the zero-sum economy, the reentry physics, and what still needs art.">
+<style>
+:root{
+  --bg:#07090c; --panel:#0d1117; --edge:#1d2430; --edge2:#2b3644;
+  --ink:#c8d3de; --dim:#7f8c9b; --faint:#5a6675;
+  --green:#5ee08a; --amber:#f0b45e; --red:#ef6b6b; --blue:#6fa8ff; --violet:#b48ef0;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"DejaVu Sans Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans);
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+header{border-bottom:1px solid var(--edge);padding:56px 0 34px;margin-bottom:8px;
+  background:radial-gradient(900px 300px at 50% -80px,rgba(94,224,138,.09),transparent)}
+h1{font:600 clamp(28px,5vw,44px)/1.1 var(--sans);margin:0 0 10px;letter-spacing:-.02em}
+h1 small{display:block;font:400 15px/1.5 var(--mono);color:var(--green);letter-spacing:.06em;
+  margin-top:12px;text-transform:uppercase}
+.lede{color:var(--dim);font-size:18px;max-width:72ch;margin:14px 0 0}
+h2{font:600 26px/1.25 var(--sans);margin:56px 0 4px;padding-top:14px;border-top:1px solid var(--edge);
+  letter-spacing:-.01em;scroll-margin-top:16px}
+h2 .n{color:var(--green);font:500 14px/1 var(--mono);display:block;margin-bottom:8px;letter-spacing:.1em}
+h3{font:600 18px/1.3 var(--sans);margin:34px 0 8px;color:#e6eef7;scroll-margin-top:16px}
+h4{font:600 14px/1.3 var(--mono);margin:22px 0 6px;color:var(--amber);letter-spacing:.04em;
+  text-transform:uppercase}
+p{margin:12px 0;max-width:74ch}
+a{color:var(--green);text-decoration:none;border-bottom:1px solid rgba(94,224,138,.3)}
+a:hover{border-bottom-color:var(--green)}
+code{font:13px/1.5 var(--mono);background:#131a23;border:1px solid var(--edge);
+  padding:1px 5px;border-radius:4px;color:#dbe6f0}
+pre{background:#0a0f15;border:1px solid var(--edge);border-left:2px solid var(--green);
+  padding:16px 18px;overflow-x:auto;border-radius:6px;font:13px/1.6 var(--mono);color:#cfe0ee}
+pre b{color:var(--amber);font-weight:600}
+blockquote{margin:20px 0;padding:14px 20px;border-left:2px solid var(--amber);
+  background:rgba(240,180,94,.05);color:#e8dcc8}
+blockquote p{margin:0}
+/* table of contents */
+.toc{background:var(--panel);border:1px solid var(--edge);border-radius:8px;padding:22px 26px;margin:28px 0}
+.toc h2{margin:0 0 14px;border:0;padding:0;font-size:15px;font-family:var(--mono);
+  color:var(--green);letter-spacing:.1em;text-transform:uppercase}
+.toc ol{margin:0;padding-left:20px;columns:2;column-gap:40px}
+@media(max-width:700px){.toc ol{columns:1}}
+.toc li{margin:3px 0;break-inside:avoid}
+.toc a{border:0;color:var(--ink)}
+.toc a:hover{color:var(--green)}
+.toc ul{list-style:none;padding-left:12px;margin:2px 0}
+.toc ul a{color:var(--faint);font-size:14px}
+/* figures */
+figure{margin:22px 0;background:var(--panel);border:1px solid var(--edge);border-radius:8px;
+  overflow:hidden}
+figure img{width:100%;display:block;background:#000}
+figcaption{padding:12px 16px;font-size:14px;color:var(--dim);border-top:1px solid var(--edge)}
+figcaption b{color:var(--ink);font-weight:600}
+figcaption .key{font:12px/1.5 var(--mono);color:var(--green);display:block;margin-top:5px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:800px){.duo{grid-template-columns:1fr}}
+.duo figure{margin:0}
+/* tables */
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px}
+th{text-align:left;font:600 12px/1.4 var(--mono);color:var(--green);text-transform:uppercase;
+  letter-spacing:.06em;padding:8px 10px;border-bottom:1px solid var(--edge2)}
+td{padding:7px 10px;border-bottom:1px solid var(--edge);vertical-align:top}
+td.num,th.num{text-align:right;font-family:var(--mono)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.mono{font-family:var(--mono);font-size:13px}
+/* tags */
+.tag{display:inline-block;font:600 10px/1.5 var(--mono);padding:1px 7px;border-radius:10px;
+  letter-spacing:.06em;text-transform:uppercase;vertical-align:middle}
+.built{background:rgba(94,224,138,.14);color:var(--green);border:1px solid rgba(94,224,138,.35)}
+.design{background:rgba(180,142,240,.14);color:var(--violet);border:1px solid rgba(180,142,240,.35)}
+.missing{background:rgba(239,107,107,.14);color:var(--red);border:1px solid rgba(239,107,107,.35)}
+.partial{background:rgba(240,180,94,.14);color:var(--amber);border:1px solid rgba(240,180,94,.35)}
+/* callouts */
+.note{border:1px solid var(--edge2);border-radius:8px;padding:16px 20px;margin:22px 0;
+  background:rgba(111,168,255,.05)}
+.note h4{margin-top:0;color:var(--blue)}
+.svgbox{background:var(--panel);border:1px solid var(--edge);border-radius:8px;padding:20px;margin:22px 0;
+  overflow-x:auto}
+.svgbox svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.svgcap{font-size:13px;color:var(--dim);margin-top:12px;text-align:center}
+footer{margin-top:70px;border-top:1px solid var(--edge);padding:26px 0 60px;color:var(--faint);font-size:14px}
+.up{position:fixed;right:18px;bottom:18px;background:var(--panel);border:1px solid var(--edge2);
+  color:var(--dim);border-radius:6px;padding:8px 12px;font:12px var(--mono);text-decoration:none}
+.up:hover{color:var(--green);border-color:var(--green)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>Gonex — the game as it stands
+<small>Team Yodacon · captured 22 September 2026 · seed 20260922</small></h1>
+<p class="lede">Every screen you can reach, photographed from the running build. The
+zero-sum economy behind them, drawn. The reentry physics, explained. And an
+honest list of what has no art yet.</p>
+<p class="lede">Three generations of the same little space war: <b>ConEx</b> (1997, an
+Escape Velocity plugin), <b>konex</b> (2005, C++/OpenGL), <b>Gonex</b> (2026, Go and
+Ebitengine). What is new in the third is underneath: a galaxy that trades
+while nobody is looking, and a law that says it can never cheat.</p>
+</div></header>
+
+<div class="wrap">
+
+<nav class="toc">
+<h2>Contents</h2>
+<ol>
+<li><a href="#one">One law, two ledgers</a></li>
+<li><a href="#menus">The menus</a></li>
+<li><a href="#flight">Flight, war and the map</a></li>
+<li><a href="#voyage">The voyage: warp, deorbit, reentry, takeoff</a>
+  <ul><li><a href="#reentry">The reentry corridor</a></li></ul></li>
+<li><a href="#dock">The concourse and its six screens</a>
+  <ul><li><a href="#bar">Bar</a> · <a href="#missions">Mission computer</a></li>
+      <li><a href="#trade">Commodity board</a> · <a href="#outfit">Outfitter</a></li>
+      <li><a href="#yard">Shipyard</a> · <a href="#journal">Trade journal</a></li></ul></li>
+<li><a href="#desk">The Governor's Desk — four tabs</a></li>
+<li><a href="#economy">The zero-sum economy</a>
+  <ul><li><a href="#matter">Matter: 30 materials</a></li>
+      <li><a href="#massflow">Mass flow, every branch</a></li>
+      <li><a href="#industry">Industry by composition</a></li>
+      <li><a href="#lithium">The lithium cycle</a></li>
+      <li><a href="#siting">Hostile worlds</a></li>
+      <li><a href="#prices">Prices as scarcity</a></li>
+      <li><a href="#loop">The trade loop</a></li>
+      <li><a href="#agents">Five kinds of agent</a></li></ul></li>
+<li><a href="#physics">Reentry physics</a>
+  <ul><li><a href="#magnetopause">The magnetopause</a></li>
+      <li><a href="#confine">The confinement ladder</a></li></ul></li>
+<li><a href="#reactors">Ship reactors</a></li>
+<li><a href="#state">Measured state</a></li>
+<li><a href="#dev">Developer screens</a></li>
+<li><a href="#art">What needs art</a></li>
+<li><a href="#reports">The lab reports</a></li>
+</ol>
+</nav>
+
+<h2 id="one"><span class="n">01</span>One law, two ledgers</h2>
+<p>Everything below is downstream of one rule, and it is the only rule in the
+game that can be <em>proved</em> rather than argued about.</p>
+<blockquote><p>Every ton in the game was put in the ground at genesis. From then on it can
+only <b>move</b> — out of the crust, into a warehouse, into a hold, across a lane,
+through a factory that changes what it is, and finally into a mouth or a slag
+heap. It is never minted.</p></blockquote>
+<p>A second ledger says the same of money: credits are minted at genesis and
+never again. Both are checked by an auditor that rolls <em>every</em> pool in the
+universe into one column — crusts, warehouses, holds, hull structure, wreck
+fields, the sink, and the two pools the player stands in — and compares the
+total. A pool left out of that call reads exactly like a leak, which is the
+correct failure: forgetting to count a warehouse <em>is</em> losing track of the mass
+in it.</p>
+<p>The check is on the <b>grand total, not per material</b>, because transformation is
+the whole point of industry. A smelter is supposed to destroy ferrite and
+create steel. What no process may do is change how many tons there are.</p>
+<pre>109 ports · 730 simulated days · seed 20260922
+
+  genesis        93,792 kt
+  in the crust   85,200 kt
+  in warehouses   4,655 kt
+  afloat in holds    36 kt
+  consumed/slag   3,801 kt
+  ---
+  mass           <b>BALANCED</b> at every checkpoint, every seed
+  credits        <b>BALANCED</b> — 123,082,138 cr, every one in a purse</pre>
+
+<h2 id="menus"><span class="n">02</span>The menus</h2>
+<p>The menu tree is konex's, kept deliberately: single player with three modes,
+options for display and player, and the save/load pair. <b>Trader</b> is the mode
+this project added — the commodity game with the reentry landing under it.</p>
+<figure><img src="img/menu.png" alt="Gonex main menu over a starfield">
+<figcaption><b>Main menu.</b> Single Player → <b>Team Deathmatch</b> (konex's original
+three-way), <b>Sunday Drive</b> (no opposition, for flying), <b>Trader</b> (the campaign).
+Options → Display (FPS, HUD, mini-map, target) and Player (name, ship).
+<span class="key">Esc toggles the menu at any time; the game pauses behind it</span></figcaption></figure>
+
+<h2 id="flight"><span class="n">03</span>Flight, war and the map</h2>
+<p>The flight view is konex's top-down arena, unchanged in feel: arrows turn and
+thrust, space fires, <code>X</code> brakes, Shift targets the nearest enemy. What changed is
+what the other ships are doing there.</p>
+<figure><img src="img/flight.png" alt="Top-down flight view with planets, ships and HUD panels">
+<figcaption><b>Flight.</b> Mini-map, HUD and target panels are draggable windows.
+Bottom left is the <b>power grid</b> — capacitors, battery, heat, rounds — the one
+machine every mode in the game is secretly operating. The orange line is a
+docking approach vector; <code>L</code> near a planet requests clearance.
+<span class="key">arrows · space fire · X brake · Shift target · Ctrl autotarget · Tab map · L land</span></figcaption></figure>
+<figure><img src="img/war.png" alt="Team deathmatch with three colours engaged">
+<figcaption><b>Team deathmatch.</b> Three colours, twelve hulls, konex's scoring.
+The AI flies in <b>fleets</b> with a doctrine and a phase — muster, advance, engage,
+withdraw, return to base — and a flight that runs out of rounds goes home to
+rearm rather than dying in place.</figcaption></figure>
+
+<h2 id="voyage"><span class="n">04</span>The voyage: warp, deorbit, reentry, takeoff</h2>
+<p>Getting to a planet's surface is four screens and about a minute of flying.
+Each is a real phase of the same trajectory rather than a transition.</p>
+<div class="duo">
+<figure><img src="img/warp.png" alt="Hyperspace tunnel"><figcaption><b>Warp.</b> The jump between
+systems. Distance is real: one hop is ~180 Mm and about a week of economy time,
+so a five-jump haul is a month and a decision.</figcaption></figure>
+<figure><img src="img/route.png" alt="Route planning chart"><figcaption><b>Route.</b> Jump
+routing over the recovered 1997 hyperspace links, BFS with deterministic
+tie-breaks.</figcaption></figure>
+</div>
+<figure><img src="img/deorbit.png" alt="Deorbit burn above a planet">
+<figcaption><b>Deorbit.</b> The retrograde burn that drops you onto the entry
+interface at 122 km. Orbital mechanics hand off directly into the corridor —
+there is no cut.</figcaption></figure>
+
+<h3 id="reentry">The reentry corridor</h3>
+<p>This is the piece the project is really about, and the screen with the most
+physics in it. A 350-tonne freighter has the ballistic coefficient of a falling
+anvil; what makes it flyable is an <b>MHD plasma aeroshell</b> — a magnetic bubble
+inflated ahead of the nose that stands the shock off and sheds the heat.</p>
+<figure><img src="img/entry_auto.png" alt="Reentry corridor with plasma sheath and instrument cluster">
+<figcaption><b>Reentry, autoland engaged.</b> The pillow is drawn as it is modelled:
+plasma sheath, dipole field lines, shock puffs. Around it, the <b>GPIS</b> six-stage
+instrument cluster — g-load, heat flux against limit, wall temperature, Mach,
+magnetopause stand-off, load, RCS, hull soak, battery, lithium tank. Bottom left
+the corridor gauge: steep burns, shallow skips out, and the caret is the
+optimal-consumption line the debrief pays out on.
+<span class="key">pitch flies AoA · &lt;&gt; banks the lift vector · B boost · space burst · Tab live algebra</span></figcaption></figure>
+<figure><img src="img/entry.png" alt="Reentry flown by hand">
+<figcaption><b>The same corridor, hand-flown.</b> Every number on this screen is
+computed from the flow state, not a table: Knudsen number, shock-layer
+temperature, electron density, plasma frequency, the magnetic interaction
+parameter, and the power the shield is asking of the grid.</figcaption></figure>
+<figure><img src="img/takeoff.png" alt="Takeoff down the landing road">
+<figcaption><b>Takeoff.</b> Out down the same 840 m landing road you came in on.</figcaption></figure>
+
+<h2 id="dock"><span class="n">05</span>The concourse and its six screens</h2>
+<p>Landing ends on the concourse. Six sub-screens hang off it, and <code>Esc</code>
+from any of them returns here rather than opening the game menu.</p>
+<figure><img src="img/concourse.png" alt="Spaceport concourse menu">
+<figcaption><b>Concourse.</b> The hub. <span class="key">B bar · M missions · T trade · O outfitter · S shipyard · J journal · G governor · R refuel</span></figcaption></figure>
+<div class="duo">
+<figure id="bar"><img src="img/bar.png" alt="Spaceport bar"><figcaption><b>Bar.</b> Rumours,
+hiring, and the 1997 mission briefs — 36 recovered missions running on the real
+Escape Velocity bit machine.</figcaption></figure>
+<figure id="missions"><img src="img/missions.png" alt="Mission computer with chart and hops">
+<figcaption><b>Mission computer.</b> Cargo runs with a chart, hop count and payout.
+Includes <b>Approach School</b>, ten lessons that extend the 1997 academy chain past
+Trading 202 into landing and heat discipline.</figcaption></figure>
+</div>
+<figure id="trade"><img src="img/trade.png" alt="Commodity board showing eight goods">
+<figcaption><b>Commodity board.</b> Eight goods. Price, trend, what is actually
+<b>IN PORT</b> — a real warehouse that runs out — and what is aboard. Note the bottom
+two rows: <b>Pellets 2,580 cr</b> and <b>Melt 3,060 cr</b>, both at 3× base and both
+<code>SOLD OUT</code>. That is the fuel famine, visible at a counter.
+<span class="key">up/down select · + buys · − sells · Shift ×10</span></figcaption></figure>
+<div class="duo">
+<figure id="outfit"><img src="img/outfit.png" alt="Outfitter catalogue of twelve items">
+<figcaption><b>Outfitter.</b> Twelve items: five power-grid upgrades, three reactor
+classes and four plasma-confinement rungs. Everything costs mass, and mass is
+what the atmosphere charges for on the way back down.</figcaption></figure>
+<figure id="yard"><img src="img/yard.png" alt="Shipyard hull list"><figcaption><b>Shipyard.</b>
+Thirteen hulls, including the <b>Yodacon '97</b> decoded straight out of the original
+plugin's resource fork.</figcaption></figure>
+</div>
+<figure id="journal"><img src="img/journal.png" alt="Trade journal wall with lanes, inbound and the wire">
+<figcaption><b>Trade journal.</b> The whole economy on a wall: this world's industry
+and seams, lanes out with what pays today, inbound hulls with ETAs off the real
+momentum integrator, the standings, and <b>the wire</b> — every load, delivery,
+tariff and shore leave in the galaxy as it happens.</figcaption></figure>
+
+<h2 id="desk"><span class="n">06</span>The Governor's Desk — four tabs</h2>
+<p><code>G</code> at any dock. If you bought the first building at a world you hold its
+charter and the desk is writable; otherwise it is read-only and you are
+watching somebody else govern.</p>
+<div class="duo">
+<figure><img src="img/govern1.png" alt="Governor's desk world tab">
+<figcaption><b>1 · WORLD.</b> Population, cash, rounds, missiles, defence rating,
+garrison. What is built, what is mandated, standing orders, tariff, and how many
+days of cover the magazine has.</figcaption></figure>
+<figure><img src="img/govern2.png" alt="Governor's desk chart tab">
+<figcaption><b>2 · CHART.</b> The galaxy, colour-coded, with lanes, charters, wrecks
+and flights. Below it the neighbourhood — every world within reach, its rating
+and its holder.</figcaption></figure>
+</div>
+<div class="duo">
+<figure><img src="img/govern3.png" alt="Governor's desk books tab">
+<figcaption><b>3 · BOOKS.</b> The ledger: treasuries, the exchequer, tariff income,
+and the audit line that says <code>MASS OK CREDITS OK</code> — the conservation proof,
+on screen, every frame.</figcaption></figure>
+<figure><img src="img/govern4.png" alt="Governor's desk government tab">
+<figcaption><b>4 · GOVERNMENT.</b> Doctrine, priority world, spending policy and tax
+rate. Red the raider, Green the grower, Blue the fortress — each builds in a
+different order because the trifecta says so.</figcaption></figure>
+</div>
+
+<h2 id="economy"><span class="n">07</span>The zero-sum economy</h2>
+<p>Under every screen above there is a simulation of <em>everywhere</em>: 109 ports
+digging, refining, eating, growing and trading, with roughly 195 hulls carrying
+the difference between them. It runs whether you are looking at it or not, and
+landing burns days — so a long delivery comes back to a market that has moved.</p>
+
+<h3 id="matter">Matter: 30 materials in six tiers</h3>
+<p>The ordering is load-bearing in exactly one place: the first eight entries are
+the commodity board, in order, so a planet's warehouse and a ship's hold are a
+<em>prefix</em> of a full material vector and convert by copying.</p>
+<table>
+<tr><th>Tier</th><th>Materials</th><th>Rule</th></tr>
+<tr><td><b>Board</b> (8)</td><td class="mono">Lumber · Ore · Rations · Medicine · Chips · Fuel cells · <b>Pellets</b> · <b>Melt</b></td><td>what a port posts a price for, and all the player trades</td></tr>
+<tr><td><b>Refined</b> (10)</td><td class="mono">Steel · Copper · Silicon · Polymer · Grain · Lithex · Lithium · Heavylith · Acid · Fluid</td><td>made, not sold; what a smelter hands a fabricator</td></tr>
+<tr><td><b>Yard</b> (3)</td><td class="mono">Hull · Rounds · Missiles</td><td>what a fleet is made of and what it shoots</td></tr>
+<tr><td><b>Returns</b> (2)</td><td class="mono">Compost · Scrap</td><td>the only two places the flow goes back uphill</td></tr>
+<tr><td><b>Crust</b> (6)</td><td class="mono">Ferrite · Cuprite · Silicate · Volatiles · Biomass · <b>Spodumene</b></td><td>finite; the only tier mining can produce</td></tr>
+<tr><td><b>Sink</b> (1)</td><td class="mono">Slag</td><td>counted, and worthless — which is what makes the books balance</td></tr>
+</table>
+<p>Two predicates carry the travel rules, for two quite different reasons.
+<b>Hot</b> — pure lithium and heavylith travel in a shielded cask or not at all,
+because a cask that survives a jump costs more than the ton inside it, which is
+what pins the finishing plant beside the breeder rather than beside the
+customer. <b>Bulkable</b> — steel, concentrate, acid and hydraulic fluid are refined
+but ship like goods, because a city eats steel and the hot worlds import
+chemicals or run nothing.</p>
+
+<h3 id="massflow">Mass flow, every branch</h3>
+<div class="svgbox">
+<svg viewBox="0 0 1000 440" role="img" aria-label="Mass flow from finite crust through refining and goods to consumption and the sink, with two return loops">
+<defs>
+<marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+<path d="M0 0 L8 4 L0 8 z" fill="#5a6675"/></marker>
+<marker id="ag" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+<path d="M0 0 L8 4 L0 8 z" fill="#5ee08a"/></marker>
+<marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+<path d="M0 0 L8 4 L0 8 z" fill="#ef6b6b"/></marker>
+</defs>
+<style>
+.bx{fill:#101720;stroke:#2b3644}
+.lb{fill:#c8d3de;font:600 12px ui-monospace,monospace}
+.sm{fill:#7f8c9b;font:10px ui-monospace,monospace}
+.hd{fill:#5ee08a;font:600 11px ui-monospace,monospace;letter-spacing:.08em}
+.ln{stroke:#5a6675;fill:none;marker-end:url(#a)}
+.lg{stroke:#5ee08a;fill:none;marker-end:url(#ag);stroke-dasharray:4 3}
+.lr{stroke:#ef6b6b;fill:none;marker-end:url(#ar)}
+</style>
+<text class="hd" x="20" y="22">FINITE · ONLY EVER FALLS</text>
+<text class="hd" x="250" y="22">REFINED</text>
+<text class="hd" x="480" y="22">GOODS &amp; YARD</text>
+<text class="hd" x="720" y="22">CONSUMPTION</text>
+<text class="hd" x="890" y="22">TERMINAL</text>
+
+<rect class="bx" x="20" y="36" width="170" height="128" rx="5"/>
+<text class="lb" x="32" y="56">CRUST</text>
+<text class="sm" x="32" y="74">Ferrite · Cuprite</text>
+<text class="sm" x="32" y="89">Silicate · Volatiles</text>
+<text class="sm" x="32" y="104">Biomass · Spodumene</text>
+<text class="sm" x="32" y="126" fill="#f0b45e">mined against a</text>
+<text class="sm" x="32" y="140" fill="#f0b45e">reserve that never</text>
+<text class="sm" x="32" y="154" fill="#f0b45e">goes back up</text>
+
+<rect class="bx" x="250" y="36" width="180" height="92" rx="5"/>
+<text class="lb" x="262" y="56">SMELT · CRACK · MILL</text>
+<text class="sm" x="262" y="76">Steel Copper Silicon</text>
+<text class="sm" x="262" y="91">Polymer Grain Acid Fluid</text>
+<text class="sm" x="262" y="106">Lithex Lithium Heavylith</text>
+
+<rect class="bx" x="480" y="36" width="180" height="92" rx="5"/>
+<text class="lb" x="492" y="56">FABRICATE</text>
+<text class="sm" x="492" y="76">Lumber Ore Rations</text>
+<text class="sm" x="492" y="91">Medicine Chips Cells</text>
+<text class="sm" x="492" y="106">Pellets Melt</text>
+
+<rect class="bx" x="480" y="146" width="180" height="60" rx="5"/>
+<text class="lb" x="492" y="166">YARD</text>
+<text class="sm" x="492" y="186">Hull · Rounds · Missiles</text>
+
+<rect class="bx" x="720" y="36" width="150" height="92" rx="5"/>
+<text class="lb" x="732" y="56">POPULATION</text>
+<text class="sm" x="732" y="76">eats · burns · builds</text>
+<text class="sm" x="732" y="91">growth is made</text>
+<text class="sm" x="732" y="106">of rations</text>
+
+<rect class="bx" x="720" y="146" width="150" height="60" rx="5"/>
+<text class="lb" x="732" y="166">BATTLE</text>
+<text class="sm" x="732" y="186">hulls → wreck fields</text>
+
+<rect class="bx" x="880" y="36" width="100" height="60" rx="5" stroke="#ef6b6b"/>
+<text class="lb" x="892" y="56" fill="#ef6b6b">SLAG</text>
+<text class="sm" x="892" y="76">counted,</text>
+<text class="sm" x="892" y="88">worthless</text>
+
+<rect class="bx" x="250" y="250" width="410" height="70" rx="5" stroke="#5ee08a"/>
+<text class="lb" x="262" y="272" fill="#5ee08a">THE TWO RETURNS — the only uphill flow</text>
+<text class="sm" x="262" y="292">Compost ──composter 0.60──▶ Biomass (surface only, never the crust)</text>
+<text class="sm" x="262" y="308">Scrap ──breaker 0.75──▶ Steel  · winning a battle is a mining operation</text>
+
+<path class="ln" d="M190 90 H244"/>
+<path class="ln" d="M430 82 H474"/>
+<path class="ln" d="M430 100 C450 100 455 170 474 172"/>
+<path class="ln" d="M660 82 H714"/>
+<path class="ln" d="M660 176 H714"/>
+<path class="ln" d="M870 66 H874"/>
+<path class="ln" d="M340 128 C340 180 250 200 250 258"/>
+<path class="lg" d="M660 290 C760 290 800 240 815 132"/>
+<path class="lg" d="M250 290 C180 290 150 200 150 170"/>
+<path class="lr" d="M560 128 C600 128 640 60 874 60" opacity=".5"/>
+<text class="sm" x="352" y="200" fill="#5ee08a">consumption &amp; wrecks</text>
+<text class="sm" x="352" y="214" fill="#5ee08a">feed the return path</text>
+<text class="sm" x="690" y="330" fill="#5ee08a">back to the warehouse ▲</text>
+<text class="sm" x="120" y="196" fill="#5ee08a">▲ biomass only</text>
+<text class="sm" x="600" y="30" fill="#ef6b6b">every inefficiency ▶</text>
+</svg>
+<p class="svgcap">Mass only ever flows left to right, except at the two return
+loops. The crust is the only source and it is finite; slag is the only grave.
+Everything in between is a change of identity at constant tonnage.</p>
+</div>
+
+<h3 id="industry">Industry by composition</h3>
+<p>Seventeen chains are built from twenty-three primitives by one operator:</p>
+<pre>func (m *Module) <b>Then</b>(next *Module) *Module</pre>
+<p>Plug <code>m</code>'s outputs into <code>next</code>'s inputs; get back a module whose ports are
+whatever the pair could not satisfy internally. Because the result is itself a
+module, it plugs into a third the same way — <b>a supermodule is not a special
+kind of thing with its own rules, it is a module that remembers what it was
+built from.</b></p>
+<p>Two properties, both tested: mass balances, and the chain runs at its
+bottleneck, recorded at composition time because that is the only moment the
+shortfall is visible. And nobody authored a speciality — a world ranks the
+chains its own rocks could back and stands up the best two. A world that can
+smelt and fabricate has a chip industry; nobody wrote "chip industry" down.</p>
+
+<h3 id="lithium">The lithium cycle</h3>
+<p>Fuel is <b>radioactive heavy lithium</b>, and it comes off a five-stage line in two
+forms that are not interchangeable. Which one a hull can burn is a question
+about the reactor bolted into it — so the reactor decides which refineries in
+the galaxy are your suppliers.</p>
+<div class="svgbox">
+<svg viewBox="0 0 1000 300" role="img" aria-label="The five-stage lithium line from spodumene to clad pellets or molten melt">
+<style>
+.n2{fill:#101720;stroke:#2b3644}
+.t2{fill:#c8d3de;font:600 12px ui-monospace,monospace}
+.s2{fill:#7f8c9b;font:10px ui-monospace,monospace}
+.y2{fill:#f0b45e;font:10px ui-monospace,monospace}
+.l2{stroke:#5a6675;fill:none;marker-end:url(#a)}
+</style>
+<rect class="n2" x="14" y="80" width="118" height="62" rx="5" stroke="#f0b45e"/>
+<text class="t2" x="26" y="104">SPODUMENE</text><text class="s2" x="26" y="122">crust · finite</text>
+<text class="s2" x="26" y="135">hot worlds only</text>
+
+<rect class="n2" x="182" y="80" width="112" height="62" rx="5"/>
+<text class="t2" x="194" y="104">ORE MILL</text><text class="s2" x="194" y="122">+ acid, leach</text>
+<text class="y2" x="194" y="135">yield 0.45</text>
+
+<rect class="n2" x="344" y="80" width="112" height="62" rx="5"/>
+<text class="t2" x="356" y="104">HOT CELL</text><text class="s2" x="356" y="122">radiant smelt</text>
+<text class="y2" x="356" y="135">yield 0.55</text>
+
+<rect class="n2" x="506" y="80" width="118" height="62" rx="5"/>
+<text class="t2" x="518" y="104">BREEDER</text><text class="s2" x="518" y="122">+ volatiles</text>
+<text class="y2" x="518" y="135">yield 0.62</text>
+
+<rect class="n2" x="682" y="20" width="150" height="62" rx="5" stroke="#6fa8ff"/>
+<text class="t2" x="694" y="44" fill="#6fa8ff">PELLETS</text>
+<text class="s2" x="694" y="62">press + steel clad</text><text class="y2" x="694" y="75">0.86 · thermal piles</text>
+
+<rect class="n2" x="682" y="140" width="150" height="62" rx="5" stroke="#b48ef0"/>
+<text class="t2" x="694" y="164" fill="#b48ef0">MELT</text>
+<text class="s2" x="694" y="182">loop + hydraulic fluid</text><text class="y2" x="694" y="195">0.90 · fast loops</text>
+
+<path class="l2" d="M132 111 H176"/><path class="l2" d="M294 111 H338"/>
+<path class="l2" d="M456 111 H500"/>
+<path class="l2" d="M624 100 C650 100 656 55 676 52"/>
+<path class="l2" d="M624 122 C650 122 656 168 676 171"/>
+<text class="s2" x="186" y="72">Lithex</text><text class="s2" x="348" y="72">Lithium</text>
+<text class="s2" x="512" y="72">Heavylith</text>
+<text class="s2" x="512" y="164" fill="#ef6b6b">hot: cask only</text>
+<text class="s2" x="14" y="238" fill="#5ee08a">SITING — the seam IS the dose: econ.Dose and the spodumene draw are the same number,</text>
+<text class="s2" x="14" y="254" fill="#5ee08a">so the fuel is under the worlds nobody can live on. ≥0.10 mills · ≥0.35 smelts · ≥0.55 breeds.</text>
+<text class="s2" x="14" y="276">Nothing converts pellets to melt outside a refinery. A hull buys in one half of the market or the other.</text>
+</svg>
+<p class="svgcap">One tonne of spodumene is about 0.13 t of finished fuel across the
+whole line. The waste is slag and it is counted.</p>
+</div>
+
+<h3 id="siting">Hostile worlds</h3>
+<p>A world's radiological dose and its spodumene seam are drawn from <b>one
+number</b> — the single place in the game where two facts about a world are forced
+to be the same fact. A clean world has no spodumene at all, however rich it is
+otherwise; a hot world's reserve scales with exactly how hot it is.</p>
+<table>
+<tr><th></th><th>clean</th><th>milling ≥0.10</th><th>smelting ≥0.35</th><th>breeding ≥0.55</th></tr>
+<tr><td>population ceiling</td><td class="num">32 M</td><td class="num">~1.35 M</td><td class="num">~975 k</td><td class="num">~675 k → 40 k</td></tr>
+<tr><td>growth</td><td>full</td><td colspan="3">taxed up to 94 %</td></tr>
+<tr><td>licensed line</td><td>—</td><td>Lithium milling</td><td>Radiant smelting</td><td>Fuel pellets / melt</td></tr>
+<tr><td>worked by</td><td>a workforce</td><td colspan="3">machines — dose that stops a city does not stop a machine</td></tr>
+<tr><td>flag</td><td>a polity</td><td colspan="3"><b>whoever is paying</b> — the free ports of the fuel trade</td></tr>
+</table>
+<div class="note"><h4>Why a refinery is founded with money</h4>
+<p>A licensed world opens with working capital sized to its own line. Without it
+the hot worlds sit in a trap with no exit from inside: no chemicals → no fuel →
+no revenue → no chemicals. A port buys only what its treasury covers, so a broke
+world does not send a distress signal — it quietly declines the cargo and the
+courier flies on. One refinery ran a 63 t/day line at <b>9 % of capacity for a
+simulated year</b> and nothing anywhere said why.</p></div>
+
+<h3 id="prices">Prices as scarcity</h3>
+<p>Price is <b>cover</b>: how many days of real demand the warehouse holds. A short
+world pays up to 3×, a glutted one as little as 0.35×, and a producer sells
+cheap — which is what a producer <em>is</em>, and what gives a route its direction.</p>
+<p>Two steepenings, each with an argument. <b>Rations, ×7</b> — people will pay
+anything for the next meal, which turns a famine into the best-paying route on
+the board and gets it relieved without anybody scripting relief. <b>A sited
+world's feedstock, ×5</b> — a refinery short of acid is not inconvenienced, it is
+<em>shut</em>.</p>
+<p>And every finished good has an appetite, which is not decoration. The first
+cut gave chips, ore and steel no consumer, so they piled up in warehouses nobody
+would ever need them from and the whole network went quiet on day 104 with every
+hull idle. <b>A commodity with no sink stops being traded the moment the first
+warehouse fills.</b></p>
+
+<h3 id="loop">The trade loop</h3>
+<div class="svgbox">
+<svg viewBox="0 0 900 260" role="img" aria-label="The daily cycle: mine, produce, consume, grow, reprice, route, fly, govern">
+<style>.c{fill:#101720;stroke:#2b3644}.ct{fill:#c8d3de;font:600 11px ui-monospace,monospace}
+.cs{fill:#7f8c9b;font:9.5px ui-monospace,monospace}.cl{stroke:#5ee08a;fill:none;marker-end:url(#ag)}</style>
+<g>
+<rect class="c" x="20" y="40" width="96" height="52" rx="5"/><text class="ct" x="32" y="62">MINE</text><text class="cs" x="32" y="78">crust → shelf</text>
+<rect class="c" x="150" y="40" width="96" height="52" rx="5"/><text class="ct" x="162" y="62">PRODUCE</text><text class="cs" x="162" y="78">rationed</text>
+<rect class="c" x="280" y="40" width="96" height="52" rx="5"/><text class="ct" x="292" y="62">CONSUME</text><text class="cs" x="292" y="78">eat · burn</text>
+<rect class="c" x="410" y="40" width="96" height="52" rx="5"/><text class="ct" x="422" y="62">GROW</text><text class="cs" x="422" y="78">from rations</text>
+<rect class="c" x="540" y="40" width="96" height="52" rx="5"/><text class="ct" x="552" y="62">REPRICE</text><text class="cs" x="552" y="78">cover → price</text>
+<rect class="c" x="670" y="40" width="96" height="52" rx="5"/><text class="ct" x="682" y="62">ROUTE</text><text class="cs" x="682" y="78">found, not set</text>
+<rect class="c" x="800" y="40" width="80" height="52" rx="5"/><text class="ct" x="812" y="62">FLY</text><text class="cs" x="812" y="78">momentum</text>
+<path class="cl" d="M116 66 H144"/><path class="cl" d="M246 66 H274"/><path class="cl" d="M376 66 H404"/>
+<path class="cl" d="M506 66 H534"/><path class="cl" d="M636 66 H664"/><path class="cl" d="M766 66 H794"/>
+<path class="cl" d="M840 92 C840 150 500 150 400 150 C200 150 68 150 68 100"/>
+<text class="cs" x="380" y="168">the next industrial day</text>
+<rect class="c" x="150" y="190" width="600" height="46" rx="5" stroke="#f0b45e"/>
+<text class="ct" x="164" y="210" fill="#f0b45e">GOVERN · PROSPECT · COMMISSION</text>
+<text class="cs" x="164" y="226">doctrine buys buildings · harvesters and surveys go out · yards press plate or lay up on berth pressure</text>
+</g>
+</svg>
+<p class="svgcap">The order is the causal order and it matters: you cannot refine
+ore you have not dug, sell goods you have not made, or route a hull to a
+shortage this morning's production just filled.</p>
+</div>
+
+<h3 id="agents">Five kinds of agent</h3>
+<table>
+<tr><th>Mission</th><th>What it does</th><th>Why it exists</th></tr>
+<tr><td><b>Courier</b></td><td>free trade, routed by what pays today</td><td>the baseline</td></tr>
+<tr><td><b>Convoy</b></td><td>a standing order to carry a named material A → B</td><td>a government overriding the market</td></tr>
+<tr><td><b>Flight</b></td><td>moves hulls; arriving hostile it fights, friendly it garrisons, at peace it turns back</td><td>Konquest's war, conserved</td></tr>
+<tr><td><b>Harvester</b></td><td>flies empty to a seam, lifts crust <em>straight out of the ground</em> into its hold against a royalty, carries it to the nearest port that wants it</td><td>a rich rock with nobody on it produced <b>nothing</b>, for ever — mining was capped by population</td></tr>
+<tr><td><b>Survey</b></td><td>carries nothing, earns nothing; reads a seam and leaves. +45 % dig for 90 days where it lands, +20 % one jump out</td><td>the only thing that raises extraction without raising population</td></tr>
+</table>
+<p>And the merchant fleet sizes itself. It opens proportional to worlds held —
+a trade network's size is a property of the map, not a constant somebody typed
+— and then every day each colour measures <b>berth pressure</b>, the unserved
+margin still on its board per hull afloat. Above 90 k cr/hull a yard presses
+plate; below 22 k it breaks a ship up and puts the tonnage back on the shelf.
+<b>Nothing is minted:</b> growth costs somebody a warehouse.</p>
+
+<h2 id="physics"><span class="n">08</span>Reentry physics</h2>
+<h3 id="magnetopause">The magnetopause</h3>
+<p>The envelope the ship flies behind is not a heat shield, it is a <b>magnetic
+bubble</b>. The coil's dipole pushes outward with magnetic pressure; the oncoming
+flow pushes inward with ram pressure; and the stand-off is where they balance.
+Because a dipole falls off as <code>r⁻³</code>, its pressure falls as <code>r⁻⁶</code>:</p>
+<pre>    r_mp / R_n  =  ( p_mag / p_flow ) ^ <b>1/6</b>        p_mag = B²/2μ₀</pre>
+<div class="svgbox">
+<svg viewBox="0 0 860 250" role="img" aria-label="Flow meets a magnetic bubble standing off the nose, with polar cusps leaking onto the hull">
+<style>.f{stroke:#6fa8ff;fill:none;opacity:.55}.m{stroke:#b48ef0;fill:none}
+.tt{fill:#c8d3de;font:600 11px ui-monospace,monospace}.ss{fill:#7f8c9b;font:10px ui-monospace,monospace}
+.gg{fill:#5ee08a;font:10px ui-monospace,monospace}</style>
+<path class="f" d="M20 40 H250"/><path class="f" d="M20 70 H262"/><path class="f" d="M20 100 H278"/>
+<path class="f" d="M20 125 H286"/><path class="f" d="M20 150 H278"/><path class="f" d="M20 180 H262"/>
+<path class="f" d="M20 210 H250"/>
+<path class="f" d="M250 40 C330 40 360 70 420 32"/><path class="f" d="M262 70 C340 70 370 88 430 62"/>
+<path class="f" d="M278 100 C350 100 380 104 440 96"/>
+<path class="f" d="M278 150 C350 150 380 146 440 154"/>
+<path class="f" d="M262 180 C340 180 370 162 430 188"/><path class="f" d="M250 210 C330 210 360 180 420 218"/>
+<path d="M286 125 C286 60 330 30 400 25 M286 125 C286 190 330 220 400 225" stroke="#f0b45e" fill="none" stroke-dasharray="5 4"/>
+<ellipse class="m" cx="470" cy="125" rx="86" ry="96"/>
+<ellipse class="m" cx="470" cy="125" rx="58" ry="66" opacity=".6"/>
+<ellipse class="m" cx="470" cy="125" rx="30" ry="34" opacity=".35"/>
+<path d="M470 29 L470 8 M470 221 L470 242" stroke="#ef6b6b" stroke-width="2"/>
+<g transform="translate(470,125)"><path d="M-16 0 L10 -11 L22 0 L10 11 z" fill="#c8d3de"/></g>
+<text class="ss" x="24" y="26">hypersonic flow</text>
+<text class="ss" x="300" y="20" fill="#f0b45e">bow shock</text>
+<text class="gg" x="566" y="60">magnetopause</text>
+<text class="ss" x="566" y="76">stand-off ∝ B^⅓</text>
+<text class="ss" x="566" y="96">double the field</text>
+<text class="ss" x="566" y="110">→ only +12 % radius</text>
+<text class="ss" x="482" y="12" fill="#ef6b6b">polar cusp — flow funnels onto the nose</text>
+<text class="ss" x="482" y="246" fill="#ef6b6b">polar cusp</text>
+<text class="gg" x="566" y="140">the pillow</text>
+<text class="ss" x="566" y="156">holds the shock off</text>
+<text class="ss" x="566" y="170">the hull and sheds</text>
+<text class="ss" x="566" y="184">heat as light</text>
+</svg>
+<p class="svgcap">A bare dipole is not a closed bottle. It has two axial cusps
+where the field lines run <em>into</em> the vehicle and flow funnels straight down them
+onto the nose — which is what the multipole ring is for.</p>
+</div>
+<h3 id="confine">The confinement ladder</h3>
+<p><b>Nobody buys their way out of that exponent.</b> To stand a shock off twice as far
+you need sixty-four times the magnetic pressure. What a yard can sell is a fix
+for one of four distinct ways the balance goes wrong — and each is a different
+piece of hardware because each is a different piece of physics.</p>
+<table>
+<tr><th>Failure mode</th><th>Outfit</th><th>The hook</th></tr>
+<tr><td>the field is too weak</td><td><b>HTS coil rewind</b> +0.45 T</td><td>stand-off ∝ B^⅓ — honest, expensive, diminishing</td></tr>
+<tr><td>the bottle leaks at the poles</td><td><b>Multipole cusp ring</b></td><td>plugs the cusps: more usable pressure, and <b>two thirds less wake drag</b>, which is where it really earns its price</td></tr>
+<tr><td>the pillow is symmetric</td><td><b>Phased steering array</b></td><td>drives current asymmetrically and leans the envelope: +45 % commandable L/D, and MHD grip several km higher. Paid for on the power ledger</td></tr>
+<tr><td>the air is too thin to grip</td><td><b>Seed injection ring</b></td><td>MHD needs a conducting continuum; high up there is nothing to push against however hard you push. Put the mass there yourself — <b>inertial</b> confinement, the only rung that works where the magnetic ones do not</td></tr>
+</table>
+<p>That fourth rung is tested by the property that justifies it: <b>at 88 km the
+injection ring beats tripling the coil</b>, because tripling a field that has
+nothing to grip buys nothing at all.</p>
+
+<h2 id="reactors"><span class="n">09</span>Ship reactors</h2>
+<p>A tonne of heavy lithium carries the same energy wherever it is loaded. What
+decides how much of it a ship can <em>use</em> is the machine it is loaded into.</p>
+<table>
+<tr><th>Class</th><th>Takes</th><th class="num">Burnup</th><th class="num">Range</th><th>Breeds</th><th class="num">Mass</th></tr>
+<tr><td><b>Thermal pile</b> — light-water moderated</td><td class="mono">Pellets</td><td class="num">5.5 %</td><td class="num">×1.0</td><td>—</td><td class="num">stock</td></tr>
+<tr><td><b>Sodium fast loop</b> — unmoderated, molten salt</td><td class="mono">Melt</td><td class="num">19.5 %</td><td class="num">×3.5</td><td>—</td><td class="num">+7 t</td></tr>
+<tr><td><b>Shipboard breeder</b> — fast loop + fertile blanket</td><td class="mono">Melt</td><td class="num">25.0 %</td><td class="num">×4.5</td><td>0.35 t/t</td><td class="num">+16 t</td></tr>
+</table>
+<p>The breeder is the third uphill loop in the game: it burns its charge <em>and</em>
+transmutes fertile lithium from a blanket it is carrying into fresh fissile
+material. It does not mint anything — the tonnage comes out of the blanket —
+which is precisely the distinction the books care about.</p>
+<div class="note"><h4>Not yet wired <span class="tag partial">partial</span></h4>
+<p>Pellets and Melt are traded, priced and eaten by populations, but <b>a hull's own
+jump does not burn them yet</b>. Until it does, the range multiplier above is a
+shop label rather than a constraint you feel. It is the highest-value small
+piece of work outstanding.</p></div>
+
+<h2 id="state"><span class="n">10</span>Measured state</h2>
+<p>Full gazetteer, 109 ports, 730 simulated days, three seeds. The mechanics work;
+the <b>balance</b> does not, and the numbers say exactly where.</p>
+<table>
+<tr><th>Measure</th><th class="num">Measured</th><th>Should be</th></tr>
+<tr><td>Pellets made</td><td class="num">7.6 t/d</td><td>443 t/d of appetite — <b>2 %</b></td></tr>
+<tr><td>Melt made</td><td class="num">23.3 t/d</td><td>286 t/d of appetite — <b>8 %</b></td></tr>
+<tr><td>Chips made</td><td class="num">60.7 t/d</td><td>~815 t/d of appetite</td></tr>
+<tr><td>Hull plate pressed</td><td class="num"><b>0.0 t/d</b></td><td>enough to replace losses</td></tr>
+<tr><td>Shipyards in the galaxy</td><td class="num">3</td><td>more than 3</td></tr>
+<tr><td>Berth pressure</td><td class="num">5,795–8,406 k</td><td>threshold is 90 k — <b>64–93× over, and it cannot fire</b></td></tr>
+<tr><td>Mass &amp; credits</td><td class="num">BALANCED</td><td>✓ every checkpoint, every seed</td></tr>
+</table>
+<p>One causal chain explains all six broken rows:</p>
+<pre>one world per system  →  copper is a one-jump good with nowhere to go
+                      →  chips at 7% of demand
+                      →  shipyards at 0% (chips are 15% of the yard recipe)
+                      →  no hull plate
+                      →  the fleet cannot grow however hard the board pays
+                      →  too few hulls to fly acid to 15 scattered refineries
+                      →  <b>fuel at 2% of demand</b></pre>
+<p>Everything downstream of the first line is a symptom. <b>Three bodies per system
+— one planet, one station, one nebula or asteroid field — is not a content item;
+it is the fix for the economy's only structural fault.</b> Nothing above is a
+correctness bug. It is a map that cannot support the economy standing on it.</p>
+
+<h2 id="dev"><span class="n">11</span>Developer screens</h2>
+<div class="duo">
+<figure><img src="img/vector.png" alt="Vector HUD debug overlay"><figcaption><b>Vector HUD.</b>
+Forces, headings and the flight-model internals drawn live.</figcaption></figure>
+<figure><img src="img/fxlab.png" alt="Effects laboratory"><figcaption><b>FX lab.</b> The plasma,
+shock and particle systems on a black stage, tunable in isolation.</figcaption></figure>
+</div>
+<p>The drop-down console (<code>`</code>) carries the economy: <code>economy</code>, <code>routes</code>,
+<code>journal</code>, <code>world &lt;id&gt;</code>, <code>trifecta</code>, <code>standings</code>, <code>day &lt;n&gt;</code>, <code>govern</code>,
+<code>doctrine</code>, <code>priority</code>, <code>policy</code>, <code>tune</code>, <code>seed</code>, plus konex's originals.
+<code>GONEX_CMD="day 200;economy"</code> runs them at boot and <code>GONEX_SEED</code> reproduces a
+universe exactly.</p>
+
+<h2 id="art"><span class="n">12</span>What needs art</h2>
+<p>Everything in the game today is either konex's art, art recovered from the 1997
+plugin, or drawn procedurally at runtime. <b>Nothing added in the last two passes
+has a sprite.</b> Here is the honest inventory.</p>
+<h4>What exists</h4>
+<table>
+<tr><th>Asset</th><th class="num">Count</th><th>Source</th></tr>
+<tr><td>Ship sprite banks (rotations, target, yard, comm art)</td><td class="num">22</td><td>konex + 9 recovered 1997 banks</td></tr>
+<tr><td>Planet discs</td><td class="num">18</td><td>konex</td></tr>
+<tr><td>Explosion frames</td><td class="num">17</td><td>konex</td></tr>
+<tr><td>Pickup items — <code>health</code>, <code>money</code></td><td class="num">2</td><td>konex</td></tr>
+<tr><td>Landing views (CustPic)</td><td class="num">13</td><td>recovered 1997</td></tr>
+<tr><td>Spaceport metropolis, plasma, shock, field lines, gauges</td><td class="num">—</td><td>procedural, per seed</td></tr>
+</table>
+
+<h4>Commodity icons <span class="tag missing">none exist</span></h4>
+<p>The eight board goods need to be legible at ~16 px in a list and ~32 px on the
+board. The two fuels are the important pair — <b>the whole reactor decision hangs
+on telling them apart at a glance</b>, so they should differ in silhouette, not
+just colour: a clad cylinder versus a flask of liquid.</p>
+<table>
+<tr><th>Icon</th><th>Reads as</th><th>Note</th></tr>
+<tr><td class="mono">Lumber</td><td>stacked timber</td><td></td></tr>
+<tr><td class="mono">Ore</td><td>crushed rock, bulk</td><td>the cheapest thing on the board</td></tr>
+<tr><td class="mono">Rations</td><td>sealed tin / pack</td><td>the famine commodity — needs to read as <em>food</em> instantly</td></tr>
+<tr><td class="mono">Medicine</td><td>ampoule / cross</td><td>luxury tier</td></tr>
+<tr><td class="mono">Chips</td><td>wafer / die</td><td>luxury tier; the galaxy's scarcest good</td></tr>
+<tr><td class="mono">Fuel cells</td><td>stacked cells</td><td>the <em>old</em> fuel — must not be confused with the two below</td></tr>
+<tr><td class="mono"><b>Pellets</b></td><td>clad cylinder, radiation trefoil</td><td>solid fuel · thermal piles</td></tr>
+<tr><td class="mono"><b>Melt</b></td><td>sealed flask, glowing liquid</td><td>liquid fuel · fast loops</td></tr>
+</table>
+
+<h4>Deeper material icons <span class="tag missing">none exist</span></h4>
+<p>Twenty-two more, needed wherever the desk, journal and industry lines show a
+material: <span class="mono">Steel · Copper · Silicon · Polymer · Grain ·
+Lithex · Lithium · Heavylith · Acid · Fluid · Hull · Rounds · Missiles ·
+Compost · Scrap · Ferrite · Cuprite · Silicate · Volatiles · Biomass ·
+Spodumene · Slag</span>. These can be a tighter, more schematic set than the
+board icons — a 12 px glyph beside a number, not a picture.</p>
+<p>Three want a shared visual language because they are one chain: <b>Lithex</b>
+(dusty concentrate) → <b>Lithium</b> (bright metal) → <b>Heavylith</b> (the same metal,
+hotter) — ideally the same silhouette escalating in glow, with <b>Spodumene</b> as
+the raw ore that starts it.</p>
+
+<h4>Outfit icons <span class="tag missing">none exist</span></h4>
+<p>Twelve shelf items, of which seven are new. The two ladders should read as
+ladders — a viewer should see at a glance that a breeder is above a fast loop,
+and that the four confinement rungs are siblings rather than a sequence.</p>
+<table>
+<tr><th>Group</th><th>Items</th></tr>
+<tr><td>Power grid</td><td class="mono">Auxiliary generator · Deep battery bank · Capacitor array · Radiator wing · Thermal mass sink</td></tr>
+<tr><td><b>Reactor ladder</b></td><td class="mono">Thermal pile (stock) · Sodium fast loop · Shipboard breeder</td></tr>
+<tr><td><b>Confinement ladder</b></td><td class="mono">HTS coil rewind · Multipole cusp ring · Phased steering array · Seed injection ring · Cryoplant uprate</td></tr>
+</table>
+
+<h4>Building icons <span class="tag missing">none exist</span></h4>
+<p>Eight, for the Governor's Desk and the world tab: <span class="mono">Spaceport ·
+Works · Habitat · Exchange · Lane · Bastion · Picket · Silo</span>. Each needs a
+level indicator (1–3) and a "genesis" state that reads as <em>not bought</em>.</p>
+
+<h4>Agent markers <span class="tag missing">none exist</span></h4>
+<p>Five mission states want distinct markers on the chart and in the journal:
+<span class="mono">Courier · Convoy · Flight · Harvester · Survey</span>. Harvester
+and Survey are the two nobody has seen before and most need explaining visually
+— one is a ship working a rock, the other is a ship doing nothing visible at all.</p>
+
+<h4>New body types <span class="tag missing">nothing exists</span></h4>
+<p>The planned three-bodies-per-system map needs two entirely new classes of
+landable object, and they have <em>no</em> art of any kind:</p>
+<table>
+<tr><th>Body</th><th>Needs</th><th>Economic role</th></tr>
+<tr><td><b>Space station</b></td><td>orbital disc/silhouette at flight scale, an approach view, and a landed concourse backdrop that is plainly not a planet</td><td>pure <b>sink</b> — population, no crust, imports everything</td></tr>
+<tr><td><b>Nebula / asteroid field</b></td><td>a volumetric or particle field at flight scale, plus an ice-crystal cavern interior for the landed view</td><td>pure <b>source</b> — crust, no population; worked by harvesters</td></tr>
+<tr><td><b>Hostile-world overlay</b></td><td>a dose indicator on the planet disc and on the chart — the 14–22 % of worlds that are refineries should be visible <em>as</em> hostile</td><td>the fuel industry's whole geography</td></tr>
+</table>
+
+<h4>Animations <span class="tag missing">none exist</span></h4>
+<p>Stand-in loops would do for all of these; the point is that several important
+events currently happen with no visual at all.</p>
+<ul>
+<li><b>Hyperjump</b> — entering and leaving the tunnel (the tunnel itself exists)</li>
+<li><b>Harvester working a seam</b> — the only mining the player can watch</li>
+<li><b>Scoop</b> — a hull lifting a wreck field, currently silent</li>
+<li><b>Refinery plume</b> — a hot world under load, so a fuel world looks like one</li>
+<li><b>Commission / lay-up</b> — plate leaving or returning to a yard</li>
+<li><b>Transmutation core</b> <span class="tag design">design only</span> — laser implosion and the arc field</li>
+</ul>
+
+<h4>Known visual bugs <span class="tag partial">visible in the captures above</span></h4>
+<ol>
+<li><b>Notification overprint.</b> The <code>MARKET:</code> lines at the top of every docked
+screen draw on top of each other — visible in nearly every screenshot on this
+page. They need a proper stacked queue with expiry.</li>
+<li><b>Outfitter runs under the gauges.</b> The new reactor and confinement rows have
+longer descriptions than the original five, and the text now passes beneath the
+fuel/hull/LI gauge cluster. The list needs a width budget or the gauges need to
+move.</li>
+<li><b>Chart label collision.</b> On the desk's CHART tab, system names in the dense
+core overlap into illegibility. Needs label de-confliction or zoom.</li>
+</ol>
+
+<h2 id="reports"><span class="n">13</span>The lab reports</h2>
+<p>Everything on this page is derived from four dated engineering write-ups. They
+carry the arguments, the measurements, and the faults found along the way.</p>
+<table>
+<tr><th>Report</th><th>What it covers</th><th></th></tr>
+<tr><td><a href="../lab-reports/2026-09-22-game-mechanics-overview.md">Game mechanics overview</a></td>
+<td>Every mechanic, the rule that defines it, and the test that fails if it stops being true — 56 cited tests, all of which exist and pass</td><td><span class="tag built">built</span></td></tr>
+<tr><td><a href="../lab-reports/2026-09-22-lithium-fuel-cycle.md">The lithium fuel cycle</a></td>
+<td>The build, the measurements over three seeds of the full gazetteer, and the eleven faults flying it turned up</td><td><span class="tag built">built</span></td></tr>
+<tr><td><a href="../lab-reports/2026-09-22-transmutation-core.md">The transmutation core</a></td>
+<td>The nuclide chart read as a price list, the barium line where the Coulomb term overtakes binding energy, lithium as a charged battery made of matter</td><td><span class="tag design">design</span></td></tr>
+<tr><td><a href="../resource-cycle-plan.md">The resource cycle</a> · <a href="../trade-economy-plan.md">The trade economy</a> · <a href="../war-economy-plan.md">The war economy</a></td>
+<td>The three earlier plans this economy was built on</td><td><span class="tag built">built</span></td></tr>
+</table>
+
+<h2 id="next"><span class="n">14</span>What comes next</h2>
+<ol>
+<li><b>Three bodies per system.</b> The unlock. Source, mixed and sink in every
+system, connected by 60 Mm shuttle hops instead of 240 Mm jumps — which is what
+the same-type rule was written for and has never once been true.</li>
+<li><b>The field fills the planet's holes.</b> Draw each asteroid field's crust from
+the inverse of its planet's barren mask, so every system can complete at least
+one chain locally while still trading for the finished goods.</li>
+<li><b>Fuel as a jump consumable</b>, so the reactor ladder is a constraint rather
+than a label.</li>
+<li><b>The commodity detail screen</b> — agents on mission, prices within N jumps,
+best-paying run from here. The data is all computed already.</li>
+<li><b>The art above.</b></li>
+</ol>
+
+</div>
+<footer><div class="wrap">
+<p>Gonex · Team Yodacon · GPL-2.0, as a derivative of konex © 2005 Joshua B.
+Bussdieker. ConEx is Paul Richeson's, 1997. Escape Velocity is Ambrosia
+Software's.</p>
+<p>Screens captured from the running build at seed <code>20260922</code>. Every number on
+this page is measured, not estimated.</p>
+</div></footer>
+<a class="up" href="#">↑ top</a>
+</body>
+</html>

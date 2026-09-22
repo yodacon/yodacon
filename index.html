@@ -91,81 +91,95 @@ h1{
   opacity:.85;pointer-events:none;
 }
 @keyframes churn{to{transform:rotate(360deg)}}
-.orb:hover,.orb:focus-visible,.panel:hover .orb{
+.orb:hover,.orb:focus-visible{
   transform:scale(1.16);
   filter:saturate(1.5) brightness(1.25);
   box-shadow:0 0 0 2px #0009, 0 0 30px #6cffb0aa, inset -6px -8px 14px #000a;
   outline:none;
 }
-.orb:hover::before,.orb:focus-visible::before,.panel:hover .orb::before{opacity:.75}
+.orb:hover::before,.orb:focus-visible::before{opacity:.75}
 
-/* ---- HUD glass panels (the 4 "buttons") ---- */
-.console{
-  display:grid;
-  grid-template-columns:1fr minmax(240px,320px) 1fr;
-  gap:18px;align-items:stretch;margin-top:14px;
+/* ---- primary navigation ----
+   Was six hover-preview buttons flanking a "No Pilot File Loaded" readout.
+   They looked like a menu and navigated nowhere: hovering filled a centre
+   panel with prose that is already on the page below, clicking only locked
+   that preview, and on a touch screen the whole thing did nothing at all.
+   Replaced with links that go where they say they go. No JS. ---- */
+.mainnav{
+  display:grid;margin-top:22px;gap:12px;
+  grid-template-columns:repeat(3,1fr);
 }
-@media(max-width:900px){.console{grid-template-columns:1fr}.readout-wrap{order:-1}}
-/* three panels a side, spread to match the readout's height */
-.stack{display:flex;flex-direction:column;gap:16px;justify-content:space-between}
+@media(max-width:860px){.mainnav{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.mainnav{grid-template-columns:1fr}}
 
-.panel{
-  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
-  min-height:78px;
-  padding:14px 16px;cursor:pointer;position:relative;overflow:hidden;
-  color:var(--phos);font:inherit;font-size:clamp(15px,2vw,22px);line-height:1.15;
-  border:3px solid var(--chrome);
-  border-radius:6px;
+.nv{
+  display:flex;flex-direction:column;justify-content:center;gap:4px;
+  min-height:76px;padding:14px 16px;position:relative;overflow:hidden;
+  text-decoration:none;color:var(--phos);font:inherit;
+  border:3px solid var(--chrome);border-radius:6px;
   background-color:var(--crt);
   background-image:
     linear-gradient(45deg,rgba(92,255,92,.10) 25%,transparent 25%,transparent 75%,rgba(92,255,92,.10) 75%),
     linear-gradient(45deg,rgba(92,255,92,.10) 25%,transparent 25%,transparent 75%,rgba(92,255,92,.10) 75%);
-  background-size:8px 8px;
-  background-position:0 0,4px 4px;
-  box-shadow:
-    0 0 0 1px #000,
-    inset 0 0 0 2px var(--chrome-lo),
-    inset 0 2px 0 rgba(255,255,255,.18),
-    0 6px 18px #000a;
+  background-size:8px 8px;background-position:0 0,4px 4px;
+  box-shadow:0 0 0 1px #000, inset 0 0 0 2px var(--chrome-lo),
+             inset 0 2px 0 rgba(255,255,255,.18), 0 6px 18px #000a;
   transition:background-color .2s, box-shadow .25s, transform .12s;
 }
-.panel .lbl{flex:1;text-shadow:0 0 10px #5cff5c66}
-.panel .idx{font-size:11px;color:var(--phos-dim);letter-spacing:.2em}
-.panel:hover,.panel:focus-visible,.panel.active{
+.nv-k{font-size:11px;letter-spacing:.2em;color:var(--phos-dim)}
+.nv-t{font-size:clamp(15px,2vw,20px);line-height:1.15;text-shadow:0 0 10px #5cff5c66}
+.nv-d{font-size:11px;font-weight:400;letter-spacing:.04em;color:#7ee87e;line-height:1.4}
+
+/* the game manual is the destination the site exists to point at */
+.nv-hero{
+  grid-column:1/-1;min-height:104px;
+  border-color:var(--chrome-hi);
+  background-color:#0f4a16;
+  box-shadow:0 0 0 1px #000, inset 0 0 0 2px #cfe6d0,
+             inset 0 2px 0 rgba(255,255,255,.28), 0 0 30px #4cff4c33, 0 6px 18px #000a;
+}
+.nv-hero .nv-k{color:#9dff9d}
+
+.nv:hover,.nv:focus-visible{
   background-color:var(--crt-lit);
   box-shadow:0 0 0 1px #000, inset 0 0 0 2px #cfe6d0,
              inset 0 2px 0 rgba(255,255,255,.3), 0 0 26px #4cff4c55, 0 6px 18px #000a;
   outline:none;
 }
-.panel:active{transform:translateY(2px)}
-/* sweeping glass glare */
-.panel::before{
+.nv:active{transform:translateY(2px)}
+/* sweeping glass glare, kept from the old panels */
+.nv::before{
   content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
   background:linear-gradient(105deg,transparent,rgba(255,255,255,.22),transparent);
   transition:left .55s ease;pointer-events:none;
 }
-.panel:hover::before{left:120%}
+.nv:hover::before{left:120%}
+@media(prefers-reduced-motion:reduce){
+  .nv,.nv::before{transition:none}
+}
+/* anchored sections must not hide under anything */
+h2[id]{scroll-margin-top:18px}
 
-/* the pilot-file readout in the middle */
-.readout-wrap{
-  border:14px solid transparent;border-radius:38px;
-  background:
-    linear-gradient(#000,#000) padding-box,
-    linear-gradient(160deg,var(--chrome-hi),var(--chrome-lo) 40%,var(--chrome-hi) 62%,#2a2f31) border-box;
-  box-shadow:0 0 0 2px #000, 0 10px 30px #000c, inset 0 0 40px #000;
-  min-height:420px;padding:22px 20px;
-  display:flex;flex-direction:column;
+/* ---- the flight manual card ---- */
+.manual{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;
+  margin:26px 0 8px;padding:20px;
+  border:3px solid var(--chrome);border-radius:8px;background:#071a09;
+  box-shadow:0 0 0 1px #000, inset 0 0 0 2px var(--chrome-lo), 0 6px 18px #000a;
 }
-.readout{
-  flex:1;display:flex;flex-direction:column;justify-content:center;
-  font-size:13px;line-height:1.7;letter-spacing:.04em;
-  text-shadow:0 0 8px #5cff5c55;
+@media(max-width:820px){.manual{grid-template-columns:1fr}}
+.manual-k{font-size:11px;letter-spacing:.2em;color:var(--phos-dim);margin-bottom:8px}
+.manual h3{margin:0 0 10px;font-size:20px;color:#9dff9d;text-shadow:0 0 12px #4cff4c44}
+.manual p{font-weight:400;color:#7ee87e;font-size:13px;line-height:1.7;margin:0 0 10px}
+.manual-go{
+  display:inline-block;margin-top:4px;padding:9px 16px;text-decoration:none;
+  color:#05070a;background:var(--phos);border-radius:4px;font-size:13px;
+  letter-spacing:.08em;box-shadow:0 0 18px #4cff4c55;
 }
-.readout .rt{font-size:15px;color:#9dff9d;margin:0 0 10px}
-.readout p{margin:0 0 10px;font-weight:400;color:#7ee87e}
-.readout .idle{text-align:center;color:var(--phos-dim);font-weight:700}
-.readout ul{margin:6px 0 0;padding-left:18px;font-weight:400;color:#7ee87e}
-.readout a{color:#9dff9d}
+.manual-go:hover{background:#9dff9d}
+.manual-shots{display:grid;gap:10px}
+.manual-shots img{width:100%;display:block;border:2px solid var(--chrome-lo);border-radius:4px;background:#000}
+.manual-shots a:hover img{border-color:var(--phos)}
 
 /* ---- lore ---- */
 .lore{margin-top:52px}
@@ -228,30 +242,24 @@ footer a{color:#7fe9ff;text-decoration:none}
   </div>
 </header>
 
-<div class="console">
-  <div class="stack">
-    <button class="panel" data-key="lore"><span class="orb"></span><span class="lbl">The Lore</span><span class="idx">01</span></button>
-    <button class="panel" data-key="conex"><span class="orb"></span><span class="lbl">ConEx</span><span class="idx">02</span></button>
-    <button class="panel" data-key="reentry"><span class="orb"></span><span class="lbl">Reentry</span><span class="idx">03</span></button>
-  </div>
-
-  <div class="readout-wrap">
-    <div class="readout" id="readout">
-      <div class="idle">No Pilot File Loaded</div>
-    </div>
-  </div>
-
-  <div class="stack">
-    <button class="panel" data-key="archive"><span class="orb"></span><span class="lbl">The Archive</span><span class="idx">04</span></button>
-    <button class="panel" data-key="courier"><span class="orb"></span><span class="lbl">Courier</span><span class="idx">05</span></button>
-    <button class="panel" data-key="sixstages"><span class="orb"></span><span class="lbl">Six Stages</span><span class="idx">06</span></button>
-  </div>
-</div>
+<nav class="mainnav" aria-label="Primary">
+  <a class="nv nv-hero" href="docs/game/">
+    <span class="nv-k">FLIGHT MANUAL</span>
+    <span class="nv-t">The Game As It Stands</span>
+    <span class="nv-d">Every screen · the zero-sum economy · reentry physics</span>
+  </a>
+  <a class="nv" href="#lore"><span class="nv-k">01</span><span class="nv-t">The Lore</span></a>
+  <a class="nv" href="#conex"><span class="nv-k">02</span><span class="nv-t">ConEx 1.2</span></a>
+  <a class="nv" href="#reentry"><span class="nv-k">03</span><span class="nv-t">Reentry</span></a>
+  <a class="nv" href="#sixstages"><span class="nv-k">04</span><span class="nv-t">Six Stages</span></a>
+  <a class="nv" href="#courier"><span class="nv-k">05</span><span class="nv-t">The Courier Lane</span></a>
+  <a class="nv" href="https://github.com/yodacon/gonex"><span class="nv-k">06</span><span class="nv-t">Source &#8599;</span></a>
+</nav>
 
 <!-- ============================ LORE ============================ -->
 <main class="lore">
 
-  <h2>&gt; THE GROUP FORMERLY KNOWN AS THE OUTSIDERS</h2>
+  <h2 id="lore">&gt; THE GROUP FORMERLY KNOWN AS THE OUTSIDERS</h2>
   <p class="drop">Alaska had too many children and not enough school. The solution was portables — plywood boxes on blocks, parked in the snow outside the building that was already full. We were the kids in them. Our core rooms rotated between those arctic portables, and the building called us what we were: <em>the Outsiders</em>. Not a nickname anyone chose. A location.</p>
 
   <p>Getting there was its own long instrument. I was the last stop on a long bus ride, to a place that was not a city and not even outside a city — the buses still delivered kids to postboxes. Postboxes were snow-powered waiting areas. Chains on the wheels. A flashing white light on the roof. Sparkling strobes of white thrown against falling snow, and ice grown thick on the windows in the back of the bus, where you scratched a hole with a fingernail to see whether your stop had arrived yet.</p>
@@ -273,17 +281,38 @@ footer a{color:#7fe9ff;text-decoration:none}
 
   <p>Yodacon.org is the crew of shipmates on the Yodacon. Our intention is to <strong>expand upon the original game</strong> — to take the ship out of a lost vote and put it back into a universe where it can actually be flown, traded, refueled, and landed. Everything here is MIT licensed, because the whole point is that it belongs to the people who show up for it.</p>
 
-  <h2>&gt; CONEX — WHERE THE YODACON IS DOCKED</h2>
+  <h2 id="conex">&gt; CONEX — WHERE THE YODACON IS DOCKED</h2>
   <p><strong>ConEx</strong> is Paul Richeson's plugin for Ambrosia's <em>Escape Velocity</em>, and it is where the Yodacon was published into the archives. ConEx 1.2 shipped 10 new ships for a government called Consolidated Express, 11 systems, and 35 linked missions that teach you how to fly — with instructions to be sure to land on Conex, Exeon, and Cenron, because their backgrounds will amaze you. It was posted in December 1999. It has been downloaded a few thousand times by people who are no longer fourteen. 🔥</p>
 
   <p>We have the original archive. The work is to open it, pull the resources out into individual files, fix what 1999 left broken, and get the result hosted where people can still play it.</p>
 
-  <h2>&gt; TEAM YODACON — THE GAME</h2>
+  <h2 id="game">&gt; TEAM YODACON — THE GAME</h2>
   <p>Team Yodacon is a space commodity trading game. Its signature system is the landing. We use lithium-injected pellets, cooked with lasers and X-ray emitters, to create rotating comforting pillows of glide — a steerable plasma envelope that shapes your atmospheric reentry trajectory. The real physics of reentry heating drives the controls, and those controls are integral to the landing process. You do not press "land." You fly it down.</p>
 
   <p>Then: set the bird down safely at the station dock. Refuel. Walk the outfitters and dream about upgrades, or about a different ship entirely. Or get a drink at the bar and be distracted there, waiting on the mini-games — the charisma ladder, the Royal Finkel table — while the winners process runs the way the EV Bible explains it.</p>
 
-  <h2>&gt; FLIGHT RECORDER — REENTRY AND TAKEOFF</h2>
+  <div class="manual">
+    <div class="manual-txt">
+      <div class="manual-k">FLIGHT MANUAL &nbsp;·&nbsp; CAPTURED FROM THE RUNNING BUILD</div>
+      <h3>The Game As It Stands</h3>
+      <p>Every screen you can reach, photographed at seed <b>20260922</b>. The
+      zero-sum economy drawn as flow charts. The reentry physics explained. And
+      an honest list of what still has no art.</p>
+      <p>Thirty materials, seventeen industries, 109 ports trading while nobody
+      is looking — under one law: <b>every ton was put in the ground at genesis
+      and can only move.</b> Mass and credits are audited every day and have
+      never once failed to balance.</p>
+      <p><a class="manual-go" href="docs/game/">Open the flight manual &raquo;</a></p>
+    </div>
+    <div class="manual-shots">
+      <a href="docs/game/#reentry"><img src="docs/game/img/entry_auto.png" loading="lazy"
+         alt="The reentry corridor: plasma sheath, dipole field lines and the GPIS instrument cluster"></a>
+      <a href="docs/game/#journal"><img src="docs/game/img/journal.png" loading="lazy"
+         alt="The trade journal: lanes out, inbound hulls with ETAs, standings and the wire"></a>
+    </div>
+  </div>
+
+  <h2 id="reentry">&gt; FLIGHT RECORDER — REENTRY AND TAKEOFF</h2>
   <p>This is not concept art. This is the flight recorder from the released
   <strong>Gonex v0.1a3</strong> build, playing one landing at ConEx station in a
   single take: the plasma pillow burning on the Yodacon's own 1997 mask, the
@@ -342,7 +371,7 @@ footer a{color:#7fe9ff;text-decoration:none}
     </div>
   </div>
 
-  <h2>&gt; SIX STAGES ON INSTRUMENTS — THE PHYSICS, FLOWN</h2>
+  <h2 id="sixstages">&gt; SIX STAGES ON INSTRUMENTS — THE PHYSICS, FLOWN</h2>
   <p>The landing got its flight manual. The MHD reentry console — the envelope-model
   prototype behind the plasma pillow — proves the descent as six numerical-flow tabs:
   <strong>CONCEPT, FLOW, HEATING, PLASMA, SHIELD, POWER</strong>. All six now ride the
@@ -378,7 +407,7 @@ footer a{color:#7fe9ff;text-decoration:none}
   <a href="writeups/six-stages-on-instruments.html" style="color:#7fe9ff">Six Stages on
   Instruments</a>.</p>
 
-  <h2>&gt; THE COURIER UNIVERSE</h2>
+  <h2 id="courier">&gt; THE COURIER UNIVERSE</h2>
   <p>Ours is a world parallel to the EV universes, and it diverges on one word. The other universes were settled by pirates and warriors — raiders with a hold full of stolen ore, fleets with a flag and a grievance. Ours was settled by <strong>commodity</strong>. The first thing that ever crossed our sky in numbers was not a gunship. It was freight, on a schedule, with a manifest.</p>
 
   <p>The <strong>ConEx government</strong> is what a civilization becomes when it commercializes and commoditizes its own freight. Consolidated Express is not an empire and not a guild; it is the clearing house, the bonded lane, the ledger everyone agreed to trust because the alternative was every captain inventing their own. Its power is not that it can shoot you. Its power is that it can decline to sign for your cargo.</p>
@@ -392,7 +421,7 @@ footer a{color:#7fe9ff;text-decoration:none}
 
   <p>You do not buy the Yodacon. You are sent out after it. The campaign is the hero's mission of an ordinary captain — one contract at a time, one landing at a time — until the master ship is yours and the lane belongs to a courier.</p>
 
-  <h2>&gt; FOUNDING RECORD</h2>
+  <h2 id="record">&gt; FOUNDING RECORD</h2>
   <p><strong>27 August 2026.</strong> On this day the domain <strong>yodacon.org</strong> was acquired, the <strong>Yodacon</strong> GitHub organization was created, and DNS was cut over to GitHub Pages — apex <code>A</code> and <code>AAAA</code> records to the four GitHub Pages addresses each, a <code>CNAME</code> on <code>www</code> to the organization's Pages host, and the <code>_github-pages-challenge</code> <code>TXT</code> record for domain verification.</p>
 
   <p>The same day, the ConEx lore was revived and expanded from a 1999 Escape Velocity plugin into what it is now: <strong>space reentry and space commerce</strong>. Not pirate. Not warrior. Courier.</p>
@@ -418,69 +447,5 @@ footer a{color:#7fe9ff;text-decoration:none}
 </main>
 </div>
 
-<script>
-const CONTENT = {
-  lore: {
-    t: "01 — THE LORE",
-    h: `<p>Alaska overflowed its schools and answered with portables in the snow. We were the kids out there, the core group the building called <b>the Outsiders</b>.</p>
-        <p>The year after, a week-long naming contest. Insignia, icons, and one kid with Infini-D rendering an actual starship. It came down to <b>Yodacon</b> or <b>Taurus</b>. The teachers' vote made it Taurus.</p>
-        <p>The losing team kept the room, got a drama-based leader, and did calculus with red and white chess pieces. <b>Don't get left behind.</b></p>`
-  },
-  conex: {
-    t: "02 — CONEX 1.2",
-    h: `<p><b>Paul Richeson's</b> Escape Velocity plugin — the archive where the Yodacon was published. Posted 1999/12/04. Rated 4.00. 3,400 downloads.</p>
-        <p>10 ships for Consolidated Express · 11 systems · 35 linked missions that teach you to fly.</p>
-        <p>&quot;Be sure to land on Conex, Exeon, and Cenron, their backgrounds will amaze you.&quot;</p>
-        <p>We hold the original <b>.sit</b>. Next: crack it open, extract every resource to individual files, fix the 1999 bugs.</p>`
-  },
-  reentry: {
-    t: "03 — REENTRY",
-    h: `<p>Lithium-injected pellets, cooked with lasers and X-ray emitters, forming <b>rotating comforting pillows of glide</b>.</p>
-        <p>A steerable plasma envelope shapes the trajectory. Real reentry-heating math drives the stick.</p>
-        <p>Landing is a flown maneuver, not a menu item. Then: dock, refuel, outfitters, the bar, the mini-games, the charisma ladder.</p>`
-  },
-  courier: {
-    t: "05 — THE COURIER LANE",
-    h: `<p>Parallel to the EV universes, and settled by <b>commodity</b> — not pirates, not warriors. Freight, on a schedule, with a manifest.</p>
-        <p>The <b>ConEx government</b> is commercialized, commoditized freight. Its power is not that it can shoot you; it is that it can decline to sign for your cargo.</p>
-        <p>The hero is a hard-working space captain on the long mission to take the master ship: the <b>Yodacon</b>. Rotating turrets on every arc, vast cargo hulls, and reentry speeds no courier hull before it survived.</p>`
-  },
-  archive: {
-    t: "04 — THE ARCHIVE",
-    h: `<p>Everything needed to rebuild a 1999 plugin in the present day — the Cythera Guides archive, the Nova Bible, EV Nova CE, evnova-utils, and the escape-velocity.games tool mirror.</p>
-        <p>Target outcome: a repaired ConEx, hosted on systemless.org's emulator page, playable again.</p>
-        <p><i>Scroll for the full resource plate.</i></p>`
-  },
-  sixstages: {
-    t: "06 — SIX STAGES ON INSTRUMENTS",
-    h: `<p>The reentry console's physics tabs — <b>CONCEPT, FLOW, HEATING, PLASMA, SHIELD, POWER</b> — flown live in the Gonex cockpit.</p>
-        <p>The algebra is typeset onto the black sky above the horizon, recomputed every frame; a seed-economy advisor draws the optimal-fuel line on the feed gauge.</p>
-        <p><a href="writeups/six-stages-on-instruments.html">Open the full writeup, with captures &raquo;</a></p>`
-  }
-};
-const readout = document.getElementById('readout');
-const IDLE = '<div class="idle">No Pilot File Loaded</div>';
-let locked = null;
-
-function show(k){
-  const c = CONTENT[k];
-  readout.innerHTML = '<div class="rt">' + c.t + '</div>' + c.h;
-}
-function clear(){
-  if (locked) { show(locked); } else { readout.innerHTML = IDLE; }
-}
-document.querySelectorAll('.panel').forEach(p => {
-  const k = p.dataset.key;
-  p.addEventListener('mouseenter', () => show(k));
-  p.addEventListener('focus',      () => show(k));
-  p.addEventListener('mouseleave', clear);
-  p.addEventListener('blur',       clear);
-  p.addEventListener('click', () => {
-    locked = (locked === k) ? null : k;
-    document.querySelectorAll('.panel').forEach(o => o.classList.toggle('active', o.dataset.key === locked));
-    clear();
-  });
-});
-</script>
 </body>
 </html>

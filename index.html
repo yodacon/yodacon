@@ -58,11 +58,18 @@ h1{
   -webkit-text-stroke:2px #0a2a0a;
 }
 .tag{margin:10px 0 0;color:var(--phos-dim);font-size:13px}
+/* The readings are written <span>..</span><span>..</span> with no whitespace
+   between the tags, and inline elements only break at whitespace — so there
+   was no wrap opportunity anywhere in the line and it ran off the right edge
+   below about 560px. A flex row wraps on the boxes themselves rather than on
+   text, which is what this always wanted to be; gap replaces the margins so
+   a wrapped line does not carry a stray 10px indent. */
 .telemetry{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:4px 20px;
   font-size:11px;color:#c26bd8;letter-spacing:.12em;margin-top:12px;
   text-shadow:0 0 8px #c26bd855;
 }
-.telemetry span{margin:0 10px;white-space:nowrap}
+.telemetry span{white-space:nowrap}
 
 /* ---- the arc of spheres, like the splash bracket ---- */
 .arc{display:flex;justify-content:center;gap:14px;margin:22px 0 10px;flex-wrap:wrap}

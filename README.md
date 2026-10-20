@@ -29,6 +29,7 @@ was created, and DNS was pointed at GitHub Pages. Records are documented in
 
 MIT licensed. See [`index.html`](index.html) for the full lore and
 [`backlog.md`](backlog.md) for the plan.
+[`docs/FEATURE_GUIDE.md`](docs/FEATURE_GUIDE.md) is the tour in pictures, from the menu to the burning sky and back to orbit.
 
 ---
 

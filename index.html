@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Yodacon — The Losing Team's Starship</title>
+<title>Yodacon Ship Pack — free 1997 starships for your game</title>
+<meta name="description" content="Free GPL-2.0-or-later starship art recovered from Paul Richeson's 1990s Escape Velocity plugins ConEx 1.2 and ConEx Override — for your game, web component or 3D scene. Plus the story of Yodacon and Gonex.">
 <style>
 :root{
   --void:#05070a;
@@ -15,6 +16,9 @@
   --chrome:#9aa3a7;
   --chrome-lo:#4c5457;
   --bezel:#2b3134;
+  --violet:#c26bd8;
+  --cyan:#7fe9ff;
+  --text:#8fe98f;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -47,77 +51,40 @@ body::after{
   background:linear-gradient(to right,#1a1e20,var(--chrome-lo) 18%,var(--chrome-hi) 42%,var(--chrome) 58%,#1a1e20);
   box-shadow:0 0 18px #000 inset;}
 .rail.l{left:0}.rail.r{right:0}
-@media(max-width:820px){.rail{display:none}}
+@media(max-width:1260px){.rail{display:none}}
+
+a{color:var(--cyan)}
+code{font-family:inherit;color:#c9f7c9;background:#0d3d1255;padding:0 3px;border-radius:2px;word-break:break-word}
 
 /* ---- masthead ---- */
 header{text-align:center;padding:26px 0 6px;position:relative}
 h1{
-  margin:0;font-size:clamp(38px,9vw,104px);line-height:.92;
+  margin:0;font-size:clamp(34px,8.4vw,96px);line-height:.92;
   color:#7dff62;
   text-shadow:0 0 2px #000,4px 4px 0 #063d06,0 0 26px #4cff4c88;
   -webkit-text-stroke:2px #0a2a0a;
 }
-.tag{margin:10px 0 0;color:var(--phos-dim);font-size:13px}
+h1 small{display:block;font-size:.42em;letter-spacing:.32em;margin-top:.25em;-webkit-text-stroke:1px #0a2a0a}
+.tag{margin:14px auto 0;color:#9dff9d;font-size:clamp(14px,2.2vw,19px);max-width:46ch;line-height:1.45}
+.sub{margin:10px auto 0;color:var(--phos-dim);font-size:12px;max-width:80ch;line-height:1.7;font-weight:400}
 /* The readings are written <span>..</span><span>..</span> with no whitespace
-   between the tags, and inline elements only break at whitespace — so there
-   was no wrap opportunity anywhere in the line and it ran off the right edge
-   below about 560px. A flex row wraps on the boxes themselves rather than on
-   text, which is what this always wanted to be; gap replaces the margins so
-   a wrapped line does not carry a stray 10px indent. */
+   between the tags, and inline elements only break at whitespace — so a flex
+   row wraps on the boxes themselves rather than on text. */
 .telemetry{
   display:flex;flex-wrap:wrap;justify-content:center;gap:4px 20px;
-  font-size:11px;color:#c26bd8;letter-spacing:.12em;margin-top:12px;
+  font-size:11px;color:var(--violet);letter-spacing:.12em;margin-top:12px;
   text-shadow:0 0 8px #c26bd855;
 }
 .telemetry span{white-space:nowrap}
 
-/* ---- the arc of spheres, like the splash bracket ---- */
-.arc{display:flex;justify-content:center;gap:14px;margin:22px 0 10px;flex-wrap:wrap}
-
-/* ---- plasma spheres ---- */
-.orb{
-  width:44px;height:44px;border-radius:50%;position:relative;cursor:pointer;
-  background:
-    radial-gradient(circle at 32% 28%, #eafcff 0 6%, #7fe9ff 18%, #2aa7d8 42%, #10506e 72%, #041722 100%);
-  box-shadow:0 0 0 2px #0009, 0 0 14px #2aa7d855, inset -6px -8px 14px #000a;
-  transition:transform .18s ease, box-shadow .25s ease, filter .25s ease;
-  flex:0 0 auto;
-}
-.orb::before{
-  content:"";position:absolute;inset:0;border-radius:50%;opacity:0;
-  transition:opacity .3s ease;
-  background:
-    conic-gradient(from 0deg, #5cff5c, #35d0ff, #b46bff, #5cff5c);
-  filter:blur(4px) saturate(1.6);
-  mix-blend-mode:screen;
-  animation:churn 3.2s linear infinite;
-}
-.orb::after{
-  content:"";position:absolute;inset:14% 22% 52% 20%;border-radius:50%;
-  background:radial-gradient(circle at 40% 35%,#fff 0 40%,#fff0 70%);
-  opacity:.85;pointer-events:none;
-}
-@keyframes churn{to{transform:rotate(360deg)}}
-.orb:hover,.orb:focus-visible{
-  transform:scale(1.16);
-  filter:saturate(1.5) brightness(1.25);
-  box-shadow:0 0 0 2px #0009, 0 0 30px #6cffb0aa, inset -6px -8px 14px #000a;
-  outline:none;
-}
-.orb:hover::before,.orb:focus-visible::before{opacity:.75}
-
-/* ---- primary navigation ----
-   Was six hover-preview buttons flanking a "No Pilot File Loaded" readout.
-   They looked like a menu and navigated nowhere: hovering filled a centre
-   panel with prose that is already on the page below, clicking only locked
-   that preview, and on a touch screen the whole thing did nothing at all.
-   Replaced with links that go where they say they go. No JS. ---- */
+/* ---- primary navigation: links that go where they say they go. No JS. ---- */
 .mainnav{
-  display:grid;margin-top:22px;gap:12px;
+  display:grid;margin-top:24px;gap:12px;
   grid-template-columns:repeat(3,1fr);
 }
 @media(max-width:860px){.mainnav{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.mainnav{grid-template-columns:1fr}}
+@media(max-width:520px){.mainnav.compact{grid-template-columns:1fr 1fr}.compact .nv{min-height:60px;padding:10px 12px}}
 
 .nv{
   display:flex;flex-direction:column;justify-content:center;gap:4px;
@@ -136,17 +103,13 @@ h1{
 .nv-k{font-size:11px;letter-spacing:.2em;color:var(--phos-dim)}
 .nv-t{font-size:clamp(15px,2vw,20px);line-height:1.15;text-shadow:0 0 10px #5cff5c66}
 .nv-d{font-size:11px;font-weight:400;letter-spacing:.04em;color:#7ee87e;line-height:1.4}
-
-/* the game manual is the destination the site exists to point at */
 .nv-hero{
-  grid-column:1/-1;min-height:104px;
   border-color:var(--chrome-hi);
   background-color:#0f4a16;
   box-shadow:0 0 0 1px #000, inset 0 0 0 2px #cfe6d0,
              inset 0 2px 0 rgba(255,255,255,.28), 0 0 30px #4cff4c33, 0 6px 18px #000a;
 }
 .nv-hero .nv-k{color:#9dff9d}
-
 .nv:hover,.nv:focus-visible{
   background-color:var(--crt-lit);
   box-shadow:0 0 0 1px #000, inset 0 0 0 2px #cfe6d0,
@@ -154,7 +117,6 @@ h1{
   outline:none;
 }
 .nv:active{transform:translateY(2px)}
-/* sweeping glass glare, kept from the old panels */
 .nv::before{
   content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
   background:linear-gradient(105deg,transparent,rgba(255,255,255,.22),transparent);
@@ -164,20 +126,58 @@ h1{
 @media(prefers-reduced-motion:reduce){
   .nv,.nv::before{transition:none}
 }
-/* anchored sections must not hide under anything */
-h2[id]{scroll-margin-top:18px}
+.jump{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin:18px 0 0;padding:0;list-style:none;font-size:12px;letter-spacing:.12em}
+.jump a{color:var(--phos-dim);text-decoration:none;border-bottom:1px dotted #2f9b3466}
+.jump a:hover{color:#9dff9d}
 
-/* ---- the flight manual card ---- */
+/* ---- sections ---- */
+main{margin-top:40px}
+h2{
+  font-size:22px;color:#9dff9d;margin:52px 0 12px;
+  border-bottom:2px solid #1d7a2455;padding-bottom:8px;
+  text-shadow:0 0 12px #4cff4c44;line-height:1.3;
+}
+h2[id],section[id]{scroll-margin-top:18px}
+h3{color:#9dff9d}
+main p, main li{font-weight:400;color:var(--text);line-height:1.85;font-size:14.5px;letter-spacing:.02em}
+main p{max-width:80ch}
+.note{font-size:12.5px !important;color:#6fcf6f !important}
+
+/* ---- the hangar: ten 1997 hulls ---- */
+.hangar{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:18px 0 10px;padding:0;list-style:none}
+@media(max-width:900px){.hangar{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.hangar{grid-template-columns:repeat(2,1fr)}}
+.hangar li{margin:0}
+.ship{
+  display:block;text-decoration:none;text-align:center;padding:10px 8px 10px;
+  border:3px solid var(--chrome-lo);border-radius:6px;background:#071a09;
+  box-shadow:0 0 0 1px #000, 0 6px 18px #000a;transition:border-color .2s, background-color .2s;
+}
+.ship img{display:block;width:100%;max-width:150px;height:auto;aspect-ratio:1;margin:0 auto 8px;
+  image-rendering:pixelated;border:2px solid #000;background:#000}
+.ship b{display:block;color:#9dff9d;font-size:15px;line-height:1.2}
+.ship span{display:block;color:var(--phos-dim);font-size:11px;font-weight:400;letter-spacing:.08em;margin-top:3px}
+.ship:hover,.ship:focus-visible{border-color:var(--phos);background:#0d3d12;outline:none}
+
+.sheet{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:20px;align-items:start;margin:22px 0}
+@media(max-width:700px){.sheet{grid-template-columns:1fr}.sheet > a{max-width:260px;margin:0 auto;display:block;width:100%}}
+.sheet img{width:100%;height:auto;display:block;border:2px solid var(--chrome-lo);border-radius:4px;background:#000}
+.sheet a:hover img{border-color:var(--phos)}
+
+/* ---- panels (flight manual, licence, examples) ---- */
 .manual{
-  display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;
-  margin:26px 0 8px;padding:20px;
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;
+  margin:22px 0 8px;padding:20px;
   border:3px solid var(--chrome);border-radius:8px;background:#071a09;
   box-shadow:0 0 0 1px #000, inset 0 0 0 2px var(--chrome-lo), 0 6px 18px #000a;
 }
+.manual.one{grid-template-columns:1fr}
 @media(max-width:820px){.manual{grid-template-columns:1fr}}
+.manual > *{min-width:0}
 .manual-k{font-size:11px;letter-spacing:.2em;color:var(--phos-dim);margin-bottom:8px}
-.manual h3{margin:0 0 10px;font-size:20px;color:#9dff9d;text-shadow:0 0 12px #4cff4c44}
-.manual p{font-weight:400;color:#7ee87e;font-size:13px;line-height:1.7;margin:0 0 10px}
+.manual h3{margin:0 0 10px;font-size:18px;text-shadow:0 0 12px #4cff4c44}
+.manual p,.manual li{font-weight:400;color:#7ee87e;font-size:13.5px;line-height:1.7;margin:0 0 10px}
+.manual ul{margin:0 0 10px;padding-left:20px}
 .manual-go{
   display:inline-block;margin-top:4px;padding:9px 16px;text-decoration:none;
   color:#05070a;background:var(--phos);border-radius:4px;font-size:13px;
@@ -185,49 +185,97 @@ h2[id]{scroll-margin-top:18px}
 }
 .manual-go:hover{background:#9dff9d}
 .manual-shots{display:grid;gap:10px}
-.manual-shots img{width:100%;display:block;border:2px solid var(--chrome-lo);border-radius:4px;background:#000}
+.manual-shots img{width:100%;height:auto;display:block;border:2px solid var(--chrome-lo);border-radius:4px;background:#000}
 .manual-shots a:hover img{border-color:var(--phos)}
+.shots2{grid-template-columns:1fr 1fr;margin:12px 0}
+@media(max-width:700px){.shots2{grid-template-columns:1fr}}
 
-/* ---- lore ---- */
-.lore{margin-top:52px}
-.lore h2{
-  font-size:22px;color:#9dff9d;margin:34px 0 12px;
-  border-bottom:2px solid #1d7a2455;padding-bottom:8px;
-  text-shadow:0 0 12px #4cff4c44;
+pre{
+  margin:10px 0;padding:12px 14px;background:#000;border:2px solid var(--chrome-lo);border-radius:4px;
+  color:#c9f7c9;font:400 12.5px/1.6 "Courier New",Courier,monospace;letter-spacing:0;
+  white-space:pre-wrap;word-break:break-all;
 }
-.lore p{font-weight:400;color:#8fe98f;line-height:1.85;font-size:14.5px;max-width:76ch;letter-spacing:.02em}
-.lore .drop::first-letter{font-size:2.6em;line-height:.8;float:left;padding:6px 10px 0 0;color:#c26bd8}
+pre code{background:none;padding:0}
+.credit{border-left:4px solid var(--violet);background:#c26bd80d;color:#e2c8ec}
+
+.uses{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0;padding:0;list-style:none}
+@media(max-width:700px){.uses{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.uses{grid-template-columns:1fr}}
+.uses li{margin:0 !important}
+.uses a{display:block;padding:10px 12px;border:2px solid var(--chrome-lo);border-radius:4px;text-decoration:none;color:#9dff9d;background:#0a240c;font-weight:700;font-size:13px}
+.uses a span{display:block;font-weight:400;color:#6fcf6f;font-size:11.5px;margin-top:2px;letter-spacing:.02em}
+.uses a:hover{border-color:var(--phos);background:#0d3d12}
+
+/* ---- lineage timeline ---- */
+.timeline{list-style:none;margin:18px 0;padding:0 0 0 22px;border-left:3px solid #1d7a24}
+.timeline li{position:relative;margin:0 0 22px;padding-left:6px}
+.timeline li::before{
+  content:"";position:absolute;left:-36px;top:4px;width:20px;height:20px;border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #eafcff 0 6%, #7fe9ff 18%, #2aa7d8 42%, #10506e 72%, #041722 100%);
+  box-shadow:0 0 0 2px #000, 0 0 12px #2aa7d855;
+}
+.timeline .yr{display:block;color:var(--violet);font-size:12px;letter-spacing:.2em}
+.timeline h3{margin:2px 0 4px;font-size:17px}
+.timeline p{margin:0}
+
+/* ---- the catalogue table ---- */
+.tablewrap{overflow-x:auto;margin:16px 0;border:3px solid var(--chrome);border-radius:6px;background:#071a08;
+  box-shadow:inset 0 0 0 2px var(--chrome-lo),0 6px 18px #000a}
+table{border-collapse:collapse;width:100%;font-size:12.5px;font-weight:400;color:var(--text)}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid #1d7a2455}
+th{color:#9dff9d;font-weight:700;letter-spacing:.1em;font-size:11px;background:#0d3d12}
+td.n{text-align:right;white-space:nowrap}
+td q{display:block;margin-top:6px;color:#c9a6d8;font-style:italic;line-height:1.6}
+td a{font-weight:700}
+/* phone: each row becomes a card instead of a wide table */
+@media(max-width:760px){
+  .tablewrap{overflow:visible}
+  table,thead,tbody,tr,th,td{display:block}
+  thead{position:absolute;left:-9999px}
+  tr{padding:10px 0;border-bottom:2px solid #1d7a24}
+  td{border:0;padding:3px 12px}
+  td.n{text-align:left}
+  td[data-k]::before{content:attr(data-k) ": ";color:var(--phos-dim);font-size:11px;letter-spacing:.12em}
+}
+
+/* ---- the old lore ---- */
+.lore .drop::first-letter{font-size:2.6em;line-height:.8;float:left;padding:6px 10px 0 0;color:var(--violet)}
 blockquote{
-  margin:26px 0;padding:14px 20px;border-left:4px solid #c26bd8;
+  margin:26px 0;padding:14px 20px;border-left:4px solid var(--violet);
   color:#c9a6d8;font-weight:400;font-style:italic;background:#c26bd80d;
 }
 .plate{
   border:3px solid var(--chrome);border-radius:6px;background:#071a08;
   padding:16px 18px;margin:22px 0;box-shadow:inset 0 0 0 2px var(--chrome-lo),0 6px 18px #000a;
 }
-.plate h3{margin:0 0 10px;font-size:14px;color:#9dff9d;letter-spacing:.16em}
-.plate ul{margin:0;padding-left:18px;font-weight:400;color:#8fe98f;line-height:1.9;font-size:13.5px}
-.plate a{color:#7fe9ff;text-decoration:none;border-bottom:1px dotted #7fe9ff66;word-break:break-word}
-.plate a:hover{color:#fff;background:#0d3d12}
+.plate h3{margin:0 0 10px;font-size:14px;letter-spacing:.16em}
+.plate ul{margin:0;padding-left:18px}
+.plate li{line-height:1.9;font-size:13.5px}
+.plate a,.lore a,main p a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted #7fe9ff66;word-break:break-word}
+.plate a:hover,main p a:hover{color:#fff;background:#0d3d12}
+.chapter{margin-top:70px;padding-top:6px;border-top:3px double var(--chrome-lo)}
+.chapter-k{display:block;font-size:11px;letter-spacing:.3em;color:var(--violet);margin-top:16px}
 footer{margin-top:52px;text-align:center;color:var(--phos-dim);font-size:11px;line-height:2}
-footer a{color:#7fe9ff;text-decoration:none}
+footer a{color:var(--cyan);text-decoration:none}
 
 /* ---- flight recorder: the landing gif in a chrome bezel ---- */
+.recorders{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:18px;margin:22px 0}
 .recorder{
-  border:14px solid transparent;border-radius:24px;margin:26px 0;
+  border:14px solid transparent;border-radius:24px;margin:0;
   background:
     linear-gradient(#000,#000) padding-box,
     linear-gradient(160deg,var(--chrome-hi),var(--chrome-lo) 40%,var(--chrome-hi) 62%,#2a2f31) border-box;
   box-shadow:0 0 0 2px #000, 0 10px 30px #000c, inset 0 0 40px #000;
-  padding:10px;max-width:560px;
+  padding:10px;min-width:0;
 }
 .recorder img{display:block;width:100%;height:auto;border-radius:8px;image-rendering:auto}
 .recorder .rec-cap{
-  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  display:flex;justify-content:space-between;gap:4px 10px;flex-wrap:wrap;
   font-size:11px;color:var(--phos-dim);letter-spacing:.14em;padding:10px 4px 2px;
 }
 .recorder .rec-cap b{color:#9dff9d}
-.recorder .rec-cap .live{color:#c26bd8}
+.recorder .rec-cap .live{color:var(--violet)}
+.recorder .rec-cap a{color:var(--cyan);text-decoration:none}
 </style>
 </head>
 <body>
@@ -235,66 +283,299 @@ footer a{color:#7fe9ff;text-decoration:none}
 
 <div class="frame">
 <header>
-  <h1>YODACON</h1>
-  <p class="tag">THE LOSING TEAM &nbsp;·&nbsp; THE SHIP THAT GOT BUILT ANYWAY &nbsp;·&nbsp; MIT LICENSE</p>
+  <h1>YODACON<small>SHIP PACK</small></h1>
+  <p class="tag">Free 1990s starships for your game.</p>
+  <p class="sub">Ten hulls designed and rendered by Paul Richeson for his <em>Escape Velocity</em>
+  plugin ConEx in 1997 — recovered byte for byte and repackaged for anyone's game, web page or 3D scene.
+  GPL-2.0-or-later.</p>
   <p class="telemetry">
-    <span>249 1054</span><span>orbit 24987</span><span>249 4545 SET</span><span>249 1054 SET</span><span>vec ok</span>
+    <span>10 HULLS</span><span>36 FRAMES EACH</span><span>32–80 PX</span><span>2 EDITIONS</span><span>GPL-2.0+</span>
   </p>
-  <div class="arc">
-    <div class="orb" tabindex="0" aria-hidden="true"></div>
-    <div class="orb" tabindex="0" aria-hidden="true"></div>
-    <div class="orb" tabindex="0" aria-hidden="true"></div>
-    <div class="orb" tabindex="0" aria-hidden="true"></div>
-    <div class="orb" tabindex="0" aria-hidden="true"></div>
-  </div>
 </header>
 
-<nav class="mainnav" aria-label="Primary">
-  <a class="nv nv-hero" href="docs/game/">
-    <span class="nv-k">FLIGHT MANUAL</span>
-    <span class="nv-t">The Game As It Stands</span>
-    <span class="nv-d">Every screen · the zero-sum economy · reentry physics</span>
+<nav class="mainnav" aria-label="Ship pack">
+  <a class="nv nv-hero" href="ship-pack/">
+    <span class="nv-k">01 · BROWSE</span>
+    <span class="nv-t">Browse the ships</span>
+    <span class="nv-d">Every hull, every picture, every frame</span>
   </a>
-  <a class="nv" href="#lore"><span class="nv-k">01</span><span class="nv-t">The Lore</span></a>
-  <a class="nv" href="#conex"><span class="nv-k">02</span><span class="nv-t">ConEx 1.2</span></a>
-  <a class="nv" href="#reentry"><span class="nv-k">03</span><span class="nv-t">Reentry</span></a>
-  <a class="nv" href="#sixstages"><span class="nv-k">04</span><span class="nv-t">Six Stages</span></a>
-  <a class="nv" href="#courier"><span class="nv-k">05</span><span class="nv-t">The Courier Lane</span></a>
-  <a class="nv" href="https://github.com/yodacon/gonex"><span class="nv-k">06</span><span class="nv-t">Source &#8599;</span></a>
+  <a class="nv nv-hero" href="https://github.com/yodacon/yodacon-ship-pack/releases">
+    <span class="nv-k">02 · DOWNLOAD</span>
+    <span class="nv-t">Download &#8599;</span>
+    <span class="nv-d">Release zips on GitHub</span>
+  </a>
+  <a class="nv nv-hero" href="ship-pack/demo/?edition=conex&amp;ship=yodacon">
+    <span class="nv-k">03 · FLY</span>
+    <span class="nv-t">Play the demo</span>
+    <span class="nv-d">Spin and fly any hull in your browser</span>
+  </a>
 </nav>
+<ul class="jump" aria-label="On this page">
+  <li><a href="#ships">The ships</a></li>
+  <li><a href="#use">Use it anywhere</a></li>
+  <li><a href="#licence">Licence</a></li>
+  <li><a href="#lineage">Lineage</a></li>
+  <li><a href="#originals">The originals</a></li>
+  <li><a href="#flying">Who's flying them</a></li>
+  <li><a href="#yodacon">The Yodacon story</a></li>
+  <li><a href="docs/game/">Flight manual</a></li>
+</ul>
 
-<!-- ============================ LORE ============================ -->
-<main class="lore">
+<main>
+
+<!-- ============================ THE SHIPS ============================ -->
+<section id="ships" aria-labelledby="ships-h">
+  <h2 id="ships-h">&gt; THE SHIPS — CONEX 1.2, 1997</h2>
+  <p>Ten hulls from Paul Richeson's ConEx 1.2 (dated 9 November 1997, released the
+  evening of 28 November 1997). Each ships with 36 rotation frames (sprites 32–80 px)
+  plus its target, shipyard, comm and thumbnail pictures. Pick one to fly it in the demo.</p>
+
+  <ul class="hangar">
+    <li><a class="ship" href="ship-pack/demo/?edition=conex&amp;ship=small-pin"><img src="ship-pack/conex/ships/small-pin/yard.png" width="100" height="100" loading="lazy" alt="Small Pin, shipyard picture"><b>Small Pin</b><span>36 px sprite</span></a></li>
+    <li><a class="ship" href="ship-pack/demo/?edition=conex&amp;ship=medium-pin"><img src="ship-pack/conex/ships/medium-pin/yard.png" width="100" height="100" loading="lazy" alt="Medium Pin, shipyard picture"><b>Medium Pin</b><span>50 px sprite</span></a></li>
+    <li><a class="ship" href="ship-pack/demo/?edition=conex&amp;ship=large-pin"><img src="ship-pack/conex/ships/large-pin/yard.png" width="100" height="100" loading="lazy" alt="Large Pin, shipyard picture"><b>Large Pin</b><span>65 px sprite</span></a></li>
+    <li><a class="ship" href="ship-pack/demo/?edition=conex&amp;ship=dart"><img src="ship-pack/conex/ships/dart/yard.png" width="100" height="100" loading="lazy" alt="Dart, shipyard picture"><b>Dart</b><span>80 px sprite</span></a></li>
+    <li><a class="ship" href="ship-pack/demo/?edition=conex&amp;ship=defender"><img src="ship-pack/conex/ships/defender/yard.png" width="100" height="100" loading="lazy" alt="Defender, shipyard picture"><b>Defender</b><span>36 px sprite</span></a></li>
+    <li><a class="ship" href="ship-pack/demo/?edition=conex&amp;ship=gryphon"><img src="ship-pack/conex/ships/gryphon/yard.png" width="100" height="100" loading="lazy" alt="Gryphon, shipyard picture"><b>Gryphon</b><span>32 px sprite</span></a></li>
+    <li><a class="ship" href="ship-pack/demo/?edition=conex&amp;ship=trident"><img src="ship-pack/conex/ships/trident/yard.png" width="100" height="100" loading="lazy" alt="Trident, shipyard picture"><b>Trident</b><span>35 px sprite</span></a></li>
+    <li><a class="ship" href="ship-pack/demo/?edition=conex&amp;ship=necromancer"><img src="ship-pack/conex/ships/necromancer/yard.png" width="100" height="100" loading="lazy" alt="Necromancer, shipyard picture"><b>Necromancer</b><span>50 px sprite</span></a></li>
+    <li><a class="ship" href="ship-pack/demo/?edition=conex&amp;ship=yodacon"><img src="ship-pack/conex/ships/yodacon/yard.png" width="100" height="100" loading="lazy" alt="Yodacon, shipyard picture"><b>Yodacon</b><span>70 px sprite</span></a></li>
+    <li><a class="ship" href="ship-pack/demo/?edition=conex&amp;ship=tomaquad"><img src="ship-pack/conex/ships/tomaquad/yard.png" width="100" height="100" loading="lazy" alt="Tomaquad, shipyard picture"><b>Tomaquad</b><span>60 px sprite</span></a></li>
+  </ul>
+
+  <div class="sheet">
+    <a href="ship-pack/conex/contact-sheet.png"><img src="ship-pack/conex/contact-sheet.png" width="608" height="1406" loading="lazy"
+       alt="Contact sheet of the ten 1997 ConEx hulls: for each ship a rotation frame, its target picture, shipyard picture, comm picture and thumbnail."></a>
+    <div>
+      <h3>Two editions</h3>
+      <p><strong>ConEx 1.2</strong> (1997) — the <em>Escape Velocity</em> plugin: the ten hulls above.</p>
+      <p><strong>ConEx Override 1.0</strong> (1998) — Paul Richeson's rebuild for
+      <em>Escape Velocity Override</em>: eleven ship records — the <strong>Callisto</strong> and a
+      “1/4 Defender” are new, the Medium Pin is gone — with larger sprites (40–104 px) and sixteen landing pictures
+      (thirteen distinct) rendered in Bryce. It is in the pack as its own edition.</p>
+      <p class="note">The contact sheet shows the 1997 hulls: frame, target, yard, comm and thumb per ship.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ USE IT ANYWHERE ============================ -->
+<section id="use" aria-labelledby="use-h">
+  <h2 id="use-h">&gt; USE IT ANYWHERE</h2>
+  <p>The pictures are plain PNGs — sprite sheets, single frames and the 1997 pictures — so they
+  drop into anything. Working examples:</p>
+  <ul class="uses">
+    <li><a href="ship-pack/examples/dom/">DOM / CSS<span>sprite sheet as a background</span></a></li>
+    <li><a href="ship-pack/examples/canvas/">Canvas 2D<span>drawImage, frame by frame</span></a></li>
+    <li><a href="ship-pack/examples/threejs/">three.js<span>a hull in a 3D scene</span></a></li>
+    <li><a href="ship-pack/examples/phaser/">Phaser<span>a spritesheet you can fly</span></a></li>
+    <li><a href="ship-pack/examples/pixi/">PixiJS<span>animated sprite</span></a></li>
+    <li><a href="ship-pack/examples/web-component/">&lt;yodacon-ship&gt;<span>one tag, no build step</span></a></li>
+  </ul>
+  <div class="manual one">
+    <div>
+      <div class="manual-k">EMBED · THREE LINES</div>
+<pre><code>&lt;script type="module"
+  src="https://yodacon.org/ship-pack/lib/yodacon-ship-pack.js"&gt;&lt;/script&gt;
+&lt;yodacon-ship ship="yodacon" spin&gt;&lt;/yodacon-ship&gt;</code></pre>
+      <p class="note">Swap <code>ship="yodacon"</code> for any slug: small-pin, medium-pin, large-pin, dart,
+      defender, gryphon, trident, necromancer, yodacon, tomaquad.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ LICENCE ============================ -->
+<section id="licence" aria-labelledby="licence-h">
+  <h2 id="licence-h">&gt; THE LICENCE, IN PLAIN WORDS</h2>
+  <div class="manual">
+    <div>
+      <div class="manual-k">GPL-2.0-OR-LATER · © 1997–1998 PAUL RICHESON</div>
+      <ul>
+        <li><strong>Free</strong> to use, modify and sell in your project.</li>
+        <li><strong>Credit</strong> “Paul Richeson (ConEx)” and the Yodacon Ship Pack.</li>
+        <li>If you <strong>distribute the art</strong>, distribute it under GPL-2.0-or-later with the licence text.</li>
+        <li>A game that <strong>builds the art into itself</strong> should itself be GPL-compatible.</li>
+      </ul>
+      <p>The simplest safe routes: license your project under the GPL, or keep the pack as a
+      separate, unmodified vendored folder with its <code>LICENSE</code> beside it.</p>
+      <p class="note">Not legal advice. When in doubt, read the
+      <a href="https://www.gnu.org/licenses/gpl-faq.html">GPL FAQ</a> or the pack's
+      <a href="ship-pack/LICENSE">LICENSE</a>.</p>
+    </div>
+    <div>
+      <div class="manual-k">CREDIT LINE · COPY AND PASTE</div>
+<pre class="credit"><code>Ships from the Yodacon Ship Pack by Paul Richeson (ConEx, 1997), GPL-2.0-or-later — https://github.com/yodacon/yodacon-ship-pack</code></pre>
+      <p><a class="manual-go" href="https://github.com/yodacon/yodacon-ship-pack">The repository &#8599;</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ LINEAGE ============================ -->
+<section id="lineage" aria-labelledby="lineage-h">
+  <h2 id="lineage-h">&gt; LINEAGE — WHERE THESE SHIPS FIRST FLEW</h2>
+  <p>The oldest date in any ConEx file: the plugin was created on Sunday 9 November 1997 and released on the
+  evening of the 28th. Its home page, <code>geocities.com/SiliconValley/Way/9298</code>, is lost.
+  <a href="https://github.com/yodacon/yodacon-ship-pack/blob/main/TIMELINE.md">The full timeline</a>.</p>
+  <ol class="timeline">
+    <li>
+      <span class="yr">1997</span>
+      <h3>ConEx — Paul Richeson</h3>
+      <p>An <em>Escape Velocity</em> plugin: 538 resources in a Mac resource fork, no code.
+      Designed, rendered and published all ten hulls for the Consolidated Express government.
+      <a href="#originals">The original archive</a>.</p>
+    </li>
+    <li>
+      <span class="yr">1998</span>
+      <h3>ConEx Override — Paul Richeson</h3>
+      <p>Started over for <em>Escape Velocity Override</em>: larger sprites (40–104 px), adds the Callisto
+      and drops the Medium Pin, new landing pictures rendered in Bryce. <a href="#originals">The original archive</a>.</p>
+    </li>
+    <li>
+      <span class="yr">2005</span>
+      <h3>konex — Joshua Bussdieker</h3>
+      <p>A standalone C++/OpenGL remake. Its cast is ConEx Override's ten hulls — sprites carried over
+      from the 1998 plugin, some rescaled to power-of-two textures — plus two of its own, Advisor and Citrus.
+      Kept ConEx's splash screen; only deathmatch and “Sunday Drive”.
+      <a href="https://github.com/yodacon/konex">yodacon/konex &#8599;</a></p>
+    </li>
+    <li>
+      <span class="yr">2026</span>
+      <h3>Gonex — Team Yodacon</h3>
+      <p>The Go/Ebitengine port of konex that restores ConEx's game, and adds a reentry-trader layer.
+      Flies konex's art and the 1997 originals beside it, as <code>&lt;ship&gt;97</code>.
+      <a href="https://github.com/yodacon/gonex">yodacon/gonex &#8599;</a></p>
+    </li>
+    <li>
+      <span class="yr">2026</span>
+      <h3>The Yodacon Ship Pack — Team Yodacon</h3>
+      <p>Every picture recovered byte for byte from the original resource forks and packaged for
+      anyone's project. <a href="ship-pack/">Browse it</a> ·
+      <a href="https://github.com/yodacon/yodacon-ship-pack">repository &#8599;</a></p>
+    </li>
+  </ol>
+  <p class="note">The organization: <a href="https://github.com/yodacon/yodacon">yodacon/yodacon</a>.
+  The author: <a href="https://paulricheson.com">paulricheson.com</a>.</p>
+</section>
+
+<!-- ============================ ORIGINALS ============================ -->
+<section id="originals" aria-labelledby="originals-h">
+  <h2 id="originals-h">&gt; THE ORIGINALS</h2>
+  <p>Both plugins were published to Ambrosia Software's add-on archive and survive in the
+  Cythera Guides mirror. These are their catalogue rows, verbatim, 1990s spelling and all.
+  The archives are rehosted with the pack.</p>
+  <div class="tablewrap">
+  <table>
+    <thead>
+      <tr><th scope="col">Title and description</th><th scope="col">Category</th><th scope="col">Author</th><th scope="col">Date</th><th scope="col">Rating</th><th scope="col">Votes</th><th scope="col">Downloads</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="ship-pack/sources/ev/792_ConEx12.sit.hqx">ConEx12.sit</a> (1.10 MB)
+          <q>ConEx 1.2 fixes all the bugs in ConEx 1.1, and gives the ship Dart a sleeker new look! It is equiped with 10 all new ships for the government called Consolidated Express, which is now 11 systems strong. Let the 35 new missions make you travel throught the galaxy with a set of linked missions, teaching you how to fly. Be sure to land on Conex, Exeon, and Cenron, their backgrounds will amaze you.</q>
+          <a href="http://www.cytheraguides.com/archives/ambrosia_addons/ev/Plugins/792_ConEx12.sit.hqx">Cythera mirror copy</a></td>
+        <td data-k="Category">Plugins</td><td data-k="Author">Anonymous</td><td data-k="Date">1999/12/04</td>
+        <td class="n" data-k="Rating">4.00</td><td class="n" data-k="Votes">4</td><td class="n" data-k="Downloads">3400</td>
+      </tr>
+      <tr>
+        <td><a href="ship-pack/sources/evo/2437_ConExOverride.sit.hqx">ConExOverride.sit</a> (2.70 MB)
+          <q>ConEx Override is a major change since the original. I started all over again to make it better and to be compatible with ConEx Override. It has 12 new background pictures (when you land) rendered in Bryce, 10 brand spanken19 new ships, lots and lots of missions, and other gizmos. ConEx stands for Consolidated Express which you might have guessed was the shipping company to the original EV.</q>
+          <a href="http://www.cytheraguides.com/archives/ambrosia_addons/evo/Plugins/2437_ConExOverride.sit.hqx">Cythera mirror copy</a></td>
+        <td data-k="Category">Plugins</td><td data-k="Author">Anonymous</td><td data-k="Date">1998/09/26</td>
+        <td class="n" data-k="Rating">1.75</td><td class="n" data-k="Votes">12</td><td class="n" data-k="Downloads">3919</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="manual-shots shots2">
+    <a href="ship-pack/sources/screenshots/cythera-ev-conex12.png"><img src="ship-pack/sources/screenshots/cythera-ev-conex12.png" loading="lazy"
+       alt="Screenshot of the ConEx12.sit row in the Cythera Guides mirror of Ambrosia's Escape Velocity add-on catalogue"></a>
+    <a href="ship-pack/sources/screenshots/cythera-evo-conexoverride.png"><img src="ship-pack/sources/screenshots/cythera-evo-conexoverride.png" loading="lazy"
+       alt="Screenshot of the ConExOverride.sit row in the Cythera Guides mirror of Ambrosia's Escape Velocity Override add-on catalogue"></a>
+  </div>
+  <p class="note">“Anonymous” is how the archive lists the uploader; the plugins themselves name their
+  creator: “ConEx is property of Paul Richeson … Creator: Paul Richeson”.
+  Catalogues: <a href="http://www.cytheraguides.com/archives/ambrosia_addons/ev/">Cythera Guides — EV add-ons</a> ·
+  <a href="http://www.cytheraguides.com/archives/ambrosia_addons/evo/">Cythera Guides — EV Override add-ons</a> ·
+  all rehosted files in <a href="ship-pack/sources/">ship-pack/sources/</a>.
+  Originally published through Ambrosia Software's add-on pages at
+  <a href="http://www.ambrosiasw.com/games/ev/">ambrosiasw.com/games/ev</a> (the original Ambrosia site, now offline);
+  see Ambrosia's <a href="https://web.archive.org/web/20000531134400/http://www.ambrosiasw.com/games/ev/addons.html">EV add-on library</a>
+  (Wayback Machine, 31 May 2000) and <a href="https://web.archive.org/web/19981205225923/http://ftp.ambrosiasw.com/">FTP server</a>
+  (Wayback Machine, 5 Dec 1998). The Wayback Machine also kept
+  <a href="https://web.archive.org/web/20130413003920/http://www.ambrosiasw.com/assets/files/addons/ev/ConEx12.sit.hqx">Ambrosia's own ConEx 1.2 file</a>
+  (13 Apr 2013): its checksum matches the rehosted copy, byte for byte. Ambrosia's copy of ConEx Override was not archived;
+  it survived in the Cythera Guides mirror. The full record is in <a href="ship-pack/sources/">ship-pack/sources/</a>.
+  <em>Escape Velocity</em> is Ambrosia Software's.</p>
+</section>
+
+<!-- ============================ LEADERBOARD ============================ -->
+<section id="flying" aria-labelledby="flying-h">
+  <h2 id="flying-h">&gt; WHO'S FLYING THEM</h2>
+  <div class="manual">
+    <div>
+      <div class="manual-k">THE LEADERBOARD · RANKED BY DESIGNS FLOWN</div>
+      <h3>#1 · Gonex — 11 / 11</h3>
+      <p>The Go port of konex, with the ConEx trade game restored, by Team Yodacon. It flies all eleven designs: the 1997 originals, and konex’s cast, which is ConEx Override’s art.</p>
+      <p><a class="manual-go" href="https://github.com/yodacon/yodacon-ship-pack/blob/main/USED-IN.md">See the full list &#8599;</a></p>
+    </div>
+    <div>
+      <div class="manual-k">GET LISTED</div>
+      <h3>Shipped something with these hulls?</h3>
+      <p>A game, mod, demo or video. Fill in the issue form
+      <a href="https://github.com/yodacon/yodacon-ship-pack/issues/new/choose">“Used in: list my project”</a>
+      and a reviewer adds the row. The rules are in
+      <a href="https://github.com/yodacon/yodacon-ship-pack/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ THE YODACON STORY ============================ -->
+<div class="chapter lore">
+  <span class="chapter-k">PART TWO · THE GAME THESE SHIPS FLY IN</span>
+  <h2 id="yodacon">&gt; YODACON — THE LOSING TEAM'S STARSHIP</h2>
+
+  <nav class="mainnav compact" aria-label="The game">
+    <a class="nv nv-hero" href="docs/game/" style="grid-column:1/-1">
+      <span class="nv-k">FLIGHT MANUAL</span>
+      <span class="nv-t">The Game As It Stands</span>
+      <span class="nv-d">Every screen · the zero-sum economy · reentry physics</span>
+    </a>
+    <a class="nv" href="#lore"><span class="nv-k">01</span><span class="nv-t">The Lore</span></a>
+    <a class="nv" href="#conex"><span class="nv-k">02</span><span class="nv-t">ConEx 1.2</span></a>
+    <a class="nv" href="#reentry"><span class="nv-k">03</span><span class="nv-t">Reentry</span></a>
+    <a class="nv" href="#sixstages"><span class="nv-k">04</span><span class="nv-t">Six Stages</span></a>
+    <a class="nv" href="#courier"><span class="nv-k">05</span><span class="nv-t">The Courier Lane</span></a>
+    <a class="nv" href="https://github.com/yodacon/gonex"><span class="nv-k">06</span><span class="nv-t">Source &#8599;</span></a>
+  </nav>
 
   <h2 id="lore">&gt; THE GROUP FORMERLY KNOWN AS THE OUTSIDERS</h2>
   <p class="drop">Alaska had too many children and not enough school. The solution was portables — plywood boxes on blocks, parked in the snow outside the building that was already full. We were the kids in them. Our core rooms rotated between those arctic portables, and the building called us what we were: <em>the Outsiders</em>. Not a nickname anyone chose. A location.</p>
 
-  <p>Getting there was its own long instrument. I was the last stop on a long bus ride, to a place that was not a city and not even outside a city — the buses still delivered kids to postboxes. Postboxes were snow-powered waiting areas. Chains on the wheels. A flashing white light on the roof. Sparkling strobes of white thrown against falling snow, and ice grown thick on the windows in the back of the bus, where you scratched a hole with a fingernail to see whether your stop had arrived yet.</p>
+  <p>Getting there was its own long instrument: the last stop on a long bus ride, to a place that was not a city and not even outside a city — the buses still delivered kids to postboxes, snow-powered waiting areas. Chains on the wheels, a flashing white light on the roof, strobes thrown against falling snow, and ice grown thick on the back windows, where you scratched a hole with a fingernail to see whether your stop had arrived yet.</p>
 
   <h2>&gt; THE NAMING CONTEST</h2>
-  <p>The next year, they split the Outsiders into teams and let us rename our own home rooms. This was not cosmetic. A team name meant the teachers on that team shared subjects across the same core students — the name was the roster, the schedule, the people you'd have for a year. So the contest ran for a week, and the students made it into a war of insignia and icons. Everyone was drawing crests in the margins.</p>
+  <p>The next year, they split the Outsiders into teams and let us rename our own home rooms. A team name meant the teachers on that team shared subjects across the same core students — the name was the roster, the schedule, the people you'd have for a year. The contest ran for a week, and the students made it into a war of insignia and icons.</p>
 
-  <p>I had <strong>Infini-D</strong>. Actual 3D sculpting software, on an actual Mac, in the middle of a middle-school popularity contest. So while other teams drew, I <em>rendered</em>. My team's name was the <strong>Yodacons</strong>, and the Yodacon became a ship — modeled, lit, and rendered as promotional material for a home room.</p>
+  <p>I had <strong>Infini-D</strong> — actual 3D sculpting software, on an actual Mac, in the middle of a middle-school popularity contest. So while other teams drew, I <em>rendered</em>. My team's name was the <strong>Yodacons</strong>, and the Yodacon became a ship — modeled, lit, and rendered as promotional material for a home room.</p>
 
-  <p>It came down to two names on the board: the Yodacons, or the Tauruses. The students argued for a week. Then the teachers' vote shifted the final verdict, and the outside-portable core group was given its new title: <strong>Taurus</strong>.</p>
+  <p>It came down to two names: the Yodacons, or the Tauruses. The students argued for a week. Then the teachers' vote shifted the final verdict, and the outside-portable core group was given its new title: <strong>Taurus</strong>.</p>
 
   <blockquote>The losers were never winners. That is the sad beginning of the Yodacon name.</blockquote>
 
   <h2>&gt; RED AND WHITE CHESS PIECES</h2>
-  <p>The Yodacons lost the name and kept the room. We got a drama-based leader and the lesson plan continued. The advanced classes were for the Outsiders — for the other ones, the inside ones — so we did algebra and calculus with red and white chess pieces, working the same problems by different methods, for fun, because <em>don't get left behind</em> was the whole curriculum underneath the curriculum. That is what the losing team did with a year: it kept doing the math anyway, and it enjoyed it.</p>
+  <p>The Yodacons lost the name and kept the room. We got a drama-based leader and the lesson plan continued. The advanced classes were for the inside ones, so we did algebra and calculus with red and white chess pieces, working the same problems by different methods, for fun, because <em>don't get left behind</em> was the whole curriculum underneath the curriculum. The losing team kept doing the math anyway, and enjoyed it.</p>
 
   <h2>&gt; GIVING THE SHIP A PURPOSE</h2>
-  <p>But the ship existed. A 3D-rendered starship, built by a fourteen-year-old for a home room that never got the name, cannot be left to have been done in vain. So we give it a purpose. This organization is the revival: the Yodacon flies again, out of the old <strong>ConEx</strong> Escape Velocity references, out of a meme, a personal story, a moment in time preserved by a popularity contest in a child's life.</p>
+  <p>But the ship existed, and a starship built by a fourteen-year-old for a home room that never got the name cannot be left to have been done in vain. This organization is the revival: the Yodacon flies again, out of the old <strong>ConEx</strong> Escape Velocity references, out of a meme, a personal story, a moment in time preserved by a popularity contest in a child's life.</p>
 
-  <p>Yodacon.org is the crew of shipmates on the Yodacon. Our intention is to <strong>expand upon the original game</strong> — to take the ship out of a lost vote and put it back into a universe where it can actually be flown, traded, refueled, and landed. Everything here is MIT licensed, because the whole point is that it belongs to the people who show up for it.</p>
+  <p>Yodacon.org is the crew of shipmates on the Yodacon. Our intention is to <strong>expand upon the original game</strong> — to take the ship out of a lost vote and put it back into a universe where it can actually be flown, traded, refueled, and landed. Yodacon's own work is MIT licensed, because the point is that it belongs to the people who show up for it; the 1997 ship art in the pack is Paul Richeson's, under GPL-2.0-or-later.</p>
 
   <h2 id="conex">&gt; CONEX — WHERE THE YODACON IS DOCKED</h2>
-  <p><strong>ConEx</strong> is Paul Richeson's plugin for Ambrosia's <em>Escape Velocity</em>, and it is where the Yodacon was published into the archives. ConEx 1.2 shipped 10 new ships for a government called Consolidated Express, 11 systems, and 35 linked missions that teach you how to fly — with instructions to be sure to land on Conex, Exeon, and Cenron, because their backgrounds will amaze you. It was posted in December 1999. It has been downloaded a few thousand times by people who are no longer fourteen. 🔥</p>
+  <p><strong>ConEx</strong> is Paul Richeson's plugin for Ambrosia's <em>Escape Velocity</em>, and it is where the Yodacon was published into the archives. ConEx 1.2 shipped 10 new ships for a government called Consolidated Express, 11 systems, and 35 linked missions that teach you how to fly — with instructions to be sure to land on Conex, Exeon, and Cenron, because their backgrounds will amaze you. Its row in the add-on archive is dated December 1999, and it has been downloaded a few thousand times by people who are no longer fourteen.</p>
 
-  <p>We have the original archive. The work is to open it, pull the resources out into individual files, fix what 1999 left broken, and get the result hosted where people can still play it.</p>
+  <p>We have the original archive. The work was to open it, pull the resources out into individual files, fix what the 1990s left broken, and get the result hosted where people can still play it — and, now, where anyone can fly its ships: <a href="#ships">the ship pack</a>.</p>
 
   <h2 id="game">&gt; TEAM YODACON — THE GAME</h2>
-  <p>Team Yodacon is a space commodity trading game. Its signature system is the landing. We use lithium-injected pellets, cooked with lasers and X-ray emitters, to create rotating comforting pillows of glide — a steerable plasma envelope that shapes your atmospheric reentry trajectory. The real physics of reentry heating drives the controls, and those controls are integral to the landing process. You do not press "land." You fly it down.</p>
+  <p>Team Yodacon is a space commodity trading game, built as <a href="https://github.com/yodacon/gonex">Gonex</a>. Its signature system is the landing. We use lithium-injected pellets, cooked with lasers and X-ray emitters, to create rotating comforting pillows of glide — a steerable plasma envelope that shapes your atmospheric reentry trajectory. The real physics of reentry heating drives the controls, and those controls are integral to the landing process. You do not press "land." You fly it down.</p>
 
   <p>Then: set the bird down safely at the station dock. Refuel. Walk the outfitters and dream about upgrades, or about a different ship entirely. Or get a drink at the bar and be distracted there, waiting on the mini-games — the charisma ladder, the Royal Finkel table — while the winners process runs the way the EV Bible explains it.</p>
 
@@ -310,6 +591,7 @@ footer a{color:#7fe9ff;text-decoration:none}
       and can only move.</b> Mass and credits are audited every day and have
       never once failed to balance.</p>
       <p><a class="manual-go" href="docs/game/">Open the flight manual &raquo;</a></p>
+      <p>Or take the <a href="docs/FEATURE_GUIDE.md">feature guide</a>: one trader's round trip in pictures, from the menu to the burning sky and back to orbit.</p>
     </div>
     <div class="manual-shots">
       <a href="docs/game/#reentry"><img src="docs/game/img/entry_auto.png" loading="lazy"
@@ -320,118 +602,84 @@ footer a{color:#7fe9ff;text-decoration:none}
   </div>
 
   <h2 id="reentry">&gt; FLIGHT RECORDER — REENTRY AND TAKEOFF</h2>
-  <p>This is not concept art. This is the flight recorder from the released
-  <strong>Gonex v0.1a3</strong> build, playing one landing at ConEx station in a
-  single take: the plasma pillow burning on the Yodacon's own 1997 mask, the
-  solar-prominence fan arched over the bow wave, the oncoming ion flow streaming off
-  the horizon as real particles, the corridor flown on the green HUD — then the
-  spaceport metropolis slides in over the horizon at exactly the speed on the tape,
-  the flight computer calls <em>"in the pipe, five by five,"</em> captures the ILS
-  glideslope, and sets her down on the landing road between the cities. No cuts. The
-  airframe is the original Yodacon, byte-exact from ConEx&nbsp;1.2; the descent is
-  the seed-grown port and the MHD envelope model, end to end.</p>
+  <p>Not concept art: the flight recorder from the released <strong>Gonex v0.1a3</strong> build, one landing at ConEx station in a single take — the plasma pillow burning on the Yodacon's own 1997 mask, the solar-prominence fan arched over the bow wave, the oncoming ion flow streaming off the horizon as real particles, the corridor flown on the green HUD. The spaceport metropolis slides in over the horizon at exactly the speed on the tape, the flight computer calls <em>"in the pipe, five by five,"</em> captures the ILS glideslope, and sets her down on the landing road between the cities. No cuts. The airframe is the original Yodacon, byte-exact from ConEx&nbsp;1.2; the descent is the seed-grown port and the MHD envelope model, end to end.</p>
 
-  <div class="recorder">
-    <img src="assets/reentry-a3.gif" width="512" height="394" loading="lazy"
-         alt="Flight recorder loop from the Gonex v0.1a3 build: the autoland flies the corridor on the green HUD — expected-profile monitor, dotted pipe projected to the pad, flight-director bug centered — the prominence filaments and ion flow stream over the shield pillows, the spaceport slides in from the horizon, the ship touches down 0.0 km off the pad line, and the runway debrief grades the landing A, PROVEN COURIER.">
-    <div class="rec-cap">
-      <span><b>FLT REC</b> · TAKE 3 · AUTOLAND — CLEAN CORRIDOR, GRADE A</span>
-      <span class="live">BUILD 2026-08-31 · v0.1a3 · ≈18× TIME</span>
-      <span><a href="https://github.com/yodacon/gonex" style="color:#7fe9ff;text-decoration:none">yodacon/gonex</a></span>
+  <p>The trip back up is the landing run backwards, and quicker: roll down the spaceport road like an airport runway, rotate over the town, and punch <em>up</em> through the same fire — the ascent sheath lights at the top of the thick air, the prominence fan and the ion flow run the other way, the sky bands fall from powder blue through indigo to black, and twelve seconds after throttle-up the flight computer calls orbital insertion. <em>The lanes are yours.</em></p>
+
+  <p>And the corridor flown badly on purpose — hands off the stick the whole way down. The guidance fights for the pilot: <em>HULL BURNING</em> with the live rate, <em>TOO STEEP — EASE THE NOSE UP</em>, the STEER LEFT chevrons counting eight kilometres of crossrange, the guardian dumping seed reserves, the emergency override taking the stick, and a debrief that signs for all of it. Every recording keeps its provenance burned into the frame: version, build date, commit, take. The full ledger lives in <a href="assets/RECORDINGS.md">assets/RECORDINGS.md</a>.</p>
+
+  <div class="recorders">
+    <div class="recorder">
+      <img src="assets/reentry-a3.gif" width="512" height="394" loading="lazy"
+           alt="Flight recorder loop from the Gonex v0.1a3 build: the autoland flies the corridor on the green HUD — expected-profile monitor, dotted pipe projected to the pad, flight-director bug centered — the prominence filaments and ion flow stream over the shield pillows, the spaceport slides in from the horizon, the ship touches down 0.0 km off the pad line, and the runway debrief grades the landing A, PROVEN COURIER.">
+      <div class="rec-cap">
+        <span><b>FLT REC</b> · TAKE 3 · AUTOLAND — CLEAN CORRIDOR, GRADE A</span>
+        <span class="live">BUILD 2026-08-31 · v0.1a3 · ≈18× TIME</span>
+        <span><a href="https://github.com/yodacon/gonex">yodacon/gonex</a></span>
+      </div>
     </div>
-  </div>
-
-  <p>And this is the trip back up — the landing run backwards, and quicker. Roll
-  down the spaceport road like an airport runway, rotate over the town, and punch
-  <em>up</em> through the same fire you came down through: the ascent sheath lights
-  at the top of the thick air, the prominence fan and the ion flow run the other
-  way, the sky bands fall from powder blue through indigo to black, and twelve
-  seconds after throttle-up the flight computer calls orbital insertion.
-  <em>The lanes are yours.</em></p>
-
-  <div class="recorder">
-    <img src="assets/takeoff-a3.gif" width="512" height="394" loading="lazy"
-         alt="Flight recorder loop of a takeoff from ConEx station: the ship rolls down the spaceport road between the city blocks, rotates and climbs out over the town, the ascent plasma sheath ignites and streams filaments as the sky bands go from blue to black, and the sequence ends in orbit on the flight map.">
-    <div class="rec-cap">
-      <span><b>FLT REC</b> · TAKE 4 · TAKEOFF — PAD TO ORBIT, ONE BURN</span>
-      <span class="live">BUILD 2026-08-31 · v0.1a3 · ROAD TO ORBIT IN 12 S</span>
-      <span><a href="assets/RECORDINGS.md" style="color:#7fe9ff;text-decoration:none">version history</a></span>
+    <div class="recorder">
+      <img src="assets/takeoff-a3.gif" width="512" height="394" loading="lazy"
+           alt="Flight recorder loop of a takeoff from ConEx station: the ship rolls down the spaceport road between the city blocks, rotates and climbs out over the town, the ascent plasma sheath ignites and streams filaments as the sky bands go from blue to black, and the sequence ends in orbit on the flight map.">
+      <div class="rec-cap">
+        <span><b>FLT REC</b> · TAKE 4 · TAKEOFF — PAD TO ORBIT, ONE BURN</span>
+        <span class="live">BUILD 2026-08-31 · v0.1a3 · ROAD TO ORBIT IN 12 S</span>
+        <span><a href="assets/RECORDINGS.md">version history</a></span>
+      </div>
     </div>
-  </div>
-
-  <p>And this is the corridor flown badly on purpose — hands off the stick the
-  whole way down. Watch the guidance fight for the pilot: <em>HULL BURNING</em> with
-  the live rate, <em>TOO STEEP — EASE THE NOSE UP</em>, the STEER LEFT chevrons
-  counting eight kilometres of crossrange, the guardian dumping seed reserves, the
-  emergency override taking the stick, and a debrief that signs for all of it.
-  Every recording keeps its provenance burned into the frame: version, build date,
-  commit, take. The full ledger lives in
-  <a href="assets/RECORDINGS.md" style="color:#7fe9ff;text-decoration:none">assets/RECORDINGS.md</a>.</p>
-
-  <div class="recorder">
-    <img src="assets/landing-a3-manual.gif" width="512" height="394" loading="lazy"
-         alt="Flight recorder loop of a deliberately bad manual reentry: no pilot input, the ship drifts off the corridor, the HUD flashes hull-burning warnings and steering cues, the red heat veil closes in, the emergency override and guardian fire, and the ship lands hard eight kilometres off the pad line.">
-    <div class="rec-cap">
-      <span><b>FLT REC</b> · TAKE 1 · MANUAL, HANDS OFF — THE BAD LANDING</span>
-      <span class="live">BUILD 2026-08-28 · ≈18× TIME</span>
-      <span><a href="assets/RECORDINGS.md" style="color:#7fe9ff;text-decoration:none">version history</a></span>
+    <div class="recorder">
+      <img src="assets/landing-a3-manual.gif" width="512" height="394" loading="lazy"
+           alt="Flight recorder loop of a deliberately bad manual reentry: no pilot input, the ship drifts off the corridor, the HUD flashes hull-burning warnings and steering cues, the red heat veil closes in, the emergency override and guardian fire, and the ship lands hard eight kilometres off the pad line.">
+      <div class="rec-cap">
+        <span><b>FLT REC</b> · TAKE 1 · MANUAL, HANDS OFF — THE BAD LANDING</span>
+        <span class="live">BUILD 2026-08-28 · ≈18× TIME</span>
+        <span><a href="assets/RECORDINGS.md">version history</a></span>
+      </div>
     </div>
   </div>
 
   <h2 id="sixstages">&gt; SIX STAGES ON INSTRUMENTS — THE PHYSICS, FLOWN</h2>
-  <p>The landing got its flight manual. The MHD reentry console — the envelope-model
-  prototype behind the plasma pillow — proves the descent as six numerical-flow tabs:
-  <strong>CONCEPT, FLOW, HEATING, PLASMA, SHIELD, POWER</strong>. All six now ride the
-  Gonex cockpit: the trajectory is classified live into six stages, each stage rings the
-  gauges that matter, and the console's algebra is typeset onto the black of the sky
-  itself — real subscripts, radicals and Greek, recomputed from the simulation every
-  frame, touring tab by tab on the way down. A seed-economy advisor solves the model
-  backwards for the least lithium that holds the heat line: optimal fuel, minimal hull,
-  one green caret on the feed gauge.</p>
+  <p>The MHD reentry console — the envelope-model prototype behind the plasma pillow — proves the descent as six numerical-flow tabs: <strong>CONCEPT, FLOW, HEATING, PLASMA, SHIELD, POWER</strong>. All six now ride the Gonex cockpit: the trajectory is classified live into six stages, each stage rings the gauges that matter, and the console's algebra is typeset onto the black of the sky itself — real subscripts, radicals and Greek, recomputed from the simulation every frame. A seed-economy advisor solves the model backwards for the least lithium that holds the heat line: optimal fuel, minimal hull, one green caret on the feed gauge. The full writeup walks every tab: <a href="writeups/six-stages-on-instruments.html">Six Stages on Instruments</a>.</p>
 
-  <div class="recorder">
-    <img src="assets/gpis-instruments/sky-tab3.png" width="1024" height="768" loading="lazy"
-         alt="The Gonex entry cockpit at peak g: the wall-temperature equation typeset on the black sky above the horizon, stage-ringed dials, strip charts and the attitude ball.">
-    <div class="rec-cap">
-      <span><b>PEAK G</b> · THE WALL EQUATION, TYPESET ON THE SKY</span>
-      <span class="live">T<sub>w</sub> = (q/&epsilon;&sigma;)<sup>1/4</sup> = 1387 K · RED LINE 1878 K</span>
-      <span><a href="writeups/six-stages-on-instruments.html" style="color:#7fe9ff;text-decoration:none">full writeup</a></span>
+  <div class="recorders">
+    <div class="recorder">
+      <img src="assets/gpis-instruments/sky-tab3.png" width="1024" height="768" loading="lazy"
+           alt="The Gonex entry cockpit at peak g: the wall-temperature equation typeset on the black sky above the horizon, stage-ringed dials, strip charts and the attitude ball.">
+      <div class="rec-cap">
+        <span><b>PEAK G</b> · THE WALL EQUATION, TYPESET ON THE SKY</span>
+        <span class="live">T<sub>w</sub> = (q/&epsilon;&sigma;)<sup>1/4</sup> = 1387 K · RED LINE 1878 K</span>
+        <span><a href="writeups/six-stages-on-instruments.html">full writeup</a></span>
+      </div>
+    </div>
+    <div class="recorder">
+      <img src="assets/gpis-instruments/sky-tab5.png" width="1024" height="768" loading="lazy"
+           alt="The seed-economy advisor on the sky: the least feed that holds sixty percent of the TPS limit, with the optimal-consumption caret on the lithium feed gauge.">
+      <div class="rec-cap">
+        <span><b>SHIELD</b> · THE SEED-ECONOMY ADVISOR — FLY THE CARET</span>
+        <span class="live">feed<sub>opt</sub> = min f : q(f) &le; 0.6·q<sub>TPS</sub></span>
+        <span><a href="writeups/six-stages-on-instruments.html">full writeup</a></span>
+      </div>
     </div>
   </div>
-
-  <div class="recorder">
-    <img src="assets/gpis-instruments/sky-tab5.png" width="1024" height="768" loading="lazy"
-         alt="The seed-economy advisor on the sky: the least feed that holds sixty percent of the TPS limit, with the optimal-consumption caret on the lithium feed gauge.">
-    <div class="rec-cap">
-      <span><b>SHIELD</b> · THE SEED-ECONOMY ADVISOR — FLY THE CARET</span>
-      <span class="live">feed<sub>opt</sub> = min f : q(f) &le; 0.6·q<sub>TPS</sub></span>
-      <span><a href="writeups/six-stages-on-instruments.html" style="color:#7fe9ff;text-decoration:none">full writeup</a></span>
-    </div>
-  </div>
-
-  <p>The full writeup walks every tab — the equation, the substitution with live numbers,
-  and what it means with a stick in your hand — with captures of each one on the sky:
-  <a href="writeups/six-stages-on-instruments.html" style="color:#7fe9ff">Six Stages on
-  Instruments</a>.</p>
 
   <h2 id="courier">&gt; THE COURIER UNIVERSE</h2>
   <p>Ours is a world parallel to the EV universes, and it diverges on one word. The other universes were settled by pirates and warriors — raiders with a hold full of stolen ore, fleets with a flag and a grievance. Ours was settled by <strong>commodity</strong>. The first thing that ever crossed our sky in numbers was not a gunship. It was freight, on a schedule, with a manifest.</p>
 
   <p>The <strong>ConEx government</strong> is what a civilization becomes when it commercializes and commoditizes its own freight. Consolidated Express is not an empire and not a guild; it is the clearing house, the bonded lane, the ledger everyone agreed to trust because the alternative was every captain inventing their own. Its power is not that it can shoot you. Its power is that it can decline to sign for your cargo.</p>
 
-  <p>So the hero of this universe is a <strong>courier</strong>. Hard-working space captains, running lanes on thin margins, carrying other people's goods through their own atmosphere. There is no chosen one. There is a bill of lading, a burn window, and a landing you have to fly yourself. The heroism is in the delivery — and in the long mission underneath every delivery, which is to earn your way up the hulls until you can take the master ship.</p>
+  <p>So the hero of this universe is a <strong>courier</strong>: hard-working space captains, running lanes on thin margins, carrying other people's goods through their own atmosphere. There is no chosen one. There is a bill of lading, a burn window, and a landing you have to fly yourself — and the long mission underneath every delivery, which is to earn your way up the hulls until you can take the master ship.</p>
 
   <h2>&gt; THE MASTER SHIP</h2>
   <p>The <strong>Yodacon</strong> is the top of that ladder. The full monty: mounted rotating turrets on every arc, vast cargo hulls, and a reentry envelope rated for speeds no courier hull before it survived. It is not a warship that happens to carry cargo. It is a <em>freighter that refuses to be caught</em> — turrets because a full hold attracts attention, not because the captain came looking for a fight.</p>
 
-  <p>Its real distinction is the reentry. Every other hull in the lane has to bleed velocity in the black before it dares touch air. The Yodacon brings the speed <em>down with it</em>, riding the lithium-plasma envelope through the heating regime that breaks lesser frames. That is the whole economic argument for the ship: a courier who can enter fast enough delivers on windows nobody else can bid on. Speed of reentry is the commodity. The cargo is just what pays for it.</p>
+  <p>Its real distinction is the reentry. Every other hull in the lane has to bleed velocity in the black before it dares touch air. The Yodacon brings the speed <em>down with it</em>, riding the lithium-plasma envelope through the heating regime that breaks lesser frames. A courier who can enter fast enough delivers on windows nobody else can bid on. Speed of reentry is the commodity. The cargo is just what pays for it.</p>
 
   <p>You do not buy the Yodacon. You are sent out after it. The campaign is the hero's mission of an ordinary captain — one contract at a time, one landing at a time — until the master ship is yours and the lane belongs to a courier.</p>
 
   <h2 id="record">&gt; FOUNDING RECORD</h2>
   <p><strong>27 August 2026.</strong> On this day the domain <strong>yodacon.org</strong> was acquired, the <strong>Yodacon</strong> GitHub organization was created, and DNS was cut over to GitHub Pages — apex <code>A</code> and <code>AAAA</code> records to the four GitHub Pages addresses each, a <code>CNAME</code> on <code>www</code> to the organization's Pages host, and the <code>_github-pages-challenge</code> <code>TXT</code> record for domain verification.</p>
 
-  <p>The same day, the ConEx lore was revived and expanded from a 1999 Escape Velocity plugin into what it is now: <strong>space reentry and space commerce</strong>. Not pirate. Not warrior. Courier.</p>
+  <p>The same day, the ConEx lore was revived and expanded from a 1990s Escape Velocity plugin into what it is now: <strong>space reentry and space commerce</strong>. Not pirate. Not warrior. Courier.</p>
 
   <div class="plate">
     <h3>ARCHIVE &amp; TOOLING RESOURCES</h3>
@@ -446,12 +694,19 @@ footer a{color:#7fe9ff;text-decoration:none}
       <li><a href="https://www.youtube.com/watch?v=XTzUsw34FRw">Reference: building a plugin like a 14-year-old would</a></li>
     </ul>
   </div>
+</div>
 
-  <footer>
-    YODACON.ORG &nbsp;·&nbsp; MIT LICENSE &nbsp;·&nbsp; THE SHIP OUTLIVED THE VOTE<br>
-    Escape Velocity is Ambrosia Software's. ConEx is Paul Richeson's. The Yodacon is ours.
-  </footer>
 </main>
+
+<footer>
+  YODACON.ORG &nbsp;·&nbsp; SHIP PACK GPL-2.0-OR-LATER &nbsp;·&nbsp; THE SHIP OUTLIVED THE VOTE<br>
+  <a href="https://github.com/yodacon/yodacon-ship-pack">yodacon-ship-pack</a> &nbsp;·&nbsp;
+  <a href="https://github.com/yodacon/gonex">gonex</a> &nbsp;·&nbsp;
+  <a href="https://github.com/yodacon/konex">konex</a> &nbsp;·&nbsp;
+  <a href="https://github.com/yodacon/yodacon">yodacon</a> &nbsp;·&nbsp;
+  <a href="https://paulricheson.com">paulricheson.com</a><br>
+  Escape Velocity is Ambrosia Software's. ConEx is Paul Richeson's. The Yodacon is ours.
+</footer>
 </div>
 
 </body>

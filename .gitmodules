@@ -5,3 +5,6 @@
 [submodule "gonex"]
 	path = gonex
 	url = https://github.com/yodacon/gonex.git
+[submodule "ship-pack"]
+	path = ship-pack
+	url = https://github.com/yodacon/yodacon-ship-pack.git

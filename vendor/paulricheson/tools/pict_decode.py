@@ -88,13 +88,16 @@ def unpackbits_words(r: Reader, rowbytes: int) -> bytes:
 
 def read_color_table(r: Reader):
     r.u32()  # ctSeed
-    r.u16()  # ctFlags
+    ct_flags = r.u16()
     ct_size = r.u16()
     table = {}
-    for _ in range(ct_size + 1):
+    for i in range(ct_size + 1):
         value = r.u16()
         red, green, blue = r.u16() >> 8, r.u16() >> 8, r.u16() >> 8
-        table[value] = (red, green, blue)
+        # A device colour table (high bit of ctFlags) leaves every value field
+        # zero and is indexed by position; keying on value collapsed all 256
+        # entries onto index 0 and decoded the picture solid black.
+        table[i if ct_flags & 0x8000 else value] = (red, green, blue)
     return [table.get(i, (0, 0, 0)) for i in range(256)]
 
 
@@ -161,7 +164,8 @@ def decode_bits(r: Reader, op: int) -> Image.Image:
         px = image.load()
         for y, row in enumerate(rows):
             for x in range(width):
-                px[x, y] = 1 if row[x // 8] & (0x80 >> (x % 8)) else 0
+                # QuickDraw paints a set bit black; PIL's "1" mode calls 1 white
+                px[x, y] = 0 if row[x // 8] & (0x80 >> (x % 8)) else 1
         return image
 
     r.u16()  # pmVersion

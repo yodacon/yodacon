@@ -12,11 +12,12 @@
 # `make all` proves the chain: round-trips the fork, regenerates the data,
 # and builds + tests the game in the gonex/ submodule.
 #
-# Two submodules hang off this tree, and they are separate repositories with
+# Three submodules hang off this tree, and they are separate repositories with
 # their own histories and their own pushes:
 #
 #   gonex/         github.com/yodacon/gonex   the game
 #   vendor/konex/  github.com/yodacon/konex   the engine fork
+#   ship-pack/     github.com/yodacon/yodacon-ship-pack   the free asset pack
 #
 # A submodule records ONE COMMIT, not a branch. Work inside gonex/ therefore
 # takes two commits and two pushes — the game's, then this repo's, moving the
@@ -28,10 +29,13 @@ PY      ?= python3
 # clone of the same repo at ~/code/gonex that this fell back to, and a second
 # checkout of one repo is a way to commit work into a tree nobody builds.
 GONEX    = gonex
+# The Yodacon Ship Pack is a third submodule (github.com/yodacon/yodacon-ship-pack),
+# served at yodacon.org/ship-pack/. It builds itself from the original archives.
+SHIP_PACK = ship-pack
 EXPAND   = vendor/expanded
 FORK     = $(EXPAND)/ConEx 1.2/ConEx1.2.rsrc
 
-.PHONY: all test check verify expand extract gazetteer export gonex run \
+.PHONY: all test check verify expand extract gazetteer export ship-pack gonex run \
         clean-derived submodules
 
 all: verify test gonex
@@ -76,6 +80,10 @@ gazetteer: expand
 export: expand submodules
 	GONEX_DIR="$(GONEX)" $(PY) data/export_gonex.py
 	GONEX_DIR="$(GONEX)" $(PY) data/export_ships.py
+
+## ship-pack: test the pack's extractor and rebuild its assets from sources/
+ship-pack:
+	$(MAKE) -C $(SHIP_PACK) test assets
 
 ## gonex: build the game from the gonex/ submodule
 gonex: submodules

@@ -17,6 +17,7 @@ Where things belong:
 | Directory | Contents |
 | --- | --- |
 | `gonex/` | Submodule — the game (`yodacon/gonex`). The only checkout; there is no second one |
+| `ship-pack/` | Submodule — the Yodacon Ship Pack (`yodacon/yodacon-ship-pack`), served at yodacon.org/ship-pack/. The only checkout |
 | `evutils/` | Byte-identical resource-fork dump/build tooling |
 | `data/` | Gazetteer, universe map, and the exporters that feed `gonex/` |
 | `docs/` | Project documentation |

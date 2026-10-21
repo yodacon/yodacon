@@ -51,8 +51,8 @@ def convert_sprites(src_root: Path):
         except Exception as e:
             FAILURES.append((str(f), str(e)))
             continue
-        # 1-bit masks decode with ship pixels black(0): alpha = inverted mask
-        sheet.putalpha(mask.point(lambda v: 255 - v))
+        # EV masks, 1-bit or 8-bit, are white where the ship is: alpha = mask
+        sheet.putalpha(mask)
         sheet.save(dst / (f.stem + ".png"))
         ok += 1
     print(f"spïn sheets: {ok} composited into {dst}")

@@ -97,7 +97,7 @@ thirteen of them distinct (the catalogue entry promised twelve new ones), one
 a 640×480 QuickTime JPEG.
 
 konex's ship list is exactly ConEx Override's ten named hulls plus Advisor and
-Citrus. A pixel comparison settles the rest: konex's `yodacon/00.tga` has the
+Citrus (two more ships Paul Richeson rendered; Joshua Bussdieker wrote konex). A pixel comparison settles the rest: konex's `yodacon/00.tga` has the
 same 57×87 opaque footprint as Override's frame 0, and the Small Pin's 26×35
 matches too. konex's cast is ConEx Override's art, padded to power-of-two
 textures and in places rescaled, not a redraw. Gonex therefore already flies

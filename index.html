@@ -276,6 +276,7 @@ footer a{color:var(--cyan);text-decoration:none}
 .recorder .rec-cap b{color:#9dff9d}
 .recorder .rec-cap .live{color:var(--violet)}
 .recorder .rec-cap a{color:var(--cyan);text-decoration:none}
+.titlecard{margin:18px auto 6px;max-width:335px}.titlecard img{display:block;width:100%;height:auto;border:1px solid #2b5;box-shadow:0 0 18px rgba(80,255,120,.25)}.titlecard figcaption{font-size:.75rem;opacity:.75;text-align:center;margin-top:4px}
 </style>
 </head>
 <body>
@@ -285,11 +286,16 @@ footer a{color:var(--cyan);text-decoration:none}
 <header>
   <h1>YODACON<small>SHIP PACK</small></h1>
   <p class="tag">Free 1990s starships for your game.</p>
-  <p class="sub">Ten hulls designed and rendered by Paul Richeson for his <em>Escape Velocity</em>
-  plugin ConEx in 1997 — recovered byte for byte and repackaged for anyone's game, web page or 3D scene.
-  GPL-2.0-or-later.</p>
+  <p class="sub">Twenty-three starships designed and rendered by Paul Richeson, for his <em>Escape Velocity</em>
+  plugins ConEx (1997) and ConEx Override (1998) and for konex (2005), recovered byte for byte and repackaged
+  for anyone's game, web page or 3D scene. GPL-2.0-or-later.</p>
+  <figure class="titlecard">
+    <img src="ship-pack/conex/readme/pictures/2022.png" width="335" height="273"
+         alt="ConEx, An Escape Velocity Plugin, by Paul Richeson: the title picture, a ConEx shuttle over green mountains">
+    <figcaption>ConEx's title picture · Paul Richeson, 28 November 1997</figcaption>
+  </figure>
   <p class="telemetry">
-    <span>10 HULLS</span><span>36 FRAMES EACH</span><span>32–80 PX</span><span>2 EDITIONS</span><span>GPL-2.0+</span>
+    <span>23 SHIPS</span><span>36 FRAMES EACH</span><span>32–104 PX</span><span>3 EDITIONS</span><span>GPL-2.0+</span>
   </p>
 </header>
 
@@ -347,12 +353,14 @@ footer a{color:var(--cyan);text-decoration:none}
     <a href="ship-pack/conex/contact-sheet.png"><img src="ship-pack/conex/contact-sheet.png" width="608" height="1406" loading="lazy"
        alt="Contact sheet of the ten 1997 ConEx hulls: for each ship a rotation frame, its target picture, shipyard picture, comm picture and thumbnail."></a>
     <div>
-      <h3>Two editions</h3>
+      <h3>Three editions</h3>
       <p><strong>ConEx 1.2</strong> (1997) — the <em>Escape Velocity</em> plugin: the ten hulls above.</p>
       <p><strong>ConEx Override 1.0</strong> (1998) — Paul Richeson's rebuild for
       <em>Escape Velocity Override</em>: eleven ship records — the <strong>Callisto</strong> and a
       “1/4 Defender” are new, the Medium Pin is gone — with larger sprites (40–104 px) and sixteen landing pictures
       (thirteen distinct) rendered in Bryce. It is in the pack as its own edition.</p>
+      <p><strong>konex</strong> (2005) — <strong>Advisor</strong> and <strong>Citrus</strong>, two more ships
+      Paul Richeson rendered, first published in Joshua Bussdieker's konex, with their target, shipyard and comm pictures.</p>
       <p class="note">The contact sheet shows the 1997 hulls: frame, target, yard, comm and thumb per ship.</p>
     </div>
   </div>
@@ -430,10 +438,16 @@ footer a{color:var(--cyan);text-decoration:none}
       and drops the Medium Pin, new landing pictures rendered in Bryce. <a href="#originals">The original archive</a>.</p>
     </li>
     <li>
+      <span class="yr">1998</span>
+      <h3>ConEx GL — Joshua Bussdieker</h3>
+      <p>The first standalone ConEx: a C and OpenGL program, written before konex and kept in a private
+      repository. No code survives in public; this is Paul Richeson's account.</p>
+    </li>
+    <li>
       <span class="yr">2005</span>
       <h3>konex — Joshua Bussdieker</h3>
       <p>A standalone C++/OpenGL remake. Its cast is ConEx Override's ten hulls — sprites carried over
-      from the 1998 plugin, some rescaled to power-of-two textures — plus two of its own, Advisor and Citrus.
+      from the 1998 plugin, some rescaled to power-of-two textures — plus Advisor and Citrus, two more ships Paul Richeson rendered for it.
       Kept ConEx's splash screen; only deathmatch and “Sunday Drive”.
       <a href="https://github.com/yodacon/konex">yodacon/konex &#8599;</a></p>
     </li>
@@ -513,8 +527,8 @@ footer a{color:var(--cyan);text-decoration:none}
   <div class="manual">
     <div>
       <div class="manual-k">THE LEADERBOARD · RANKED BY DESIGNS FLOWN</div>
-      <h3>#1 · Gonex — 11 / 11</h3>
-      <p>The Go port of konex, with the ConEx trade game restored, by Team Yodacon. It flies all eleven designs: the 1997 originals, and konex’s cast, which is ConEx Override’s art.</p>
+      <h3>#1 · Gonex — 13 / 13</h3>
+      <p>The Go port of konex, with the ConEx trade game restored, by Team Yodacon. It flies all thirteen designs: the 1997 originals, and konex’s cast, which is ConEx Override’s art plus Advisor and Citrus.</p>
       <p><a class="manual-go" href="https://github.com/yodacon/yodacon-ship-pack/blob/main/USED-IN.md">See the full list &#8599;</a></p>
     </div>
     <div>

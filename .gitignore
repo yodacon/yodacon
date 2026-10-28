@@ -6,3 +6,6 @@ vendor/expanded/
 # Large reference archives kept locally, never committed.
 # See vendorignored/README.md.
 vendorignored/
+
+# Python bytecode caches.
+__pycache__/
